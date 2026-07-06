@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="BuidAndHireAPI/BuidAndHireAPI.csproj" />
+  <Project Path="BuildAndHire.Domain/BuildAndHire.Domain.csproj" />
+  <Project Path="BuildAndHire.Infrastructure/BuildAndHire.Infrastructure.csproj" />
+</Solution>
