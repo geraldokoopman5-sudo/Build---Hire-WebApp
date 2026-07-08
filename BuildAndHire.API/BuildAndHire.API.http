@@ -1,0 +1,6 @@
+@BuildAndHire.API_HostAddress = http://localhost:5140
+
+GET {{BuildAndHire.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

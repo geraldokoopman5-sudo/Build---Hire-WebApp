@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="OpenApiUi" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BuildAndHire.Application\BuildAndHire.Application.csproj" />
+    <ProjectReference Include="..\BuildAndHire.Infrastructure\BuildAndHire.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
