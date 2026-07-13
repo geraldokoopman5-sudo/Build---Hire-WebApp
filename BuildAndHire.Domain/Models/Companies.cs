@@ -11,7 +11,7 @@ public class Companies
 
     public string Password { get; set; } = string.Empty;
 
-    public Address? adress { get; set; }
+    public Address? address { get; set; }
 
     public AccountStatus Status { get; set; }
 

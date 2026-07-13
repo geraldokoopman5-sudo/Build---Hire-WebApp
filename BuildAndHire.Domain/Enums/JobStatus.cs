@@ -2,5 +2,5 @@ namespace BuildAndHire.Domain.Enums;
 
 public enum JobStatus
 {
-    Rented=1,Availible=2,Maintenence=3
+    Working=1, Unavailible=2, Availible=3
 }

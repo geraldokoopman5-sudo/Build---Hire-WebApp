@@ -4,14 +4,14 @@
     "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Infrastructure\\BuildAndHire.Infrastructure.csproj": {}
   },
   "projects": {
-    "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj": {
+    "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj",
+        "projectUniqueName": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj",
         "projectName": "BuildAndHire.Application",
-        "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj",
+        "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj",
         "packagesPath": "C:\\Users\\Geraldo\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\obj\\",
+        "outputPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\obj\\",
         "projectStyle": "PackageReference",
         "centralPackageVersionsManagementEnabled": true,
         "fallbackFolders": [
@@ -34,8 +34,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
-                "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
+              "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
+                "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
               }
             }
           }
@@ -58,6 +58,10 @@
           "targetAlias": "net10.0",
           "centralPackageVersions": {
             "Microsoft.AspNetCore.OpenApi": "10.0.9",
+            "Microsoft.EntityFrameworkCore": "10.0.9",
+            "Microsoft.EntityFrameworkCore.Design": "10.0.9",
+            "Microsoft.EntityFrameworkCore.Tools": "10.0.9",
+            "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.3",
             "OpenApiUi": "1.1.0"
           },
           "imports": [
@@ -354,14 +358,14 @@
         }
       }
     },
-    "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
+    "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
+        "projectUniqueName": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
         "projectName": "BuildAndHire.Domain",
-        "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
+        "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
         "packagesPath": "C:\\Users\\Geraldo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\obj\\",
+        "outputPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "centralPackageVersionsManagementEnabled": true,
         "fallbackFolders": [
@@ -404,6 +408,10 @@
           "targetAlias": "net10.0",
           "centralPackageVersions": {
             "Microsoft.AspNetCore.OpenApi": "10.0.9",
+            "Microsoft.EntityFrameworkCore": "10.0.9",
+            "Microsoft.EntityFrameworkCore.Design": "10.0.9",
+            "Microsoft.EntityFrameworkCore.Tools": "10.0.9",
+            "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.3",
             "OpenApiUi": "1.1.0"
           },
           "imports": [
@@ -730,11 +738,11 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj": {
-                "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj"
+              "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj": {
+                "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj"
               },
-              "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
-                "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
+              "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
+                "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
               }
             }
           }
@@ -755,8 +763,38 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[10.0.9, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[10.0.9, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[10.0.9, )",
+              "versionCentrallyManaged": true
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[10.0.3, )",
+              "versionCentrallyManaged": true
+            }
+          },
           "centralPackageVersions": {
             "Microsoft.AspNetCore.OpenApi": "10.0.9",
+            "Microsoft.EntityFrameworkCore": "10.0.9",
+            "Microsoft.EntityFrameworkCore.Design": "10.0.9",
+            "Microsoft.EntityFrameworkCore.Tools": "10.0.9",
+            "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.3",
             "OpenApiUi": "1.1.0"
           },
           "imports": [
