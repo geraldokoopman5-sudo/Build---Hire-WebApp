@@ -34,8 +34,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
-                "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
+              "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
+                "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
               }
             }
           }
@@ -358,14 +358,14 @@
         }
       }
     },
-    "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
+    "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
         "projectName": "BuildAndHire.Domain",
-        "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
+        "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
         "packagesPath": "C:\\Users\\Geraldo\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\obj\\",
+        "outputPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "centralPackageVersionsManagementEnabled": true,
         "fallbackFolders": [

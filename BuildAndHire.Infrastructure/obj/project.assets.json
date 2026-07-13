@@ -2732,11 +2732,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Infrastructure\\BuildAndHire.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Infrastructure\\BuildAndHire.Infrastructure.csproj",
       "projectName": "BuildAndHire.Infrastructure",
-      "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Infrastructure\\BuildAndHire.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Infrastructure\\BuildAndHire.Infrastructure.csproj",
       "packagesPath": "C:\\Users\\Geraldo\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Infrastructure\\obj\\",
+      "outputPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "centralPackageVersionsManagementEnabled": true,
       "fallbackFolders": [
@@ -2762,8 +2762,8 @@
             "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj": {
               "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Application\\BuildAndHire.Application.csproj"
             },
-            "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
-              "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
+            "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
+              "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
             }
           }
         }

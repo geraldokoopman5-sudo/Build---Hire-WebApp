@@ -60,8 +60,8 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
-              "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
+            "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj": {
+              "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj"
             }
           }
         }

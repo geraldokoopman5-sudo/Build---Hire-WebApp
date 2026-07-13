@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "EbGd7iAE2II=",
+  "dgSpecHash": "MUHUeyasfNY=",
   "success": true,
-  "projectFilePath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Infrastructure\\BuildAndHire.Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Infrastructure\\BuildAndHire.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Geraldo\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Geraldo\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",
