@@ -1,9 +1,9 @@
-using BuildAndHire.Domain.Enums;
+using BuildAndHire.Domain.Models;
 using BuildAndHire.Domain.ValueObjects;
+using BuildAndHire.Domain.Enums;
+namespace BuildAndHire.Application.DTOs.JobDto;
 
-namespace BuildAndHire.Domain.Models;
-
-public class Jobs
+public class RegisterJobDto
 {
     public Guid JobId { get; set; }
 
@@ -16,8 +16,6 @@ public class Jobs
     public string JobDescription { get; set; } = string.Empty;
 
     public int DaysWorking { get; set; }
-    
-    public decimal DailyRate { get; set; }
 
     public DateTime StartDate { get; set; }
 
@@ -28,5 +26,4 @@ public class Jobs
     public Paymentmethod? PayingMethod { get; set; }
     
     public Address? address{ get; set; }
-  
 }

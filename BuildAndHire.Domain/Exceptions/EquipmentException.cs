@@ -3,7 +3,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BuildAndHire.Domain.Exceptions;
 
-public class EquipmentException
+public static class EquipmentException
 {
     public static bool Overlap(DateTime date1, DateTime end1, DateTime date2, DateTime end2)
     {

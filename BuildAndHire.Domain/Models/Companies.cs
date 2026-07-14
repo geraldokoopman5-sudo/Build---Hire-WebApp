@@ -17,5 +17,7 @@ public class Companies
 
     public double RegistrationNumber { get; set; }
 
-    public double TaxNumber{ get; set; } 
+    public double TaxNumber { get; set; }
+
+    public ICollection<Jobs> Jobs { get; set; } = new List<Jobs>();
 }

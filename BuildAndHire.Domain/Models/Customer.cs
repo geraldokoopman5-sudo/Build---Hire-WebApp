@@ -16,5 +16,8 @@ public class Customer
 
    public AccountStatus Status { get; set; }
 
-   public Address? address{ get; set; }
+
+   public Address? address { get; set; }
+   
+   public ICollection<Jobs> Jobs { get; set; } = new List<Jobs>();
 }

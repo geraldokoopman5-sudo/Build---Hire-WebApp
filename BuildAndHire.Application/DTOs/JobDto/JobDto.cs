@@ -1,9 +1,9 @@
-using BuildAndHire.Domain.Enums;
+using BuildAndHire.Domain.Models;
 using BuildAndHire.Domain.ValueObjects;
+using BuildAndHire.Domain.Enums;
+namespace BuildAndHire.Application.DTOs.JobDto;
 
-namespace BuildAndHire.Domain.Models;
-
-public class Jobs
+public class JobDto
 {
     public Guid JobId { get; set; }
 
@@ -25,8 +25,7 @@ public class Jobs
 
     public JobStatus Status { get; set; }
     
-    public Paymentmethod? PayingMethod { get; set; }
+    public Paymentmethod? payingBy { get; set; }
     
     public Address? address{ get; set; }
-  
 }
