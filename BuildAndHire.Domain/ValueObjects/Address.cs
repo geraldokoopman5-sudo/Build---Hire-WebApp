@@ -2,7 +2,7 @@ namespace BuildAndHire.Domain.ValueObjects;
 
 public class Address
 {
-    public string StreetName { get; set; } = string.Empty;
+    public string StreetAddress { get; set; } = string.Empty;
 
     public string Suburb { get; set; } = string.Empty;
 
@@ -10,5 +10,7 @@ public class Address
 
     public string Province { get; set; }=string.Empty;
     
-    public int PostalCode{ get; set; }
+    public int PostalCode { get; set; }
+    
+    
 }

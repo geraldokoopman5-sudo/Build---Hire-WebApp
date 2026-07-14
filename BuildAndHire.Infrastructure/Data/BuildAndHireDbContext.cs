@@ -14,10 +14,7 @@ public  class BuildAndHireDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
-
-
-        
+ 
     }
 
 }
