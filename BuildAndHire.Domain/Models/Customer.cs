@@ -14,7 +14,7 @@ public class Customer
 
    public string Email { get; set; } = string.Empty;
 
-   public AccountStatus Status { get; set; }
+   public AccountStatus Status { get; set; } 
 
    public Address? address { get; set; }
    
