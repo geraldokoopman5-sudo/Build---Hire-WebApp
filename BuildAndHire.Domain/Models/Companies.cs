@@ -1,5 +1,5 @@
-using BuildAndHire.Domain.ValueObjects;
 using BuildAndHire.Domain.Enums;
+using BuildAndHire.Domain.ValueObjects;
 
 namespace BuildAndHire.Domain.Models;
 
@@ -20,4 +20,6 @@ public class Companies
     public double TaxNumber { get; set; }
 
     public ICollection<Jobs> Jobs { get; set; } = new List<Jobs>();
+
+    public List<Workers> Workers { get; set; } = new List<Workers>();
 }

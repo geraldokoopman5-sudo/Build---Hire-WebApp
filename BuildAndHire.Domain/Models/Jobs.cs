@@ -24,9 +24,11 @@ public class Jobs
     public DateTime EndDate { get; set; }
 
     public JobStatus Status { get; set; }
-    
+
     public Paymentmethod? PayingMethod { get; set; }
-    
+
+    public ICollection<Workers> Workers { get; set; } = new List<Workers>();
+
     public Address? address{ get; set; }
   
 }

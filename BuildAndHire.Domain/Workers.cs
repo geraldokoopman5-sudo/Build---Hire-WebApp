@@ -11,12 +11,16 @@ public class Workers
 
     public string WorkerLastNAme { get; set; } = string.Empty;
 
-    public string WorkEmail { get; set; } = string.Empty;
-    
     public AccountStatus WorkerStatus { get; set; }//will be used for now until I decide I want to make a different set of enums
 
-    //For initializing 
-    public List<Companies> ResidingCompany { get; set; } = new List<Companies>();
+        //For initializing 
+    public Guid CompanyId { get; set; }
 
-    public List<Jobs> Jobs { get; set; } = new List<Jobs>();
+    public Companies? ResidingCompany { get; set; }
+
+    public Guid JobId { get; set; }
+
+    public Jobs? Job { get; set; }
+    
 }
+
