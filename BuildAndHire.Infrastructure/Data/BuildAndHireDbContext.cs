@@ -34,25 +34,25 @@ public  class BuildAndHireDbContext : DbContext
         .Property(j => j.JobId)
         .ValueGeneratedOnAdd();
 
-    // Company -> Jobs
+    // Company => Jobs
         modelBuilder.Entity<Jobs>()
         .HasOne(j => j.companies)
         .WithMany(c => c.Jobs)
         .HasForeignKey(j => j.CompanyId);
 
-    // Customer -> Jobs
+    // Customer => Jobs
          modelBuilder.Entity<Jobs>()
         .HasOne(j => j.customer)
         .WithMany(c => c.Jobs)
         .HasForeignKey(j => j.CustomerId);
 
-    // Company -> Workers
+    // Company => Workers
         modelBuilder.Entity<Workers>()
         .HasOne(w => w.ResidingCompany)
         .WithMany(c => c.Workers)
         .HasForeignKey(w => w.CompanyId);
 
-    // Job -> Workers
+    // Job => Workers
         modelBuilder.Entity<Workers>()
         .HasOne(w => w.Job)
         .WithMany(j => j.Workers)

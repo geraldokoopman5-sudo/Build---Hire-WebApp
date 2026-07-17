@@ -25,8 +25,6 @@ public class Jobs
 
     public JobStatus Status { get; set; }
 
-    public Paymentmethod? PayingMethod { get; set; }
-
     public ICollection<Workers> Workers { get; set; } = new List<Workers>();
 
     public Address? address{ get; set; }
