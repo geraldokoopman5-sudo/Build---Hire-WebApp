@@ -20,9 +20,9 @@ namespace BuildAndHire.Domain.Models
 
         public decimal Amount { get; set; }
 
-        public Paymentmethod PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
-        public PaymentStatus Status { get; set; }
+        public PaymentEnum Status { get; set; }
 
         public DateTime PaymentDate { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using BuildAndHire.Domain.ValueObjects;
+﻿using BuildAndHire.Domain.Enums;
+using BuildAndHire.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,9 +26,11 @@ namespace BuildAndHire.Domain.Models
 
         public DateTime EndDate { get; set; }
 
-        public JobStatus Status { get; set; }
+        public JobEnum Status { get; set; }
 
         public ICollection<Workers> Workers { get; set; } = new List<Workers>();
+
+       public Payment? Payments { get; set; }
 
         public Address? address { get; set; }
     }

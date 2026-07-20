@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using BuildAndHire.Domain.Entities;
 using BuildAndHire.Domain.Models;
 
 namespace BuildAndHire.Infrastructure.Data
@@ -9,10 +8,11 @@ namespace BuildAndHire.Infrastructure.Data
     {
         public BuildAndHireDbContext(DbContextOptions<BuildAndHireDbContext> options) : base(options) { }
 
-        public DbSet<Customer> Customers { get; set; }}
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<Companies> Companies { get; set; }
         public DbSet<Workers> Workers { get; set; }
         public DbSet<Jobs> Jobs { get; set; }
+        public DbSet<Payment> Payment { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,6 +40,24 @@ namespace BuildAndHire.Infrastructure.Data
             .WithMany(c => c.Jobs)
             .HasForeignKey(j => j.CompanyId);
 
+
+            modelBuilder.Entity<Payment>()
+            .HasKey(p => p.PaymentId);
+
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.PaymentId)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.Customer)
+                .WithMany(c => c.Payments)
+                .HasForeignKey(p => p.CustomerId);
+
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.Job)
+                .WithOne(j => j.Payments)
+                .HasForeignKey<Payment>(p => p.JobId);
+
             // Customer => Jobs
             modelBuilder.Entity<Jobs>()
            .HasOne(j => j.customer)
@@ -64,3 +82,4 @@ namespace BuildAndHire.Infrastructure.Data
             modelBuilder.Entity<Jobs>().OwnsOne(j => j.address);
         }
     }
+}
