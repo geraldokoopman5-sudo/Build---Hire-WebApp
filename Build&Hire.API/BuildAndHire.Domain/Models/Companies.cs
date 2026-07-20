@@ -1,0 +1,30 @@
+﻿using BuildAndHire.Domain.Enums;
+using BuildAndHire.Domain.ValueObjects;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Text;
+
+namespace BuildAndHire.Domain.Models
+{
+    public class Companies
+    {
+        public Guid CompanyId { get; set; }
+
+        public string CompanyName { get; set; } = string.Empty;
+
+        public string Password { get; set; } = string.Empty;
+
+        public Address? address { get; set; }
+
+        public AccountStatus Status { get; set; }
+
+        public double RegistrationNumber { get; set; }
+
+        public double TaxNumber { get; set; }
+
+        public ICollection<Jobs> Jobs { get; set; } = new List<Jobs>();
+
+        public List<Workers> Workers { get; set; } = new List<Workers>();
+    }
+}
