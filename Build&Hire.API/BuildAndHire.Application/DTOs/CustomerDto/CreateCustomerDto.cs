@@ -25,4 +25,4 @@ namespace BuildAndHire.Application.DTOs.CustomerDto
         public Address? address { get; set; }
     }
 }
-}
+

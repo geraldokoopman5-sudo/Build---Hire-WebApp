@@ -5,9 +5,9 @@ namespace BuildAndHire.Application.Interfaces.Repositories;
 
 public interface ICustomerRepository
 {
-    Task<IEnumerable<CustomerDto>> GetAllCustomers();
-    Task<CustomerDto> GetCustomerById(Guid Id);
-    Task<CreateCustomerDto> CreateCustomerAccount(CustomerDto dto);
-    Task<UpdateCustomerDto> UpdateCustomer(UpdateCustomerDto dto);
+    Task<IEnumerable<Customer>> GetAllCustomers();
+    Task<Customer> GetCustomerById(Guid Id);
+    Task<Customer> CreateCustomerAccount(Customer customer);
+    Task<Customer> UpdateCustomer(Customer customer);
     Task<string> DeleteCustomerAccount(Guid id);
 }

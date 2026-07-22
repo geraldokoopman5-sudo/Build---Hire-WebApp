@@ -32,7 +32,7 @@ namespace BuildAndHire.Infrastructure.Data
 
             modelBuilder.Entity<Jobs>()
             .Property(j => j.JobId)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedOnAdd(); 
 
             // Company => Jobs
             modelBuilder.Entity<Jobs>()

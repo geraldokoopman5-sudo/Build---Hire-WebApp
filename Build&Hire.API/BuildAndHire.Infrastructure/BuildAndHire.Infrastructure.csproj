@@ -24,4 +24,8 @@
     <ProjectReference Include="..\BuildAndHire.Domain\BuildAndHire.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Identity\" />
+  </ItemGroup>
+
 </Project>
