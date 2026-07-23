@@ -3,5 +3,6 @@ global using BuildAndHire.Domain.Enums;
 global using BuildAndHire.Domain.ValueObjects;
 global using Microsoft.EntityFrameworkCore;
 global using BuildAndHire.Application.Interfaces.Repositories;
+global using BuildAndHire.Application.Interfaces.Repository;
 
-global using BuildAndHire.Infrastructure.Data;
+    global using BuildAndHire.Infrastructure.Data;

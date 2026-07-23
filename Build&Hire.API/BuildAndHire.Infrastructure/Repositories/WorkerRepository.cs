@@ -1,7 +1,4 @@
 ﻿
-
-using BuildAndHire.Application.Interfaces.Repository;
-
 namespace BuildAndHire.Infrastructure.Repositories
 {
     public class WorkerRepository : IWorkersRepository
