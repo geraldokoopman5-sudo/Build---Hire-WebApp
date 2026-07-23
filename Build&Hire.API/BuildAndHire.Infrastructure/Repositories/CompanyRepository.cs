@@ -1,12 +1,4 @@
-﻿using BuildAndHire.Application.Interfaces.Repositories;
-using BuildAndHire.Domain.Models;
-using BuildAndHire.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BuildAndHire.Infrastructure.Repositories
+﻿namespace BuildAndHire.Infrastructure.Repositories
 {
     public class CompanyRepository : ICompanyRepository
     {

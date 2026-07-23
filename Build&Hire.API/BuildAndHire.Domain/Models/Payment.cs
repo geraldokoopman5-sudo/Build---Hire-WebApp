@@ -17,6 +17,9 @@ namespace BuildAndHire.Domain.Models
         public Guid CustomerId { get; set; }
 
         public Customer Customer { get; set; } = null!;
+        
+        public Guid CompanyId { get; set; }
+        public Companies? Companies { get; set; }
 
         public decimal Amount { get; set; }
 

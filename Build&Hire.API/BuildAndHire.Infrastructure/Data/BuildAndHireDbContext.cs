@@ -40,23 +40,29 @@ namespace BuildAndHire.Infrastructure.Data
             .WithMany(c => c.Jobs)
             .HasForeignKey(j => j.CompanyId);
 
-
+            
             modelBuilder.Entity<Payment>()
             .HasKey(p => p.PaymentId);
 
+           //Adding Primary key om creating account
             modelBuilder.Entity<Payment>()
                 .Property(p => p.PaymentId)
                 .ValueGeneratedOnAdd();
-
+            //Payment => Payment
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Customer)
                 .WithMany(c => c.Payments)
                 .HasForeignKey(p => p.CustomerId);
-
+            //Payment => Jobs
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Job)
                 .WithOne(j => j.Payments)
                 .HasForeignKey<Payment>(p => p.JobId);
+            //Payment  => Companies
+            modelBuilder.Entity<Payment>()
+                .HasOne(P => P.Companies)
+                .WithMany(c => c.Payments)
+                .HasForeignKey(f => f.CompanyId);
 
             // Customer => Jobs
             modelBuilder.Entity<Jobs>()

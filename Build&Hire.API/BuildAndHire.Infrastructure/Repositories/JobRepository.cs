@@ -1,10 +1,5 @@
-﻿using BuildAndHire.Application.Interfaces.Repository;
-using BuildAndHire.Domain.Models;
-using BuildAndHire.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using BuildAndHire.Application.Interfaces.Repository;
 
 namespace BuildAndHire.Infrastructure.Repositories
 {
@@ -30,7 +25,7 @@ namespace BuildAndHire.Infrastructure.Repositories
             return await _context.Jobs.
                    Include(cp => cp.companies)
                    .Include(c => c.customer)
-                   .Include(w => w.Workers).FirstOrDefaultAsync();
+                   .Include(w => w.Workers).FirstOrDefaultAsync(i => i.JobId == id);
 
         }
         public async Task<Jobs> RegisterJob(Jobs job)
@@ -45,7 +40,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         {
             var ChangeJob = await _context.Jobs.FindAsync(job.JobId);
 
-            if (ChangeJob != null) return null;
+            if (ChangeJob == null) return null;
 
             ChangeJob.EndDate = job.EndDate;
             ChangeJob.Workers = job.Workers;

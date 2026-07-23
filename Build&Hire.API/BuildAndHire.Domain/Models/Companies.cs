@@ -26,5 +26,6 @@ namespace BuildAndHire.Domain.Models
         public ICollection<Jobs> Jobs { get; set; } = new List<Jobs>();
 
         public List<Workers> Workers { get; set; } = new List<Workers>();
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 }
