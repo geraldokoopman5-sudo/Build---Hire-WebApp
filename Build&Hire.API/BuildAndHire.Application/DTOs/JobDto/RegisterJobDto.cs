@@ -18,6 +18,7 @@ namespace BuildAndHire.Application.DTOs.JobDto
         public Customer? customer { get; set; }
 
         public string JobDescription { get; set; } = string.Empty;
+        public decimal DailyRate { get; set; }
 
         public int DaysWorking { get; set; }
 
@@ -25,9 +26,9 @@ namespace BuildAndHire.Application.DTOs.JobDto
 
         public DateTime EndDate { get; set; }
 
-        public JobStatus Status { get; set; }
+        public JobEnum Status { get; set; }
 
-        public Paymentmethod? PayingMethod { get; set; }
+        public PaymentMethod? PayingMethod { get; set; }
 
         public Address? address { get; set; }
     }

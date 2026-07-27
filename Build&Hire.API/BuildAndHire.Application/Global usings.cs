@@ -5,3 +5,5 @@ global using Microsoft.EntityFrameworkCore;
 global using BuildAndHire.Application.Interfaces.Repositories;
 global using BuildAndHire.Application.Interfaces.Repository;
 global using Microsoft.EntityFrameworkCore.Design;
+global using BuildAndHire.Application.Interfaces.Services;
+global using BuildAndHire.Application.DTOs;

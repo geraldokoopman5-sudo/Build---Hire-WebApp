@@ -11,7 +11,7 @@ namespace BuildAndHire.Application.DTOs.JobDto
 
         public DateTime EndDate { get; set; }
 
-        public JobStatus Status { get; set; }
+        public JobEnum Status { get; set; }
 
         public PaymentMethod? PayingMethod { get; set; }
 
