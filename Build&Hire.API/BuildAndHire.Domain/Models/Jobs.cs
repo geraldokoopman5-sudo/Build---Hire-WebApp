@@ -32,8 +32,7 @@ namespace BuildAndHire.Domain.Models
 
         public ICollection<Workers> Workers { get; set; } = new List<Workers>();
 
-       public Payment? Payments { get; set; }
-
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public Address? address { get; set; }
     }
 }

@@ -49,20 +49,15 @@ namespace BuildAndHire.Infrastructure.Data
                 .Property(p => p.PaymentId)
                 .ValueGeneratedOnAdd();
             //Payment => Payment
-            modelBuilder.Entity<Payment>()
-                .HasOne(p => p.Customer)
-                .WithMany(c => c.Payments)
-                .HasForeignKey(p => p.CustomerId);
+            //modelBuilder.Entity<Payment>()
+            //    .HasOne(p => p.Customer)
+            //    .WithMany(c => c.Payments)
+            //    .HasForeignKey(p => p.CustomerId);
             //Payment => Jobs
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Job)
-                .WithOne(j => j.Payments)
-                .HasForeignKey<Payment>(p => p.JobId);
-            //Payment  => Companies
-            modelBuilder.Entity<Payment>()
-                .HasOne(P => P.Companies)
-                .WithMany(c => c.Payments)
-                .HasForeignKey(f => f.CompanyId);
+                .WithMany(j => j.Payments)
+                .HasForeignKey(p => p.JobId);
 
             // Customer => Jobs
             modelBuilder.Entity<Jobs>()
@@ -86,6 +81,14 @@ namespace BuildAndHire.Infrastructure.Data
             modelBuilder.Entity<Companies>().OwnsOne(c => c.address);
             modelBuilder.Entity<Customer>().OwnsOne(c => c.address);
             modelBuilder.Entity<Jobs>().OwnsOne(j => j.address);
+
+            modelBuilder.Entity<Jobs>()
+            .Property(j => j.DailyRate)
+            .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.Amount)
+                .HasPrecision(18, 2);
         }
     }
 }

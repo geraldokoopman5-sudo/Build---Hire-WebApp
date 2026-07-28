@@ -13,14 +13,6 @@ namespace BuildAndHire.Domain.Models
         public Guid JobId { get; set; }
 
         public Jobs Job { get; set; } = null!;
-
-        public Guid CustomerId { get; set; }
-
-        public Customer Customer { get; set; } = null!;
-        
-        public Guid CompanyId { get; set; }
-        public Companies? Companies { get; set; }
-
         public decimal Amount { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }

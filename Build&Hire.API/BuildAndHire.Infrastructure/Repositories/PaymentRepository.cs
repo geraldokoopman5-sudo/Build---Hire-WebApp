@@ -14,16 +14,14 @@ namespace BuildAndHire.Infrastructure.Repositories
         }
         public async Task<IEnumerable<Payment>> GetAllPaymentsAsync()
         {
-            return await _context.Payment.Include(cp => cp.Companies)
-                .Include(c => c.Customer)
+            return await _context.Payment
                 .Include(j => j.Job)
                 .ToListAsync();
         }
 
         public async Task<Payment?> GetPaymentsByIdAsync(Guid Id)
         {
-            return await _context.Payment.Include(cp => cp.Companies)
-                .Include(c => c.Customer)
+            return await _context.Payment
                 .Include(j => j.Job)
                 .FirstOrDefaultAsync(i => i.PaymentId == Id);
         }

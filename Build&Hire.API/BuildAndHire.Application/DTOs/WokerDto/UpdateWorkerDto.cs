@@ -10,4 +10,4 @@ namespace BuildAndHire.Application.DTOs.WokerDto
         public AccountStatus WorkerStatus { get; set; }
     }
 }
-}
+
