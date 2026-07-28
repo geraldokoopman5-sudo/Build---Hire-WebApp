@@ -9,8 +9,8 @@ namespace BuildAndHire.Application.Interfaces.Services
     {
         Task<IEnumerable<WorkerDto>> GetAllWorkersAsync();
         Task<WorkerDto> GetWorkersByIdAsync(Guid Id);
-        Task<AddWorkerDto> AddWorkerAsync(WorkerDto dto);
-        Task<UpdateWorkerDto> UpdateWorkerAsync(WorkerDto dto);
+        Task<AddWorkerDto> AddWorkerAsync(AddWorkerDto dto);
+        Task<UpdateWorkerDto> UpdateWorkerAsync(Guid Id, UpdateWorkerDto dto);
         Task<string>DeleteWokerAsync(Guid Id);
     }
 }

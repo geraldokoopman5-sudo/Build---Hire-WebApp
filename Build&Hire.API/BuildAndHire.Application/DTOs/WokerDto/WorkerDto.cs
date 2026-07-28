@@ -14,7 +14,7 @@ namespace BuildAndHire.Application.DTOs.WokerDto
 
         public string WorkerLastNAme { get; set; } = string.Empty;
 
-        public AccountStatus WorkerStatus { get; set; }
+        public AccountStatus WorkerStatus { get; set; } = AccountStatus.Active;
         public Guid CompanyId { get; set; }
 
         public Companies? ResidingCompany { get; set; }

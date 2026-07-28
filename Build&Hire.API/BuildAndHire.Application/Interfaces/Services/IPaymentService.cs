@@ -9,9 +9,9 @@ namespace BuildAndHire.Application.Interfaces.Services
     public interface IPaymentService
     {
         Task<IEnumerable<PaymentsDto>> GetAllPaymentsAsync();
-        Task<CompanyDto> GetPaymentsByIdAsync(Guid Id);
-        Task<PayPaymentsDto>CompletePaymentAsync(PaymentsDto dto);
-        Task<PaymentResponseDto> PaymentResponseAsync(Guid Id);
+        Task<PaymentsDto> GetPaymentsByIdAsync(Guid Id);
+        Task<PayPaymentsDto>CompletePaymentAsync(PayPaymentsDto dto);
+        Task<PaymentResponseDto> PaymentResponseAsync(Guid Id, PaymentResponseDto dto);
         Task<string> DeletePaymentHistoryAsync(Guid Id);
 
     }

@@ -108,9 +108,9 @@ namespace BuildAndHire.Application.Services
 
 
 
-        public Task<string> DeleteJobAsync(Guid Id)
+        public async Task<string> DeleteJobAsync(Guid Id)
         {
-            throw new NotImplementedException();
+            return await _repo.CancelJob(Id);
         }
     }
 }
