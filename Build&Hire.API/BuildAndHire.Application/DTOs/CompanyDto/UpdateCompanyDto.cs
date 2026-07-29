@@ -17,8 +17,8 @@ namespace BuildAndHire.Application.DTOs.CompanyDto
 
         public AccountStatus Status { get; set; }
 
-        public double RegistrationNumber { get; set; }
+        public string RegistrationNumber { get; set; } = string.Empty;
 
-        public double TaxNumber { get; set; }
+        public string TaxNumber { get; set; } = string.Empty;
     }
 }

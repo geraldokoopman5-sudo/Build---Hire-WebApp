@@ -1,11 +1,12 @@
-﻿using BuildAndHire.Domain.Enums;
+﻿using BuildAndHire.Application.DTOs.AuthDto;
+using BuildAndHire.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace BuildAndHire.Application.DTOs.CustomerDto
 {
-    public class CustomerDto
+    public class CustomerDto : UserLogindto
     {
         public Guid CustomerId { get; set; }
 

@@ -83,6 +83,15 @@ namespace BuildAndHire.Infrastructure.Data
             modelBuilder.Entity<Jobs>()
                 .OwnsOne(j => j.address);
 
+            //decimla standings
+
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.Amount)
+                .HasPrecision(10, 2);
+
+            modelBuilder.Entity<Jobs>()
+                .Property(j => j.DailyRate)
+                .HasPrecision(10, 2);
         }
     }
 }

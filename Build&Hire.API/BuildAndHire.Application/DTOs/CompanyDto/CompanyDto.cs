@@ -1,9 +1,11 @@
-﻿using BuildAndHire.Domain.Enums;
+﻿using BuildAndHire.Application.DTOs.AuthDto;
+using BuildAndHire.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace BuildAndHire.Application.DTOs.CompanyDto
 {
-    public class CompanyDto
+    public class CompanyDto : UserLogindto
     {
         public Guid CompanyId { get; set; }
 
@@ -18,8 +20,8 @@ namespace BuildAndHire.Application.DTOs.CompanyDto
         public Guid? JobId { get; set; }
         public Jobs? jobs { get; set; }
 
-        public double RegistrationNumber { get; set; }
+        public string RegistrationNumber { get; set; } = string.Empty;
 
-        public double TaxNumber { get; set; }
+        public string TaxNumber { get; set; } = string.Empty;
     }
 }

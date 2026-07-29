@@ -52,6 +52,7 @@ namespace BuildAndHire.Application.Services
 
         public async Task<RegisterCompanyDto> RegisterCompanyAsync(RegisterCompanyDto dto)
         {
+             
             var newCompany = new Companies
             {
                 CompanyName = dto.CompanyName,
@@ -60,6 +61,8 @@ namespace BuildAndHire.Application.Services
                 TaxNumber = dto.TaxNumber,
                 address = dto.address
             };
+
+                      
 
             var savedCompany = await _repository.RegisterCompany(newCompany);
 

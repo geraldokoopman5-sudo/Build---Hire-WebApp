@@ -7,5 +7,6 @@ namespace Build_Hire.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        
     }
 }

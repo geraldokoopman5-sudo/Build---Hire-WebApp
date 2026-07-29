@@ -7,3 +7,7 @@ global using BuildAndHire.Application.Interfaces.Repository;
 global using Microsoft.EntityFrameworkCore.Design;
 global using BuildAndHire.Application.Interfaces.Services;
 global using BuildAndHire.Application.DTOs;
+global using FluentValidation;
+global using BuildAndHire.Application.DTOs.CustomerDto;
+global using BuildAndHire.Application.DTOs.AuthDto;
+global using BuildAndHire.Application.DTOs.CompanyDto;
