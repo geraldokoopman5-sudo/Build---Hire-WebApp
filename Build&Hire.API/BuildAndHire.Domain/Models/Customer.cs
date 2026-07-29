@@ -1,6 +1,6 @@
 ﻿using BuildAndHire.Domain.Enums;
-using System;
 using BuildAndHire.Domain.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,7 +18,7 @@ namespace BuildAndHire.Domain.Models
 
         public AccountStatus Status { get; set; } = AccountStatus.Active;
 
-        public Address? address { get; set; }
+        public Address address { get; set; } = null!;
 
         public ICollection<Jobs> Jobs { get; set; } = new List<Jobs>();
 

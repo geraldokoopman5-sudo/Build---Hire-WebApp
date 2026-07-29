@@ -17,7 +17,7 @@ namespace BuildAndHire.Domain.Models
 
         public string Password { get; set; } = string.Empty;
 
-        public Address? address { get; set; }
+        public Address address { get; set; } = null!;
 
         public AccountStatus Status { get; set; } = AccountStatus.Active;
 

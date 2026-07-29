@@ -32,63 +32,57 @@ namespace BuildAndHire.Infrastructure.Data
 
             modelBuilder.Entity<Jobs>()
             .Property(j => j.JobId)
-            .ValueGeneratedOnAdd(); 
+            .ValueGeneratedOnAdd();
 
-            // Company => Jobs
+
+            modelBuilder.Entity<Customer>()
+                .HasIndex(e => e.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<Companies>()
+                .HasIndex(e => e.CompanyEmail)
+                .IsUnique();
+
+            //Relatioships
+            modelBuilder.Entity<Workers>()
+             .HasOne(w => w.ResidingCompany)
+             .WithMany(c => c.Workers)
+            .HasForeignKey(w => w.CompanyId)
+            .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<Jobs>()
             .HasOne(j => j.companies)
             .WithMany(c => c.Jobs)
-            .HasForeignKey(j => j.CompanyId);
+            .HasForeignKey(j => j.CompanyId)
+            .OnDelete(DeleteBehavior.NoAction); 
 
-            
-            modelBuilder.Entity<Payment>()
-            .HasKey(p => p.PaymentId);
-
-           //Adding Primary key om creating account
-            modelBuilder.Entity<Payment>()
-                .Property(p => p.PaymentId)
-                .ValueGeneratedOnAdd();
-            //Payment => Payment
-            //modelBuilder.Entity<Payment>()
-            //    .HasOne(p => p.Customer)
-            //    .WithMany(c => c.Payments)
-            //    .HasForeignKey(p => p.CustomerId);
-            //Payment => Jobs
-            modelBuilder.Entity<Payment>()
-                .HasOne(p => p.Job)
-                .WithMany(j => j.Payments)
-                .HasForeignKey(p => p.JobId);
-
-            // Customer => Jobs
             modelBuilder.Entity<Jobs>()
-           .HasOne(j => j.customer)
-           .WithMany(c => c.Jobs)
-           .HasForeignKey(j => j.CustomerId);
+            .HasOne(j => j.customer)
+            .WithMany(c => c.Jobs)
+            .HasForeignKey(j => j.CustomerId)
+            .OnDelete(DeleteBehavior.NoAction); 
 
-            // Company => Workers
-            modelBuilder.Entity<Workers>()
-            .HasOne(w => w.ResidingCompany)
-            .WithMany(c => c.Workers)
-            .HasForeignKey(w => w.CompanyId);
-
-            // Job => Workers
             modelBuilder.Entity<Workers>()
             .HasOne(w => w.Job)
             .WithMany(j => j.Workers)
-            .HasForeignKey(w => w.JobId);
-
-            // Owned value objects
-            modelBuilder.Entity<Companies>().OwnsOne(c => c.address);
-            modelBuilder.Entity<Customer>().OwnsOne(c => c.address);
-            modelBuilder.Entity<Jobs>().OwnsOne(j => j.address);
-
-            modelBuilder.Entity<Jobs>()
-            .Property(j => j.DailyRate)
-            .HasPrecision(18, 2);
+            .HasForeignKey(w => w.JobId)
+            .OnDelete(DeleteBehavior.NoAction); ;
 
             modelBuilder.Entity<Payment>()
-                .Property(p => p.Amount)
-                .HasPrecision(18, 2);
+            .HasOne(p => p.Job)
+            .WithOne(j => j.Payment)
+            .HasForeignKey<Payment>(p => p.JobId)
+            .OnDelete(DeleteBehavior.NoAction); ;
+
+            modelBuilder.Entity<Companies>()
+            .OwnsOne(c => c.address);
+
+            modelBuilder.Entity<Customer>()
+                .OwnsOne(c => c.address);
+
+            modelBuilder.Entity<Jobs>()
+                .OwnsOne(j => j.address);
+
         }
     }
 }

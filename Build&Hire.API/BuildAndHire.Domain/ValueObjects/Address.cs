@@ -6,6 +6,7 @@ namespace BuildAndHire.Domain.ValueObjects
 {
     public class Address
     {
+        public Guid AddressId { get; set; }
         public string StreetAddress { get; set; } = string.Empty;
 
         public string Suburb { get; set; } = string.Empty;

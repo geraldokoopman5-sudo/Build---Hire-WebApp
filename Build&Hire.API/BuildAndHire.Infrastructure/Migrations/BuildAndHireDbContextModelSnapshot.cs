@@ -93,7 +93,6 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("DailyRate")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("DaysWorking")
@@ -131,7 +130,6 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("CustomerId")
@@ -156,7 +154,8 @@ namespace BuildAndHire.Infrastructure.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("JobId");
+                    b.HasIndex("JobId")
+                        .IsUnique();
 
                     b.ToTable("Payment");
                 });
@@ -200,6 +199,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                             b1.Property<Guid>("CompaniesCompanyId")
                                 .HasColumnType("uniqueidentifier");
 
+                            b1.Property<Guid>("AddressId")
+                                .HasColumnType("uniqueidentifier");
+
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
@@ -227,7 +229,8 @@ namespace BuildAndHire.Infrastructure.Migrations
                                 .HasForeignKey("CompaniesCompanyId");
                         });
 
-                    b.Navigation("address");
+                    b.Navigation("address")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BuildAndHire.Domain.Models.Customer", b =>
@@ -235,6 +238,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.OwnsOne("BuildAndHire.Domain.ValueObjects.Address", "address", b1 =>
                         {
                             b1.Property<Guid>("CustomerId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("AddressId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("City")
@@ -264,7 +270,8 @@ namespace BuildAndHire.Infrastructure.Migrations
                                 .HasForeignKey("CustomerId");
                         });
 
-                    b.Navigation("address");
+                    b.Navigation("address")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BuildAndHire.Domain.Models.Jobs", b =>
@@ -272,18 +279,21 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.HasOne("BuildAndHire.Domain.Models.Companies", "companies")
                         .WithMany("Jobs")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("BuildAndHire.Domain.Models.Customer", "customer")
                         .WithMany("Jobs")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.OwnsOne("BuildAndHire.Domain.ValueObjects.Address", "address", b1 =>
                         {
                             b1.Property<Guid>("JobsJobId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("AddressId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("City")
@@ -313,7 +323,8 @@ namespace BuildAndHire.Infrastructure.Migrations
                                 .HasForeignKey("JobsJobId");
                         });
 
-                    b.Navigation("address");
+                    b.Navigation("address")
+                        .IsRequired();
 
                     b.Navigation("companies");
 
@@ -327,9 +338,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .HasForeignKey("CustomerId");
 
                     b.HasOne("BuildAndHire.Domain.Models.Jobs", "Job")
-                        .WithMany("Payments")
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne("Payment")
+                        .HasForeignKey("BuildAndHire.Domain.Models.Payment", "JobId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Job");
@@ -340,13 +351,13 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.HasOne("BuildAndHire.Domain.Models.Companies", "ResidingCompany")
                         .WithMany("Workers")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("BuildAndHire.Domain.Models.Jobs", "Job")
                         .WithMany("Workers")
                         .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Job");
@@ -370,7 +381,7 @@ namespace BuildAndHire.Infrastructure.Migrations
 
             modelBuilder.Entity("BuildAndHire.Domain.Models.Jobs", b =>
                 {
-                    b.Navigation("Payments");
+                    b.Navigation("Payment");
 
                     b.Navigation("Workers");
                 });

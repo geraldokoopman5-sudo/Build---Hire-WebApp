@@ -1,6 +1,4 @@
-﻿using BuildAndHire.Domain.Models;
-using BuildAndHire.Domain.Enums;
-using BuildAndHire.Domain.ValueObjects;
+﻿using BuildAndHire.Domain.Enums;
 
 namespace BuildAndHire.Application.DTOs.CompanyDto
 {

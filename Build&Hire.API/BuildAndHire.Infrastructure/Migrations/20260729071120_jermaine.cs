@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BuildAndHire.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class thriHope : Migration
+    public partial class jermaine : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,11 +19,12 @@ namespace BuildAndHire.Infrastructure.Migrations
                     CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CompanyEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_Suburb = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_Province = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_PostalCode = table.Column<int>(type: "int", nullable: true),
+                    address_AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    address_StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_Suburb = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_Province = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_PostalCode = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     RegistrationNumber = table.Column<double>(type: "float", nullable: false),
                     TaxNumber = table.Column<double>(type: "float", nullable: false)
@@ -42,11 +43,12 @@ namespace BuildAndHire.Infrastructure.Migrations
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    address_StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_Suburb = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_Province = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_PostalCode = table.Column<int>(type: "int", nullable: true)
+                    address_AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    address_StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_Suburb = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_Province = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_PostalCode = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,16 +64,17 @@ namespace BuildAndHire.Infrastructure.Migrations
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     JobDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DaysWorking = table.Column<int>(type: "int", nullable: false),
-                    DailyRate = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    DailyRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PayingMethod = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    address_StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_Suburb = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_Province = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address_PostalCode = table.Column<int>(type: "int", nullable: true)
+                    address_AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    address_StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_Suburb = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_Province = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    address_PostalCode = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,14 +83,12 @@ namespace BuildAndHire.Infrastructure.Migrations
                         name: "FK_Jobs_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "CompanyId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CompanyId");
                     table.ForeignKey(
                         name: "FK_Jobs_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CustomerId");
                 });
 
             migrationBuilder.CreateTable(
@@ -96,7 +97,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                 {
                     PaymentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaymentMethod = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -115,8 +116,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                         name: "FK_Payment_Jobs_JobId",
                         column: x => x.JobId,
                         principalTable: "Jobs",
-                        principalColumn: "JobId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "JobId");
                 });
 
             migrationBuilder.CreateTable(
@@ -137,14 +137,12 @@ namespace BuildAndHire.Infrastructure.Migrations
                         name: "FK_Workers_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "CompanyId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CompanyId");
                     table.ForeignKey(
                         name: "FK_Workers_Jobs_JobId",
                         column: x => x.JobId,
                         principalTable: "Jobs",
-                        principalColumn: "JobId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "JobId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -165,7 +163,8 @@ namespace BuildAndHire.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Payment_JobId",
                 table: "Payment",
-                column: "JobId");
+                column: "JobId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Workers_CompanyId",

@@ -1,6 +1,4 @@
 ﻿using BuildAndHire.Domain.Enums;
-using BuildAndHire.Domain.Models;
-using BuildAndHire.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
