@@ -9,5 +9,6 @@ namespace BuildAndHire.Application.Interfaces.Services
     {
         Task<CustomerDto> CustomerLoginAsync(UserLogindto dto);
         Task<CompanyDto> CompanyLoginAsync(UserLogindto dto);
+        
     }
 }

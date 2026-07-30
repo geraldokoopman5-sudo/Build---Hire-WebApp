@@ -1,11 +1,62 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Build_Hire.API.Controllers
+﻿namespace Build_Hire.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CompaniesController : ControllerBase
     {
+        private readonly ICompanyService _cmpService;
+
+        public CompaniesController(ICompanyService cmpService)
+        {
+            _cmpService = cmpService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllCompanies()
+        {
+            var companies = await _cmpService.GetAllCompaniesAsync();
+            return Ok(companies);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCompnaiesById(Guid id)
+        {
+            var companies = await _cmpService.GetCompanyByIdAsync(id);
+            if (companies == null) return NotFound("Invalid id for Companies");
+
+            return Ok(companies);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterComapny(RegisterCompanyDto dto)
+        {
+            var company = await _cmpService.RegisterCompanyAsync(dto);
+            return CreatedAtAction(nameof(GetCompnaiesById),
+                new { id = company.CompanyId },
+                company);
+        }
+        //[Authorize(Roles = "Admin")]
+        //[HttpPatch("{id}/Status")]
+        //public async Task<IActionResult>UpdateCompanyStatus(UpdateCompanyDto dto, Guid id)
+        //{
+        //    await _cmpService.UpdateCompanyAsync(id, dto);
+
+        //    return NoContent();
+
+        //}
+        [HttpPut("{id}")]
+        public async Task<IActionResult>UpdateCompanyDetails(Guid id, UpdateCompanyDto dto)
+        {
+            var update = await _cmpService.UpdateCompanyAsync(id, dto);
+            return Ok(update);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult>DeletCompany(Guid id)
+        {
+            var delete = await _cmpService.DeleteCompanyAsync(id);
+
+            return Ok(delete);
+        }
     }
 }

@@ -10,4 +10,15 @@ global using Microsoft.EntityFrameworkCore.Design;
 global using BuildAndHire.Infrastructure.Data;
 global using Swashbuckle.AspNetCore.SwaggerGen;
 global using Swashbuckle.AspNetCore.SwaggerUI;
-
+global using BuildAndHire.Application.DTOs.CompanyDto;
+global using BuildAndHire.Application.DTOs.CustomerDto;
+global using BuildAndHire.Application.DTOs.JobDto;
+global using BuildAndHire.Application.DTOs.PaymentsDto;
+global using BuildAndHire.Application.DTOs.WokerDto;
+global using BuildAndHire.Application.DTOs.AuthDto;
+global using BuildAndHire.Application.Interfaces.Services;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using BuildAndHire.Application.Services;
+global using BuildAndHire.Infrastructure.Repositories;

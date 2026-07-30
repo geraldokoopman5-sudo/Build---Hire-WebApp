@@ -25,6 +25,7 @@ namespace BuildAndHire.Application.Services
                 CompanyId = c.CompanyId,
                 CompanyName = c.CompanyName,
                 CompanyEmail = c.CompanyEmail,
+                Password = c.Password,
                 address = c.address,
                 Status = c.Status,
                 RegistrationNumber = c.RegistrationNumber,
@@ -42,6 +43,7 @@ namespace BuildAndHire.Application.Services
                 CompanyId = companies.CompanyId,
                 CompanyName = companies.CompanyName,
                 CompanyEmail = companies.CompanyEmail,
+                Password = companies.Password,
                 address = companies.address,
                 Status = companies.Status,
                 RegistrationNumber = companies.RegistrationNumber,
@@ -56,6 +58,7 @@ namespace BuildAndHire.Application.Services
             var newCompany = new Companies
             {
                 CompanyName = dto.CompanyName,
+                CompanyEmail = dto.CompanyEmail,
                 Password = dto.Password,
                 RegistrationNumber = dto.RegistrationNumber,
                 TaxNumber = dto.TaxNumber,
@@ -69,6 +72,7 @@ namespace BuildAndHire.Application.Services
             return new RegisterCompanyDto
             {
                 CompanyName = savedCompany.CompanyName,
+                CompanyEmail = savedCompany.CompanyEmail,
                 Password = savedCompany.Password,
                 RegistrationNumber = savedCompany.RegistrationNumber,
                 TaxNumber = savedCompany.TaxNumber,
@@ -81,6 +85,7 @@ namespace BuildAndHire.Application.Services
         {
             var UpdateCompany = await _repository.GetCompamiesById(Id);
             if (UpdateCompany == null) return null;
+
 
             UpdateCompany.CompanyName = dto.CompanyName;
             UpdateCompany.CompanyEmail = dto.CompanyEmail;
