@@ -21,6 +21,7 @@ namespace BuildAndHire.Application.Services
             {
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
+                Password = c.Password,
                 Email = c.Email,
                 Status = c.Status,
                 address = c.address,
@@ -35,6 +36,7 @@ namespace BuildAndHire.Application.Services
             {
                 CustomerId = customer.CustomerId,
                 CustomerName = customer.CustomerName,
+                Password = customer.Password,
                 Email = customer.Email,
                 Status = customer.Status,
                 address = customer.address,

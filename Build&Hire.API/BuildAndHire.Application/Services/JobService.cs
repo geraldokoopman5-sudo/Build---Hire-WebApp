@@ -76,7 +76,6 @@ namespace BuildAndHire.Application.Services
         {
             var newJob = new Jobs
             {
-                JobId = dto.JobId,
                 JobDescription = dto.JobDescription,
                 CompanyId = dto.CompanyId,
                 CustomerId = dto.CustomerId,
@@ -85,7 +84,7 @@ namespace BuildAndHire.Application.Services
                 DaysWorking = dto.DaysWorking,
                 DailyRate = dto.DailyRate,
                 Status = dto.Status,
-                address = dto.address,  
+                address = dto.address
 
             };
 
