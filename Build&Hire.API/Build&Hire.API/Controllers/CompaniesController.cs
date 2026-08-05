@@ -37,7 +37,7 @@
         }
         //[Authorize(Roles = "Admin")]
         //[HttpPatch("{id}/Status")]
-        //public async Task<IActionResult>UpdateCompanyStatus(UpdateCompanyDto dto, Guid id)
+        //public async Task<IActionResult>UpdateCompanyStatus(UpdateCompanyDto dto, Guid id)  //Save for when incorparating JWT tokens
         //{
         //    await _cmpService.UpdateCompanyAsync(id, dto);
 
@@ -51,7 +51,7 @@
             return Ok(update);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult>DeletCompany(Guid id)
         {
             var delete = await _cmpService.DeleteCompanyAsync(id);

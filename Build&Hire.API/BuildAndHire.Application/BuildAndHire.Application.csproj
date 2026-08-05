@@ -25,11 +25,4 @@
     <ProjectReference Include="..\BuildAndHire.Domain\BuildAndHire.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Validators\Customers\" />
-    <Folder Include="Validators\Jobs\" />
-    <Folder Include="Validators\Payments\" />
-    <Folder Include="Validators\Workers\" />
-  </ItemGroup>
-
 </Project>

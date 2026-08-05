@@ -71,7 +71,7 @@ namespace BuildAndHire.Application.Services
             };
         }
 
-        public async Task<string> DeleteWokerAsync(Guid Id)
+        public async Task<string> DeleteWorkerAsync(Guid Id)
         {
             return await _repo.DeleteAbdu(Id);
         }

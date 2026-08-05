@@ -11,6 +11,6 @@ namespace BuildAndHire.Application.Interfaces.Services
         Task<WorkerDto> GetWorkersByIdAsync(Guid Id);
         Task<AddWorkerDto> AddWorkerAsync(AddWorkerDto dto);
         Task<UpdateWorkerDto> UpdateWorkerAsync(Guid Id, UpdateWorkerDto dto);
-        Task<string>DeleteWokerAsync(Guid Id);
+        Task<string>DeleteWorkerAsync(Guid Id);
     }
 }

@@ -11,3 +11,6 @@ global using FluentValidation;
 global using BuildAndHire.Application.DTOs.CustomerDto;
 global using BuildAndHire.Application.DTOs.AuthDto;
 global using BuildAndHire.Application.DTOs.CompanyDto;
+global using BuildAndHire.Application.DTOs.PaymentsDto;
+global using BuildAndHire.Application.DTOs.WokerDto;
+global using BuildAndHire.Application.DTOs.JobDto;
