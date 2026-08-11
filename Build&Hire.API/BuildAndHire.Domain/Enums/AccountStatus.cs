@@ -6,6 +6,6 @@ namespace BuildAndHire.Domain.Enums
 {
     public enum AccountStatus
     {
-        Active=0, InActive=1,Deleted=2
+        Active=0, InActive=1,Deleted=2, Pending=3, Available=4, Unavailable=5
     }
 }

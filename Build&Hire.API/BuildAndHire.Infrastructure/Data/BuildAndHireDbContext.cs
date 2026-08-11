@@ -1,6 +1,7 @@
-﻿using System;
+﻿using BuildAndHire.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using BuildAndHire.Domain.Models;
+using System;
+using System.Reflection.Emit;
 
 namespace BuildAndHire.Infrastructure.Data
 {
@@ -29,6 +30,9 @@ namespace BuildAndHire.Infrastructure.Data
 
             modelBuilder.Entity<Jobs>()
             .HasKey(j => j.JobId);
+
+            modelBuilder.Entity<Payment>()
+                .HasKey(p => p.PaymentId);
 
             modelBuilder.Entity<Jobs>()
             .Property(j => j.JobId)
@@ -74,6 +78,10 @@ namespace BuildAndHire.Infrastructure.Data
             .HasForeignKey<Payment>(p => p.JobId)
             .OnDelete(DeleteBehavior.NoAction); ;
 
+            modelBuilder.Entity<Payment>()
+            .Property(p => p.PaymentId)
+            .ValueGeneratedOnAdd();
+
             modelBuilder.Entity<Companies>()
             .OwnsOne(c => c.address);
 
@@ -83,7 +91,7 @@ namespace BuildAndHire.Infrastructure.Data
             modelBuilder.Entity<Jobs>()
                 .OwnsOne(j => j.address);
 
-            //decimla standings
+            //decimal standings
 
             modelBuilder.Entity<Payment>()
                 .Property(p => p.Amount)
@@ -92,6 +100,12 @@ namespace BuildAndHire.Infrastructure.Data
             modelBuilder.Entity<Jobs>()
                 .Property(j => j.DailyRate)
                 .HasPrecision(10, 2);
+
+            CompnaiesSeed.Seed(modelBuilder);
+            Customer_Seed.Seed(modelBuilder);
+            AddressSeed.Seed(modelBuilder);
         }
+
+
     }
 }

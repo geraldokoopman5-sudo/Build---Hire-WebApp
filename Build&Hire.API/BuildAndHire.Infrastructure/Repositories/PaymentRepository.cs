@@ -14,19 +14,18 @@ namespace BuildAndHire.Infrastructure.Repositories
         }
         public async Task<IEnumerable<Payment>> GetAllPaymentsAsync()
         {
-            return await _context.Payment
-                .Include(j => j.Job)
-                .ToListAsync();
+            return await _context.Payment.ToListAsync();
         }
 
         public async Task<Payment?> GetPaymentsByIdAsync(Guid Id)
         {
             return await _context.Payment
                 .Include(j => j.Job)
-                .FirstOrDefaultAsync(i => i.PaymentId == Id);
+                .FirstOrDefaultAsync(i => i.PaymentId == Id);   
         }
 
         public async Task<Payment> CompletePaymentAsync(Payment dto)
+
         {
             await _context.Payment.AddAsync(dto);
             await _context.SaveChangesAsync();
@@ -35,10 +34,12 @@ namespace BuildAndHire.Infrastructure.Repositories
         }
         public async Task<Payment> PaymentResponseAsync(Payment Id)//Update
         {
-            Payment pay = await _context.Payment.FindAsync(Id);
+            Payment? pay = await _context.Payment.FindAsync(Id.PaymentId);
             if (pay == null) return null;
 
                     pay.Status = Id.Status;
+
+            await _context.SaveChangesAsync();
 
             return pay;
         }

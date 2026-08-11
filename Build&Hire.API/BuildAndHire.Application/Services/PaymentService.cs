@@ -25,7 +25,7 @@ namespace BuildAndHire.Application.Services
                 JobId = p.JobId,
                 Amount = p.Amount,
                 PaymentMethod = p.PaymentMethod,
-                Status = p.Status,
+                Status = p.Status,  
                 TransactionReference = p.TransactionReference,
             });
         }
@@ -52,7 +52,7 @@ namespace BuildAndHire.Application.Services
         {
             var pay = new Payment
             {
-                PaymentId = dto.PaymentId,
+                //PaymentId = dto.PaymentId,
                 PaymentMethod = dto.PaymentMethod,
                 JobId = dto.JobId,
                 Amount = dto.Amount,
@@ -64,7 +64,7 @@ namespace BuildAndHire.Application.Services
 
             return new PayPaymentsDto
             {
-                PaymentId = payment.PaymentId,
+                //PaymentId = payment.PaymentId,
                 PaymentMethod = payment.PaymentMethod,
                 JobId = payment.JobId,
                 Amount = payment.Amount,
@@ -92,6 +92,8 @@ namespace BuildAndHire.Application.Services
             {
                 Status = pay.Status,
             };
+
+            
 
         }
     }   
