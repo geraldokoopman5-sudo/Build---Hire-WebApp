@@ -16,14 +16,16 @@
         builder.Services.AddScoped<IJobRepository, JobRepository>();
         builder.Services.AddScoped<IWorkersRepository, WorkerRepository>();
         builder.Services.AddScoped<IPayementRepository, PaymentRepository>();
+        builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
         builder.Services.AddScoped<ICompanyService, CompanyService>();
         builder.Services.AddScoped<ICustomerService, CustomerService>();
         builder.Services.AddScoped<IJobService, JobService>();
         builder.Services.AddScoped<IPaymentService, PaymentService>();
         builder.Services.AddScoped<IWorkerService, WorkerService>();
+        builder.Services.AddScoped<IAdminService, AdminService>();
 
-    var app = builder.Build();
+var app = builder.Build();
 
     // Configure middleware
     if (app.Environment.IsDevelopment())

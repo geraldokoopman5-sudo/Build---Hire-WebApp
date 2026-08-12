@@ -37,15 +37,15 @@ namespace BuildAndHire.Infrastructure.Repositories
             Workers? workers = await _context.Workers.FindAsync(dto.WorkerId);
                 if (workers == null) return null;
 
-                workers.WorkerFirstName = dto.WorkerFirstName;
-                workers.WorkerLastNAme = dto.WorkerLastNAme;
-                workers.WorkerStatus = dto.WorkerStatus;
+                //workers.WorkerFirstName = dto.WorkerFirstName;
+                //workers.WorkerLastNAme = dto.WorkerLastNAme;
+                //workers.WorkerStatus = dto.WorkerStatus;
               
               await _context.SaveChangesAsync();
             
             return workers;
         }
-
+        
         public async Task<string> DeleteAbdu(Guid Id)
         {
             var fired = await _context.Workers.FindAsync(Id);

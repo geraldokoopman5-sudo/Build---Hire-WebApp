@@ -22,7 +22,7 @@ namespace Build_Hire.API.Controllers
             return Ok(payment);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetPaymentById(Guid Id)
         {
             var payment = await _service.GetPaymentsByIdAsync(Id);

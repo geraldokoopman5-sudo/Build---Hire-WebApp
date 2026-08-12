@@ -20,7 +20,7 @@ namespace BuildAndHire.Application.DTOs.WokerDto
 
         public Guid JobId { get; set; }
 
-        public Companies? ResidingCompany { get; set; }
+        
 
     }
 }

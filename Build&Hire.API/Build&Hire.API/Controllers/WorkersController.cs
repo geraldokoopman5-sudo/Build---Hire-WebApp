@@ -22,7 +22,7 @@ namespace Build_Hire.API.Controllers
             return Ok(worker);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetWorkersById(Guid Id)
         {
             var worker = await _service.GetWorkersByIdAsync(Id);

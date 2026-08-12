@@ -14,3 +14,4 @@ global using BuildAndHire.Application.DTOs.CompanyDto;
 global using BuildAndHire.Application.DTOs.PaymentsDto;
 global using BuildAndHire.Application.DTOs.WokerDto;
 global using BuildAndHire.Application.DTOs.JobDto;
+global using BuildAndHire.Application.DTOs.AdminDto;

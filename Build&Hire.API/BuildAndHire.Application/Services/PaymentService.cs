@@ -52,7 +52,6 @@ namespace BuildAndHire.Application.Services
         {
             var pay = new Payment
             {
-                //PaymentId = dto.PaymentId,
                 PaymentMethod = dto.PaymentMethod,
                 JobId = dto.JobId,
                 Amount = dto.Amount,
@@ -64,7 +63,6 @@ namespace BuildAndHire.Application.Services
 
             return new PayPaymentsDto
             {
-                //PaymentId = payment.PaymentId,
                 PaymentMethod = payment.PaymentMethod,
                 JobId = payment.JobId,
                 Amount = payment.Amount,

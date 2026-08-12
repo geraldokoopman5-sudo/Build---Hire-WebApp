@@ -24,7 +24,7 @@ namespace BuildAndHire.Application.Services
                 WorkerLastNAme = w.WorkerLastNAme,
                 WorkerStatus = w.WorkerStatus,
                 CompanyId = w.CompanyId,
-                ResidingCompany = w.ResidingCompany,
+
                 JobId = w.JobId,
             });
         }
@@ -50,7 +50,6 @@ namespace BuildAndHire.Application.Services
         {
             var addworker = new Workers
             {
-                WorkerId = dto.WorkerId,
                 WorkerFirstName = dto.WorkerFirstName,
                 WorkerLastNAme = dto.WorkerLastNAme,
                 WorkerStatus = dto.WorkerStatus,
@@ -62,7 +61,6 @@ namespace BuildAndHire.Application.Services
 
             return new AddWorkerDto
             {
-                WorkerId = worker.WorkerId,
                 WorkerFirstName = worker.WorkerFirstName,
                 WorkerLastNAme = worker.WorkerLastNAme,
                 WorkerStatus = worker.WorkerStatus,

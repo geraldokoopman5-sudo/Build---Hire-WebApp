@@ -8,11 +8,26 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BuildAndHire.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class vanilla : Migration
+    public partial class AdminAccounts : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Admin",
+                columns: table => new
+                {
+                    AdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    passWord = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    AdminRole = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Admin", x => x.AdminId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Companies",
                 columns: table => new
@@ -215,6 +230,9 @@ namespace BuildAndHire.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Admin");
+
             migrationBuilder.DropTable(
                 name: "Payment");
 

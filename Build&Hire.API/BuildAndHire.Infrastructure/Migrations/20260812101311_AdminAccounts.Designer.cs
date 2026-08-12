@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BuildAndHire.Infrastructure.Migrations
 {
     [DbContext(typeof(BuildAndHireDbContext))]
-    [Migration("20260811150716_vanilla")]
-    partial class vanilla
+    [Migration("20260812101311_AdminAccounts")]
+    partial class AdminAccounts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,31 @@ namespace BuildAndHire.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BuildAndHire.Domain.Models.Admin", b =>
+                {
+                    b.Property<Guid>("AdminId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AdminRole")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("passWord")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AdminId");
+
+                    b.ToTable("Admin");
+                });
 
             modelBuilder.Entity("BuildAndHire.Domain.Models.Companies", b =>
                 {

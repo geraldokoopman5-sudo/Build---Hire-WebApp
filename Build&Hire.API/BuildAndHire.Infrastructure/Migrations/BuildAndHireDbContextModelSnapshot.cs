@@ -22,6 +22,31 @@ namespace BuildAndHire.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BuildAndHire.Domain.Models.Admin", b =>
+                {
+                    b.Property<Guid>("AdminId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AdminRole")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("passWord")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AdminId");
+
+                    b.ToTable("Admin");
+                });
+
             modelBuilder.Entity("BuildAndHire.Domain.Models.Companies", b =>
                 {
                     b.Property<Guid>("CompanyId")

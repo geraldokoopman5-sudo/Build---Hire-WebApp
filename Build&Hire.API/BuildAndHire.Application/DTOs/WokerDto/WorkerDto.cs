@@ -17,10 +17,10 @@ namespace BuildAndHire.Application.DTOs.WokerDto
         public AccountStatus WorkerStatus { get; set; } = AccountStatus.Active;
         public Guid CompanyId { get; set; }
 
-        public Companies? ResidingCompany { get; set; }
+        //public Companies? ResidingCompany { get; set; }
 
         public Guid JobId { get; set; }
 
-        public Jobs? Job { get; set; }
+        //public Jobs? Job { get; set; }
     }
 }

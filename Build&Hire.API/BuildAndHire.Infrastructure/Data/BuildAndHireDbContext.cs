@@ -14,6 +14,7 @@ namespace BuildAndHire.Infrastructure.Data
         public DbSet<Workers> Workers { get; set; }
         public DbSet<Jobs> Jobs { get; set; }
         public DbSet<Payment> Payment { get; set; }
+        public DbSet<Admin> Admin { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,10 +35,16 @@ namespace BuildAndHire.Infrastructure.Data
             modelBuilder.Entity<Payment>()
                 .HasKey(p => p.PaymentId);
 
+            modelBuilder.Entity<Admin>()
+                .HasKey(a => a.AdminId);
+
             modelBuilder.Entity<Jobs>()
             .Property(j => j.JobId)
             .ValueGeneratedOnAdd();
 
+            modelBuilder.Entity<Admin>()
+                .Property(a => a.AdminId)
+                .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Customer>()
                 .HasIndex(e => e.Email)
