@@ -21,4 +21,7 @@ global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Mvc;
 global using BuildAndHire.Application.Services;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using BuildAndHire.Infrastructure.Repositories;
+global using Microsoft.IdentityModel.Tokens;
+global using System.Text;
