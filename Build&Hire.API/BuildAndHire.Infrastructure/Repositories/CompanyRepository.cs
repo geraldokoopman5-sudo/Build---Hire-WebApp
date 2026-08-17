@@ -45,7 +45,7 @@
                 return null;
 
             company.CompanyName = dto.CompanyName;
-            company.Password = dto.Password;
+            company.PasswordHash = dto.PasswordHash;
             company.address = dto.address;
             company.Status = dto.Status;
 

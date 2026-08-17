@@ -6,13 +6,13 @@ using System.Text;
 
 namespace BuildAndHire.Application.DTOs.CustomerDto
 {
-    public class CustomerDto : UserLogindto
+    public class CustomerDto 
     {
         public Guid CustomerId { get; set; }
 
         public string CustomerName { get; set; } = string.Empty;
 
-        public string Password { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
 
         public string Email { get; set; } = string.Empty;
 

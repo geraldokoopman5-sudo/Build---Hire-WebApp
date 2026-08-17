@@ -12,7 +12,7 @@ namespace BuildAndHire.Domain.Models
         public string UserName { get; set; } = string.Empty;
 
         public string Email { get; set; } = string.Empty;
-        public string passWord { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
 
         public AccountStatus Status { get; set; } = AccountStatus.Pending;
 

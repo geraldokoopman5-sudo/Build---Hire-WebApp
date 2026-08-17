@@ -7,9 +7,9 @@ namespace BuildAndHire.Application.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<CustomerDto> CustomerLoginAsync(UserLogindto dto);
-        Task<CompanyDto> CompanyLoginAsync(UserLogindto dto);
-        Task<AdminDto> AdminLoginAsync(UserLogindto dto);
+        Task<CustomerDto> CustomerLoginAsync(LoginRequestDto dto);
+        Task<CompanyDto> CompanyLoginAsync(LoginRequestDto dto);
+        Task<AdminDto> AdminLoginAsync(LoginRequestDto dto);
         
     }
 }

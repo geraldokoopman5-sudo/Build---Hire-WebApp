@@ -12,7 +12,7 @@ namespace BuildAndHire.Application.Validators.Customers
                 .NotEmpty()
                 .EmailAddress();
 
-            RuleFor(c => c.Password)
+            RuleFor(c => c.PasswordHash)
                 .MaximumLength(20)
                 .MinimumLength(6);
 

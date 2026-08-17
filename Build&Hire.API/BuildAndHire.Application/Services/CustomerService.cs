@@ -21,7 +21,7 @@ namespace BuildAndHire.Application.Services
             {
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
-                Password = c.Password,
+                PasswordHash = c.PasswordHash,
                 Email = c.Email,
                 Status = c.Status,
                 address = c.address,
@@ -36,7 +36,7 @@ namespace BuildAndHire.Application.Services
             {
                 CustomerId = customer.CustomerId,
                 CustomerName = customer.CustomerName,
-                Password = customer.Password,
+                PasswordHash = customer.PasswordHash,
                 Email = customer.Email,
                 Status = customer.Status,
                 address = customer.address,
@@ -50,7 +50,7 @@ namespace BuildAndHire.Application.Services
                 Email = dto.Email,
                 Status = dto.Status,
                 address = dto.address,
-                Password = dto.Password,
+                PasswordHash = dto.PasswordHash,
 
             };
 
@@ -61,7 +61,7 @@ namespace BuildAndHire.Application.Services
                 Email = customer.Email,
                 Status = customer.Status,
                 address = customer.address,
-                Password = customer.Password,
+                PasswordHash = customer.PasswordHash,
             };
         }
 
@@ -77,7 +77,7 @@ namespace BuildAndHire.Application.Services
 
             getCustomer.CustomerName = dto.CustomerName;
             getCustomer.Email = dto.Email;
-            getCustomer.Password = dto.Password;
+            getCustomer.PasswordHash = dto.PasswordHash;
             getCustomer.Status = dto.Status;
             getCustomer.address = dto.Address;
 
@@ -87,7 +87,7 @@ namespace BuildAndHire.Application.Services
             {
                 CustomerName = update.CustomerName,
                 Email = update.Email,
-                Password = update.Password,
+                PasswordHash = update.PasswordHash,
                 Status = update.Status,
                 Address = update.address
             };

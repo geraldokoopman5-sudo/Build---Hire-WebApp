@@ -12,7 +12,7 @@ namespace BuildAndHire.Application.DTOs.AdminDto
 
         public string Email { get; set; } = string.Empty;
 
-        public string passWord { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
 
         public AdminEnums AdminRole { get; set; } = AdminEnums.Admin;
 

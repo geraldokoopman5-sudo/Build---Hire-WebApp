@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BuildAndHire.Application.DTOs.AuthDto
 {
-    public abstract class UserLogindto
+    public class LoginRequestDto
     {
         public string Email { get; set; } = string.Empty;
 

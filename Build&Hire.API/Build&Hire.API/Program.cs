@@ -1,14 +1,17 @@
 
 
-    var builder = WebApplication.CreateBuilder(args);
+using BuildAndHire.Infrastructure.Authentication;
+
+var builder = WebApplication.CreateBuilder(args);
 
     // Register services
     builder.Services.AddControllers();
+    builder.Services.AddScoped<IJwtService, JwtService>();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
     builder.Services.AddDbContext<BuildAndHireDbContext>(options =>
-        options.UseSqlServer(
+        options.UseNpgsql(
             builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
@@ -24,28 +27,33 @@
         builder.Services.AddScoped<IPaymentService, PaymentService>();
         builder.Services.AddScoped<IWorkerService, WorkerService>();
         builder.Services.AddScoped<IAdminService, AdminService>();
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}
-).AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidIssuer = builder.Configuration["JwtConfig : Issuer"],
-        ValidAudience = builder.Configuration["JwtConfig : Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig : Key"]!)),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
 
-    };
-});
+            ValidateAudience = true,
+
+            ValidateLifetime = true,
+
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
+
+            ValidAudience = builder.Configuration["JwtConfig:Audience"],
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["JwtConfig:Key"]!
+                )
+            )
+        };
+    });
+
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 
 builder.Services.AddAuthorization();
 
@@ -58,8 +66,9 @@ var app = builder.Build();
         app.UseSwaggerUI();
     }
 
-app.UseAuthentication();
-app.UseAuthorization();
+    app.UseAuthentication();
+
+    app.UseAuthorization();
 
     app.UseHttpsRedirection();
 

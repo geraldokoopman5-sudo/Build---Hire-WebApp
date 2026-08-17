@@ -2,11 +2,9 @@
 global using BuildAndHire.Domain.Enums;
 global using BuildAndHire.Domain.ValueObjects;
 global using Microsoft.EntityFrameworkCore;
-global using Microsoft.EntityFrameworkCore.SqlServer;
 global using Microsoft.EntityFrameworkCore.Design;
 global using BuildAndHire.Application.Interfaces.Repositories;
 global using BuildAndHire.Application.Interfaces.Repository;
-global using Microsoft.EntityFrameworkCore.Design;
 global using BuildAndHire.Infrastructure.Data;
 global using Swashbuckle.AspNetCore.SwaggerGen;
 global using Swashbuckle.AspNetCore.SwaggerUI;

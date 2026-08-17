@@ -11,10 +11,14 @@ namespace BuildAndHire.Application.Services
     public class CompanyService : ICompanyService
     {
         private readonly ICompanyRepository _repository;
+        private readonly IPasswordService _passwordService;
 
-        public CompanyService(ICompanyRepository repository)
+        public CompanyService(
+            ICompanyRepository repository,
+            IPasswordService passwordService)
         {
             _repository = repository;
+            _passwordService = passwordService;
         }
         public async Task<IEnumerable<CompanyDto>> GetAllCompaniesAsync()
         {
@@ -25,7 +29,7 @@ namespace BuildAndHire.Application.Services
                 CompanyId = c.CompanyId,
                 CompanyName = c.CompanyName,
                 CompanyEmail = c.CompanyEmail,
-                Password = c.Password,
+                PasswordHash = c.PasswordHash,
                 address = c.address,
                 Status = c.Status,
                 RegistrationNumber = c.RegistrationNumber,
@@ -38,12 +42,14 @@ namespace BuildAndHire.Application.Services
         {
             var companies = await _repository.GetCompamiesById(Id);
 
+            if (companies == null) return null;
+
             return new CompanyDto
             {
                 CompanyId = companies.CompanyId,
                 CompanyName = companies.CompanyName,
                 CompanyEmail = companies.CompanyEmail,
-                Password = companies.Password,
+                PasswordHash = companies.PasswordHash,
                 address = companies.address,
                 Status = companies.Status,
                 RegistrationNumber = companies.RegistrationNumber,
@@ -52,33 +58,33 @@ namespace BuildAndHire.Application.Services
             };
         }
 
-        public async Task<RegisterCompanyDto> RegisterCompanyAsync(RegisterCompanyDto dto)
+        public async Task<RegisterCompanyDto> RegisterCompanyAsync(
+        RegisterCompanyDto dto)
         {
-             
             var newCompany = new Companies
             {
                 CompanyName = dto.CompanyName,
                 CompanyEmail = dto.CompanyEmail,
-                Password = dto.Password,
+
+                PasswordHash = _passwordService.HashPassword(
+                    dto.PasswordHash),
+
                 RegistrationNumber = dto.RegistrationNumber,
                 TaxNumber = dto.TaxNumber,
                 address = dto.address
             };
 
-                      
-
-            var savedCompany = await _repository.RegisterCompany(newCompany);
+            var savedCompany =
+                await _repository.RegisterCompany(newCompany);
 
             return new RegisterCompanyDto
             {
                 CompanyName = savedCompany.CompanyName,
                 CompanyEmail = savedCompany.CompanyEmail,
-                Password = savedCompany.Password,
                 RegistrationNumber = savedCompany.RegistrationNumber,
                 TaxNumber = savedCompany.TaxNumber,
                 address = savedCompany.address
             };
-           
         }
 
         public async Task<UpdateCompanyDto> UpdateCompanyAsync(Guid Id, UpdateCompanyDto dto)

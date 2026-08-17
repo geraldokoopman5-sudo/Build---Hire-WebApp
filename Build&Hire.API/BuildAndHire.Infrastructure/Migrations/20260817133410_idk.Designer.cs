@@ -3,17 +3,17 @@ using System;
 using BuildAndHire.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace BuildAndHire.Infrastructure.Migrations
 {
     [DbContext(typeof(BuildAndHireDbContext))]
-    [Migration("20260812101311_AdminAccounts")]
-    partial class AdminAccounts
+    [Migration("20260817133410_idk")]
+    partial class idk
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,29 +21,33 @@ namespace BuildAndHire.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "10.0.10")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("BuildAndHire.Domain.Models.Admin", b =>
                 {
                     b.Property<Guid>("AdminId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("AdminRole")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("passWord")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("AdminId");
 
@@ -54,30 +58,30 @@ namespace BuildAndHire.Infrastructure.Migrations
                 {
                     b.Property<Guid>("CompanyId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CompanyEmail")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RegistrationNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("TaxNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("CompanyId");
 
@@ -92,7 +96,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                             CompanyId = new Guid("a1111111-0000-0000-0000-000000000001"),
                             CompanyEmail = "info@capecoastalconstruction.co.za",
                             CompanyName = "Cape Coastal Construction (Pty) Ltd",
-                            Password = "Password123!",
+                            PasswordHash = "Password123!",
                             RegistrationNumber = "2015/123456/07",
                             Status = 0,
                             TaxNumber = "9012345671"
@@ -102,7 +106,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                             CompanyId = new Guid("a1111111-0000-0000-0000-000000000002"),
                             CompanyEmail = "admin@joburgrise.co.za",
                             CompanyName = "Joburg Rise Builders",
-                            Password = "Password123!",
+                            PasswordHash = "Password123!",
                             RegistrationNumber = "2017/654321/07",
                             Status = 0,
                             TaxNumber = "9012345672"
@@ -112,7 +116,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                             CompanyId = new Guid("a1111111-0000-0000-0000-000000000003"),
                             CompanyEmail = "contracts@durbanbay.co.za",
                             CompanyName = "Durban Bay Contractors",
-                            Password = "Password123!",
+                            PasswordHash = "Password123!",
                             RegistrationNumber = "2019/789012/07",
                             Status = 1,
                             TaxNumber = "9012345673"
@@ -123,22 +127,22 @@ namespace BuildAndHire.Infrastructure.Migrations
                 {
                     b.Property<Guid>("CustomerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("CustomerId");
 
@@ -153,7 +157,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                             CustomerId = new Guid("b2222222-0000-0000-0000-000000000001"),
                             CustomerName = "Thandiwe Mahlangu",
                             Email = "thandiwe.mahlangu@example.com",
-                            Password = "Password123!",
+                            PasswordHash = "Password123!",
                             Status = 0
                         },
                         new
@@ -161,7 +165,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                             CustomerId = new Guid("b2222222-0000-0000-0000-000000000002"),
                             CustomerName = "Johan van der Berg",
                             Email = "johan.vdberg@example.com",
-                            Password = "Password123!",
+                            PasswordHash = "Password123!",
                             Status = 0
                         },
                         new
@@ -169,7 +173,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                             CustomerId = new Guid("b2222222-0000-0000-0000-000000000003"),
                             CustomerName = "Aisha Patel",
                             Email = "aisha.patel@example.com",
-                            Password = "Password123!",
+                            PasswordHash = "Password123!",
                             Status = 0
                         },
                         new
@@ -177,7 +181,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                             CustomerId = new Guid("b2222222-0000-0000-0000-000000000004"),
                             CustomerName = "Sipho Ndlovu",
                             Email = "sipho.ndlovu@example.com",
-                            Password = "Password123!",
+                            PasswordHash = "Password123!",
                             Status = 0
                         });
                 });
@@ -186,36 +190,36 @@ namespace BuildAndHire.Infrastructure.Migrations
                 {
                     b.Property<Guid>("JobId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("DailyRate")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric(10,2)");
 
                     b.Property<int>("DaysWorking")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("JobDescription")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int?>("PayingMethod")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("JobId");
 
@@ -230,29 +234,29 @@ namespace BuildAndHire.Infrastructure.Migrations
                 {
                     b.Property<Guid>("PaymentId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric(10,2)");
 
                     b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("JobId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("TransactionReference")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("PaymentId");
 
@@ -268,24 +272,24 @@ namespace BuildAndHire.Infrastructure.Migrations
                 {
                     b.Property<Guid>("WorkerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("JobId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("WorkerFirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("WorkerLastNAme")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("WorkerStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("WorkerId");
 
@@ -301,29 +305,29 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.OwnsOne("BuildAndHire.Domain.ValueObjects.Address", "address", b1 =>
                         {
                             b1.Property<Guid>("CompaniesCompanyId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<Guid>("AddressId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("City")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.Property<int>("PostalCode")
-                                .HasColumnType("int");
+                                .HasColumnType("integer");
 
                             b1.Property<string>("Province")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.Property<string>("StreetAddress")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.Property<string>("Suburb")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.HasKey("CompaniesCompanyId");
 
@@ -374,29 +378,29 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.OwnsOne("BuildAndHire.Domain.ValueObjects.Address", "address", b1 =>
                         {
                             b1.Property<Guid>("CustomerId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<Guid>("AddressId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("City")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.Property<int>("PostalCode")
-                                .HasColumnType("int");
+                                .HasColumnType("integer");
 
                             b1.Property<string>("Province")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.Property<string>("StreetAddress")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.Property<string>("Suburb")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.HasKey("CustomerId");
 
@@ -469,29 +473,29 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.OwnsOne("BuildAndHire.Domain.ValueObjects.Address", "address", b1 =>
                         {
                             b1.Property<Guid>("JobsJobId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<Guid>("AddressId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("City")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.Property<int>("PostalCode")
-                                .HasColumnType("int");
+                                .HasColumnType("integer");
 
                             b1.Property<string>("Province")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.Property<string>("StreetAddress")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.Property<string>("Suburb")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("text");
 
                             b1.HasKey("JobsJobId");
 

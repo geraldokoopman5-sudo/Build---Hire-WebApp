@@ -22,8 +22,8 @@ namespace BuildAndHire.Application.Services
             {
                 AdminId = a.AdminId,
                 UserName = a.UserName,
-                Email = a.Email
-                passWord = a.passWord,
+                Email = a.Email,
+                PasswordHash = a.PasswordHash,
                 Status = a.Status,
                 AdminRole = a.AdminRole
             });
@@ -41,7 +41,7 @@ namespace BuildAndHire.Application.Services
                 AdminId = admin.AdminId,
                 UserName = admin.UserName,
                 Email = admin.Email,
-                passWord = admin.passWord,
+                PasswordHash = admin.PasswordHash,
                 Status = admin.Status,
                 AdminRole = admin.AdminRole
             };
@@ -54,7 +54,7 @@ namespace BuildAndHire.Application.Services
             {
                 UserName = dto.UserName,
                 Email = dto.Email,
-                passWord = dto.passWord,
+                PasswordHash = dto.PasswordHash,
                 Status = dto.Status,
                 AdminRole = dto.AdminRole
             };
@@ -65,7 +65,7 @@ namespace BuildAndHire.Application.Services
             {
                 UserName = createdAdmin.UserName,
                 Email = createdAdmin.Email,
-                passWord = createdAdmin.passWord,
+                PasswordHash = createdAdmin.PasswordHash,
                 Status = createdAdmin.Status,
                 AdminRole = createdAdmin.AdminRole
             };
@@ -80,8 +80,8 @@ namespace BuildAndHire.Application.Services
             if (admin == null)
                 throw new KeyNotFoundException("Admin not found");
 
-            admin.passWord = dto.passWord;
-            admin.Email = dto.Email,
+            admin.PasswordHash = dto.PasswordHash;
+            admin.Email = dto.Email;
             admin.Status = dto.Status;
             admin.AdminRole = dto.AdminRole;
 
@@ -92,7 +92,7 @@ namespace BuildAndHire.Application.Services
 
             return new AdminDto
             {
-                passWord = updatedAdmin.passWord,
+                PasswordHash = updatedAdmin.PasswordHash,
                 Email = updatedAdmin.Email,
                 Status = updatedAdmin.Status,
                 AdminRole = updatedAdmin.AdminRole

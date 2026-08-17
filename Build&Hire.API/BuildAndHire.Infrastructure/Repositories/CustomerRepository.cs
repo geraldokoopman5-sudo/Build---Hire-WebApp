@@ -41,7 +41,7 @@ namespace BuildAndHire.Infrastructure.Repositories
             accountExist.Status = customer.Status;
             accountExist.Payments = customer.Payments;
             accountExist.address = customer.address;
-            accountExist.Password = customer.Password;
+            accountExist.PasswordHash = customer.PasswordHash;
 
             await _context.SaveChangesAsync();
             return accountExist;

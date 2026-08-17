@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BuildAndHire.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AdminAccounts : Migration
+    public partial class idk : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,11 +17,12 @@ namespace BuildAndHire.Infrastructure.Migrations
                 name: "Admin",
                 columns: table => new
                 {
-                    AdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    passWord = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    AdminRole = table.Column<int>(type: "int", nullable: false)
+                    AdminId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    AdminRole = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,19 +33,19 @@ namespace BuildAndHire.Infrastructure.Migrations
                 name: "Companies",
                 columns: table => new
                 {
-                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CompanyEmail = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    address_StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_Suburb = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_Province = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_PostalCode = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    RegistrationNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TaxNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CompanyName = table.Column<string>(type: "text", nullable: false),
+                    CompanyEmail = table.Column<string>(type: "text", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    address_AddressId = table.Column<Guid>(type: "uuid", nullable: false),
+                    address_StreetAddress = table.Column<string>(type: "text", nullable: false),
+                    address_Suburb = table.Column<string>(type: "text", nullable: false),
+                    address_City = table.Column<string>(type: "text", nullable: false),
+                    address_Province = table.Column<string>(type: "text", nullable: false),
+                    address_PostalCode = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    RegistrationNumber = table.Column<string>(type: "text", nullable: false),
+                    TaxNumber = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,17 +56,17 @@ namespace BuildAndHire.Infrastructure.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    address_AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    address_StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_Suburb = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_Province = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_PostalCode = table.Column<int>(type: "int", nullable: false)
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerName = table.Column<string>(type: "text", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    address_AddressId = table.Column<Guid>(type: "uuid", nullable: false),
+                    address_StreetAddress = table.Column<string>(type: "text", nullable: false),
+                    address_Suburb = table.Column<string>(type: "text", nullable: false),
+                    address_City = table.Column<string>(type: "text", nullable: false),
+                    address_Province = table.Column<string>(type: "text", nullable: false),
+                    address_PostalCode = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,22 +77,22 @@ namespace BuildAndHire.Infrastructure.Migrations
                 name: "Jobs",
                 columns: table => new
                 {
-                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    JobDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DaysWorking = table.Column<int>(type: "int", nullable: false),
-                    DailyRate = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PayingMethod = table.Column<int>(type: "int", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    address_AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    address_StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_Suburb = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_Province = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    address_PostalCode = table.Column<int>(type: "int", nullable: false)
+                    JobId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    JobDescription = table.Column<string>(type: "text", nullable: false),
+                    DaysWorking = table.Column<int>(type: "integer", nullable: false),
+                    DailyRate = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PayingMethod = table.Column<int>(type: "integer", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    address_AddressId = table.Column<Guid>(type: "uuid", nullable: false),
+                    address_StreetAddress = table.Column<string>(type: "text", nullable: false),
+                    address_Suburb = table.Column<string>(type: "text", nullable: false),
+                    address_City = table.Column<string>(type: "text", nullable: false),
+                    address_Province = table.Column<string>(type: "text", nullable: false),
+                    address_PostalCode = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,14 +113,14 @@ namespace BuildAndHire.Infrastructure.Migrations
                 name: "Payment",
                 columns: table => new
                 {
-                    PaymentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TransactionReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    PaymentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    JobId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
+                    PaymentMethod = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TransactionReference = table.Column<string>(type: "text", nullable: true),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -140,12 +141,12 @@ namespace BuildAndHire.Infrastructure.Migrations
                 name: "Workers",
                 columns: table => new
                 {
-                    WorkerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    WorkerFirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WorkerLastNAme = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WorkerStatus = table.Column<int>(type: "int", nullable: false),
-                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    WorkerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    WorkerFirstName = table.Column<string>(type: "text", nullable: false),
+                    WorkerLastNAme = table.Column<string>(type: "text", nullable: false),
+                    WorkerStatus = table.Column<int>(type: "integer", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
+                    JobId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -164,7 +165,7 @@ namespace BuildAndHire.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Companies",
-                columns: new[] { "CompanyId", "CompanyEmail", "CompanyName", "Password", "RegistrationNumber", "Status", "TaxNumber", "address_AddressId", "address_City", "address_PostalCode", "address_Province", "address_StreetAddress", "address_Suburb" },
+                columns: new[] { "CompanyId", "CompanyEmail", "CompanyName", "PasswordHash", "RegistrationNumber", "Status", "TaxNumber", "address_AddressId", "address_City", "address_PostalCode", "address_Province", "address_StreetAddress", "address_Suburb" },
                 values: new object[,]
                 {
                     { new Guid("a1111111-0000-0000-0000-000000000001"), "info@capecoastalconstruction.co.za", "Cape Coastal Construction (Pty) Ltd", "Password123!", "2015/123456/07", 0, "9012345671", new Guid("f1111111-0000-0000-0000-000000000001"), "Cape Town", 8001, "Western Cape", "12 Long Street", "Cape Town City Centre" },
@@ -174,7 +175,7 @@ namespace BuildAndHire.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Customers",
-                columns: new[] { "CustomerId", "CustomerName", "Email", "Password", "Status", "address_AddressId", "address_City", "address_PostalCode", "address_Province", "address_StreetAddress", "address_Suburb" },
+                columns: new[] { "CustomerId", "CustomerName", "Email", "PasswordHash", "Status", "address_AddressId", "address_City", "address_PostalCode", "address_Province", "address_StreetAddress", "address_Suburb" },
                 values: new object[,]
                 {
                     { new Guid("b2222222-0000-0000-0000-000000000001"), "Thandiwe Mahlangu", "thandiwe.mahlangu@example.com", "Password123!", 0, new Guid("f2222222-0000-0000-0000-000000000001"), "Cape Town", 8001, "Western Cape", "23 Kloof Street", "Gardens" },
