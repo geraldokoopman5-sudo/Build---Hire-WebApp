@@ -105,12 +105,12 @@ namespace BuildAndHire.Infrastructure.Data
                 .HasPrecision(10, 2);
 
             modelBuilder.Entity<Jobs>()
-                .Property(j => j.DailyRate)
+                .Property(j => j.Qoute)
                 .HasPrecision(10, 2);
 
-            CompnaiesSeed.Seed(modelBuilder);
-            Customer_Seed.Seed(modelBuilder);
-            AddressSeed.Seed(modelBuilder);
+            //CompnaiesSeed.Seed(modelBuilder);
+            //Customer_Seed.Seed(modelBuilder);
+            //AddressSeed.Seed(modelBuilder);
         }
 
 

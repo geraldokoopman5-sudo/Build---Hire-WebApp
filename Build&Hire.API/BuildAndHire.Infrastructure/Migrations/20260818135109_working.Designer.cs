@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuildAndHire.Infrastructure.Migrations
 {
     [DbContext(typeof(BuildAndHireDbContext))]
-    [Migration("20260817133410_idk")]
-    partial class idk
+    [Migration("20260818135109_working")]
+    partial class working
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,38 +89,6 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Companies");
-
-                    b.HasData(
-                        new
-                        {
-                            CompanyId = new Guid("a1111111-0000-0000-0000-000000000001"),
-                            CompanyEmail = "info@capecoastalconstruction.co.za",
-                            CompanyName = "Cape Coastal Construction (Pty) Ltd",
-                            PasswordHash = "Password123!",
-                            RegistrationNumber = "2015/123456/07",
-                            Status = 0,
-                            TaxNumber = "9012345671"
-                        },
-                        new
-                        {
-                            CompanyId = new Guid("a1111111-0000-0000-0000-000000000002"),
-                            CompanyEmail = "admin@joburgrise.co.za",
-                            CompanyName = "Joburg Rise Builders",
-                            PasswordHash = "Password123!",
-                            RegistrationNumber = "2017/654321/07",
-                            Status = 0,
-                            TaxNumber = "9012345672"
-                        },
-                        new
-                        {
-                            CompanyId = new Guid("a1111111-0000-0000-0000-000000000003"),
-                            CompanyEmail = "contracts@durbanbay.co.za",
-                            CompanyName = "Durban Bay Contractors",
-                            PasswordHash = "Password123!",
-                            RegistrationNumber = "2019/789012/07",
-                            Status = 1,
-                            TaxNumber = "9012345673"
-                        });
                 });
 
             modelBuilder.Entity("BuildAndHire.Domain.Models.Customer", b =>
@@ -150,40 +118,6 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Customers");
-
-                    b.HasData(
-                        new
-                        {
-                            CustomerId = new Guid("b2222222-0000-0000-0000-000000000001"),
-                            CustomerName = "Thandiwe Mahlangu",
-                            Email = "thandiwe.mahlangu@example.com",
-                            PasswordHash = "Password123!",
-                            Status = 0
-                        },
-                        new
-                        {
-                            CustomerId = new Guid("b2222222-0000-0000-0000-000000000002"),
-                            CustomerName = "Johan van der Berg",
-                            Email = "johan.vdberg@example.com",
-                            PasswordHash = "Password123!",
-                            Status = 0
-                        },
-                        new
-                        {
-                            CustomerId = new Guid("b2222222-0000-0000-0000-000000000003"),
-                            CustomerName = "Aisha Patel",
-                            Email = "aisha.patel@example.com",
-                            PasswordHash = "Password123!",
-                            Status = 0
-                        },
-                        new
-                        {
-                            CustomerId = new Guid("b2222222-0000-0000-0000-000000000004"),
-                            CustomerName = "Sipho Ndlovu",
-                            Email = "sipho.ndlovu@example.com",
-                            PasswordHash = "Password123!",
-                            Status = 0
-                        });
                 });
 
             modelBuilder.Entity("BuildAndHire.Domain.Models.Jobs", b =>
@@ -198,10 +132,6 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("DailyRate")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
-
                     b.Property<int>("DaysWorking")
                         .HasColumnType("integer");
 
@@ -214,6 +144,10 @@ namespace BuildAndHire.Infrastructure.Migrations
 
                     b.Property<int?>("PayingMethod")
                         .HasColumnType("integer");
+
+                    b.Property<decimal>("Qoute")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -335,38 +269,6 @@ namespace BuildAndHire.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("CompaniesCompanyId");
-
-                            b1.HasData(
-                                new
-                                {
-                                    CompaniesCompanyId = new Guid("a1111111-0000-0000-0000-000000000001"),
-                                    AddressId = new Guid("f1111111-0000-0000-0000-000000000001"),
-                                    City = "Cape Town",
-                                    PostalCode = 8001,
-                                    Province = "Western Cape",
-                                    StreetAddress = "12 Long Street",
-                                    Suburb = "Cape Town City Centre"
-                                },
-                                new
-                                {
-                                    CompaniesCompanyId = new Guid("a1111111-0000-0000-0000-000000000002"),
-                                    AddressId = new Guid("f1111111-0000-0000-0000-000000000002"),
-                                    City = "Johannesburg",
-                                    PostalCode = 2196,
-                                    Province = "Gauteng",
-                                    StreetAddress = "45 Jan Smuts Avenue",
-                                    Suburb = "Rosebank"
-                                },
-                                new
-                                {
-                                    CompaniesCompanyId = new Guid("a1111111-0000-0000-0000-000000000003"),
-                                    AddressId = new Guid("f1111111-0000-0000-0000-000000000003"),
-                                    City = "Durban",
-                                    PostalCode = 4001,
-                                    Province = "KwaZulu-Natal",
-                                    StreetAddress = "78 Marine Parade",
-                                    Suburb = "Durban Central"
-                                });
                         });
 
                     b.Navigation("address")
@@ -408,48 +310,6 @@ namespace BuildAndHire.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("CustomerId");
-
-                            b1.HasData(
-                                new
-                                {
-                                    CustomerId = new Guid("b2222222-0000-0000-0000-000000000001"),
-                                    AddressId = new Guid("f2222222-0000-0000-0000-000000000001"),
-                                    City = "Cape Town",
-                                    PostalCode = 8001,
-                                    Province = "Western Cape",
-                                    StreetAddress = "23 Kloof Street",
-                                    Suburb = "Gardens"
-                                },
-                                new
-                                {
-                                    CustomerId = new Guid("b2222222-0000-0000-0000-000000000002"),
-                                    AddressId = new Guid("f2222222-0000-0000-0000-000000000002"),
-                                    City = "Cape Town",
-                                    PostalCode = 7530,
-                                    Province = "Western Cape",
-                                    StreetAddress = "9 Voortrekker Road",
-                                    Suburb = "Bellville"
-                                },
-                                new
-                                {
-                                    CustomerId = new Guid("b2222222-0000-0000-0000-000000000003"),
-                                    AddressId = new Guid("f2222222-0000-0000-0000-000000000003"),
-                                    City = "Johannesburg",
-                                    PostalCode = 2196,
-                                    Province = "Gauteng",
-                                    StreetAddress = "156 Oxford Road",
-                                    Suburb = "Melrose"
-                                },
-                                new
-                                {
-                                    CustomerId = new Guid("b2222222-0000-0000-0000-000000000004"),
-                                    AddressId = new Guid("f2222222-0000-0000-0000-000000000004"),
-                                    City = "Durban",
-                                    PostalCode = 4001,
-                                    Province = "KwaZulu-Natal",
-                                    StreetAddress = "34 Point Road",
-                                    Suburb = "Point"
-                                });
                         });
 
                     b.Navigation("address")

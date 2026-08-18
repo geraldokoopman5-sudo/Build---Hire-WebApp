@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace BuildAndHire.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class idk : Migration
+    public partial class working : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -82,7 +80,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     JobDescription = table.Column<string>(type: "text", nullable: false),
                     DaysWorking = table.Column<int>(type: "integer", nullable: false),
-                    DailyRate = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
+                    Qoute = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PayingMethod = table.Column<int>(type: "integer", nullable: true),
@@ -161,27 +159,6 @@ namespace BuildAndHire.Infrastructure.Migrations
                         column: x => x.JobId,
                         principalTable: "Jobs",
                         principalColumn: "JobId");
-                });
-
-            migrationBuilder.InsertData(
-                table: "Companies",
-                columns: new[] { "CompanyId", "CompanyEmail", "CompanyName", "PasswordHash", "RegistrationNumber", "Status", "TaxNumber", "address_AddressId", "address_City", "address_PostalCode", "address_Province", "address_StreetAddress", "address_Suburb" },
-                values: new object[,]
-                {
-                    { new Guid("a1111111-0000-0000-0000-000000000001"), "info@capecoastalconstruction.co.za", "Cape Coastal Construction (Pty) Ltd", "Password123!", "2015/123456/07", 0, "9012345671", new Guid("f1111111-0000-0000-0000-000000000001"), "Cape Town", 8001, "Western Cape", "12 Long Street", "Cape Town City Centre" },
-                    { new Guid("a1111111-0000-0000-0000-000000000002"), "admin@joburgrise.co.za", "Joburg Rise Builders", "Password123!", "2017/654321/07", 0, "9012345672", new Guid("f1111111-0000-0000-0000-000000000002"), "Johannesburg", 2196, "Gauteng", "45 Jan Smuts Avenue", "Rosebank" },
-                    { new Guid("a1111111-0000-0000-0000-000000000003"), "contracts@durbanbay.co.za", "Durban Bay Contractors", "Password123!", "2019/789012/07", 1, "9012345673", new Guid("f1111111-0000-0000-0000-000000000003"), "Durban", 4001, "KwaZulu-Natal", "78 Marine Parade", "Durban Central" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Customers",
-                columns: new[] { "CustomerId", "CustomerName", "Email", "PasswordHash", "Status", "address_AddressId", "address_City", "address_PostalCode", "address_Province", "address_StreetAddress", "address_Suburb" },
-                values: new object[,]
-                {
-                    { new Guid("b2222222-0000-0000-0000-000000000001"), "Thandiwe Mahlangu", "thandiwe.mahlangu@example.com", "Password123!", 0, new Guid("f2222222-0000-0000-0000-000000000001"), "Cape Town", 8001, "Western Cape", "23 Kloof Street", "Gardens" },
-                    { new Guid("b2222222-0000-0000-0000-000000000002"), "Johan van der Berg", "johan.vdberg@example.com", "Password123!", 0, new Guid("f2222222-0000-0000-0000-000000000002"), "Cape Town", 7530, "Western Cape", "9 Voortrekker Road", "Bellville" },
-                    { new Guid("b2222222-0000-0000-0000-000000000003"), "Aisha Patel", "aisha.patel@example.com", "Password123!", 0, new Guid("f2222222-0000-0000-0000-000000000003"), "Johannesburg", 2196, "Gauteng", "156 Oxford Road", "Melrose" },
-                    { new Guid("b2222222-0000-0000-0000-000000000004"), "Sipho Ndlovu", "sipho.ndlovu@example.com", "Password123!", 0, new Guid("f2222222-0000-0000-0000-000000000004"), "Durban", 4001, "KwaZulu-Natal", "34 Point Road", "Point" }
                 });
 
             migrationBuilder.CreateIndex(

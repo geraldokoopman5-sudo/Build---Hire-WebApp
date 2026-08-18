@@ -44,7 +44,7 @@ namespace BuildAndHire.Infrastructure.Repositories
 
             ChangeJob.EndDate = job.EndDate;
             ChangeJob.Workers = job.Workers;
-            ChangeJob.DailyRate = job.DailyRate;
+            ChangeJob.Qoute = job.Qoute;
             ChangeJob.address = job.address;
             ChangeJob.Status = job.Status;
             
