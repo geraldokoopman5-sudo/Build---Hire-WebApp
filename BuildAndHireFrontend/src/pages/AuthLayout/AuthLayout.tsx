@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <h1 className={styles.logo}>Linen &amp; Co</h1>
+        <h1 className={styles.logo}>Build &amp; Hire</h1>
         <button type="button" className={styles.cartButton} aria-label="Cart">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M6 6h15l-1.5 9h-12z" />
@@ -27,7 +27,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       </main>
 
       <footer className={styles.siteFooter}>
-        <span>© 2024 Linen &amp; Co. All rights reserved.</span>
+        <span>👑 Made by Crown 2026 👑</span>
         <nav className={styles.footerNav}>
           <a href="/privacy">Privacy Policy</a>
           <a href="/terms">Terms of Service</a>

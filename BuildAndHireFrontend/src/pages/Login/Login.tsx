@@ -118,21 +118,12 @@ export default function Login() {
               />
               Remember me
             </label>
-            <Link to="/forgot-password" className={styles.link}>
-              Forgot password?
-            </Link>
           </div>
 
           <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
             {isSubmitting ? 'Signing in…' : 'Sign In'}
           </button>
         </form>
-
-        <div className={styles.divider}>OR CONTINUE WITH</div>
-
-        <button type="button" className={styles.oauthButton}>
-          Company
-        </button>
 
         <p className={styles.footerText}>
           Don&apos;t have an account?

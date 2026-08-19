@@ -91,13 +91,13 @@ function validateCompany(values: CompanyFormValues): FormErrors {
   if (!values.registrationNumber) {
     errors.registrationNumber = 'Registration number is required.';
   } else if (values.registrationNumber.length !== 10) {
-    errors.registrationNumber = 'Registration number must be exactly 10 digits.';
+    errors.registrationNumber = 'Registration number must be 10 digits.';
   }
 
   if (!values.taxNumber) {
     errors.taxNumber = 'Tax number is required.';
   } else if (values.taxNumber.length !== 10) {
-    errors.taxNumber = 'Tax number must be exactly 10 digits.';
+    errors.taxNumber = 'Tax number must be 10 digits.';
   }
 
   return errors;
@@ -113,7 +113,7 @@ function validateAddress(values: AddressFormValues): FormErrors {
   if (!values.postalCode) {
     errors.postalCode = 'Postal code is required.';
   } else if (values.postalCode.length !== 4) {
-    errors.postalCode = 'Postal code must be exactly 4 digits.';
+    errors.postalCode = 'Postal code is only 4 digits.';
   }
 
   return errors;
@@ -251,7 +251,7 @@ export default function SignUp() {
                 onClick={() => handleSelectRole('customer')}
               >
                 <span className={styles.roleLabel}>Customer</span>
-                <span className={styles.roleDescription}>Shop and manage your own orders.</span>
+                <span className={styles.roleDescription}>Browse companies and see the work they can do for you.</span>
               </button>
               <button
                 type="button"
