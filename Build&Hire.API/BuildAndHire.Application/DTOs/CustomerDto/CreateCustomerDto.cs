@@ -14,6 +14,7 @@ namespace BuildAndHire.Application.DTOs.CustomerDto
         public string PasswordHash { get; set; } = string.Empty;
 
         public string Email { get; set; } = string.Empty;
+        public AccountType accountType { get; set; } = AccountType.Customer;
 
         public AccountStatus Status { get; set; }
 

@@ -10,9 +10,6 @@ namespace BuildAndHire.Application.Validators.Jobs
         public UpdateJobsValidator()
         {
 
-            RuleFor(j => j.DailyRate)
-                .NotEmpty()
-                .GreaterThan(0);
         }
     }
 }

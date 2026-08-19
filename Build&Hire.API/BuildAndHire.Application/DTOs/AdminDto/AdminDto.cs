@@ -17,5 +17,7 @@ namespace BuildAndHire.Application.DTOs.AdminDto
         public AdminEnums AdminRole { get; set; } = AdminEnums.Admin;
 
         public AccountStatus Status { get; set; } = AccountStatus.Pending;
+
+        public AccountType accountType { get; set; } = AccountType.Admin;
     }
 }

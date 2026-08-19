@@ -14,7 +14,6 @@ namespace BuildAndHire.Application.DTOs.JobDto
         public Guid CustomerId { get; set; }
 
         public string JobDescription { get; set; } = string.Empty;
-        public decimal DailyRate { get; set; }
 
         public int DaysWorking { get; set; }
 

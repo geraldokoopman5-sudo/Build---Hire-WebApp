@@ -15,7 +15,7 @@ namespace BuildAndHire.Application.DTOs.CustomerDto
         public string Email { get; set; } = string.Empty;
 
         public AccountStatus Status { get; set; }
-
+        public AccountType accountType { get; set; } = AccountType.Customer;
         public Address? Address { get; set; }
 
     }

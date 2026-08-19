@@ -7,7 +7,7 @@ namespace BuildAndHire.Application.DTOs.JobDto
 {
     public class UpdateJobDetailsDto
     {
-        public decimal DailyRate { get; set; }
+        public decimal Qoute { get; set; }
 
         public DateTime EndDate { get; set; }
 

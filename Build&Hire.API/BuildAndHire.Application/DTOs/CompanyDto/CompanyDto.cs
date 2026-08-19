@@ -13,6 +13,7 @@ namespace BuildAndHire.Application.DTOs.CompanyDto
         public string PasswordHash { get; set; } = string.Empty;
         public Address? address { get; set; }
         public AccountStatus Status { get; set; }
+        public AccountType account { get; set; } = AccountType.Company;
         public string RegistrationNumber { get; set; } = string.Empty;
         public string TaxNumber { get; set; } = string.Empty;
     }

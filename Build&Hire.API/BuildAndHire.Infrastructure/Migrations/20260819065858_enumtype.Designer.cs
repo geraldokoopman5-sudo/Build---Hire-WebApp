@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuildAndHire.Infrastructure.Migrations
 {
     [DbContext(typeof(BuildAndHireDbContext))]
-    [Migration("20260818135109_working")]
-    partial class working
+    [Migration("20260819065858_enumtype")]
+    partial class enumtype
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("accountType")
+                        .HasColumnType("integer");
+
                     b.HasKey("AdminId");
 
                     b.ToTable("Admin");
@@ -83,6 +86,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("account")
+                        .HasColumnType("integer");
+
                     b.HasKey("CompanyId");
 
                     b.HasIndex("CompanyEmail")
@@ -110,6 +116,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("accountType")
                         .HasColumnType("integer");
 
                     b.HasKey("CustomerId");

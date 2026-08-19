@@ -32,6 +32,7 @@ namespace BuildAndHire.Application.Services
                 PasswordHash = c.PasswordHash,
                 address = c.address,
                 Status = c.Status,
+                account = c.account,
                 RegistrationNumber = c.RegistrationNumber,
                 TaxNumber = c.TaxNumber,
                 
@@ -52,6 +53,7 @@ namespace BuildAndHire.Application.Services
                 PasswordHash = companies.PasswordHash,
                 address = companies.address,
                 Status = companies.Status,
+                account = companies.account,
                 RegistrationNumber = companies.RegistrationNumber,
                 TaxNumber = companies.TaxNumber,
 
@@ -68,7 +70,7 @@ namespace BuildAndHire.Application.Services
 
                 PasswordHash = _passwordService.HashPassword(
                     dto.PasswordHash),
-
+                account = dto.account,
                 RegistrationNumber = dto.RegistrationNumber,
                 TaxNumber = dto.TaxNumber,
                 address = dto.address
@@ -83,6 +85,7 @@ namespace BuildAndHire.Application.Services
                 CompanyEmail = savedCompany.CompanyEmail,
                 RegistrationNumber = savedCompany.RegistrationNumber,
                 TaxNumber = savedCompany.TaxNumber,
+                account = savedCompany.account,
                 address = savedCompany.address
             };
         }

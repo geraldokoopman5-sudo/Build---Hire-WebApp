@@ -8,10 +8,12 @@ namespace BuildAndHire.Application.Services
     public class CustomerService : ICustomerService
     {
         private readonly ICustomerRepository _repo;
+        private readonly IPasswordService _passwordService;
 
-        public CustomerService(ICustomerRepository repo)
+        public CustomerService(ICustomerRepository repo, IPasswordService passwordService)
         {
             _repo = repo;
+            _passwordService = passwordService;
         }
         public async Task<IEnumerable<CustomerDto>> GetAllCustomersAsync()
         {
@@ -24,6 +26,7 @@ namespace BuildAndHire.Application.Services
                 PasswordHash = c.PasswordHash,
                 Email = c.Email,
                 Status = c.Status,
+                accountType = c.accountType,
                 address = c.address,
             });
         }
@@ -39,6 +42,7 @@ namespace BuildAndHire.Application.Services
                 PasswordHash = customer.PasswordHash,
                 Email = customer.Email,
                 Status = customer.Status,
+                accountType = customer.accountType,
                 address = customer.address,
             };
         }
@@ -49,8 +53,10 @@ namespace BuildAndHire.Application.Services
                 CustomerName = dto.CustomerName,
                 Email = dto.Email,
                 Status = dto.Status,
+                accountType = dto.accountType,
                 address = dto.address,
-                PasswordHash = dto.PasswordHash,
+                PasswordHash = _passwordService.HashPassword(
+                    dto.PasswordHash),
 
             };
 
@@ -60,8 +66,8 @@ namespace BuildAndHire.Application.Services
                 CustomerName = customer.CustomerName,
                 Email = customer.Email,
                 Status = customer.Status,
+                accountType = customer.accountType,
                 address = customer.address,
-                PasswordHash = customer.PasswordHash,
             };
         }
 
@@ -78,7 +84,7 @@ namespace BuildAndHire.Application.Services
             getCustomer.CustomerName = dto.CustomerName;
             getCustomer.Email = dto.Email;
             getCustomer.PasswordHash = dto.PasswordHash;
-            getCustomer.Status = dto.Status;
+            getCustomer.Status = dto.Status;    
             getCustomer.address = dto.Address;
 
             var update = await _repo.UpdateCustomer(getCustomer);

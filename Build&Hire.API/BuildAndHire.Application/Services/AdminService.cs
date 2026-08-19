@@ -8,10 +8,12 @@ namespace BuildAndHire.Application.Services
     public class AdminService : IAdminService
     {
         private readonly IAdminRepository _repo;
+        private readonly IPasswordService _passwordService;
 
-        public AdminService(IAdminRepository repo)
+        public AdminService(IAdminRepository repo, IPasswordService passwordService)
         {
             _repo = repo;
+            _passwordService = passwordService;
         }
 
         public async Task<IEnumerable<AdminDto>> GetAllAdminsAsync()
@@ -25,7 +27,8 @@ namespace BuildAndHire.Application.Services
                 Email = a.Email,
                 PasswordHash = a.PasswordHash,
                 Status = a.Status,
-                AdminRole = a.AdminRole
+                AdminRole = a.AdminRole,
+                accountType = a.accountType,
             });
         }
 
@@ -43,7 +46,8 @@ namespace BuildAndHire.Application.Services
                 Email = admin.Email,
                 PasswordHash = admin.PasswordHash,
                 Status = admin.Status,
-                AdminRole = admin.AdminRole
+                AdminRole = admin.AdminRole,
+                accountType = admin.accountType,
             };
         }
 
@@ -54,9 +58,11 @@ namespace BuildAndHire.Application.Services
             {
                 UserName = dto.UserName,
                 Email = dto.Email,
-                PasswordHash = dto.PasswordHash,
+                PasswordHash = _passwordService.HashPassword(
+                    dto.PasswordHash),
                 Status = dto.Status,
-                AdminRole = dto.AdminRole
+                AdminRole = dto.AdminRole,
+                accountType = dto.accountType,
             };
 
             var createdAdmin = await _repo.RegisterAdmin(admin);
@@ -65,9 +71,9 @@ namespace BuildAndHire.Application.Services
             {
                 UserName = createdAdmin.UserName,
                 Email = createdAdmin.Email,
-                PasswordHash = createdAdmin.PasswordHash,
                 Status = createdAdmin.Status,
-                AdminRole = createdAdmin.AdminRole
+                AdminRole = createdAdmin.AdminRole,
+                accountType = createdAdmin.accountType
             };
         }
 

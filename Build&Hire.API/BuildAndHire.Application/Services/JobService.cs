@@ -23,9 +23,9 @@ namespace BuildAndHire.Application.Services
                 JobDescription = j.JobDescription,
                 CompanyId = j.CompanyId,
                 CustomerId = j.CustomerId,
+                Qoute = j.Qoute,
                 StartDate = j.StartDate,
                 EndDate = j.EndDate,
-                DailyRate = j.DailyRate,
                 Status = j.Status,
                 address = j.address,
             });
@@ -37,16 +37,15 @@ namespace BuildAndHire.Application.Services
             var jobs = await _repo.GetJobById(Id);
             if (jobs == null) return null;
 
-            jobs.DailyRate = dto.DailyRate;
             jobs.EndDate = dto.EndDate;
             jobs.Status = dto.Status;
+            jobs.Qoute = dto.Qoute;
             jobs.PayingMethod = dto.PayingMethod;
 
             var updated = await _repo.UpdatejobDetails(jobs);
 
             return new UpdateJobDetailsDto
             {
-                DailyRate = updated.DailyRate,
                 EndDate = updated.EndDate,
                 Status = updated.Status,
                 PayingMethod = updated.PayingMethod,
@@ -65,8 +64,8 @@ namespace BuildAndHire.Application.Services
                 CompanyId = job.CompanyId,
                 CustomerId = job.CustomerId,
                 StartDate = job.StartDate,
+                Qoute = job.Qoute,
                 EndDate = job.EndDate,
-                DailyRate = job.DailyRate,
                 Status = job.Status,
                 address = job.address,
             };
@@ -82,7 +81,6 @@ namespace BuildAndHire.Application.Services
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
                 DaysWorking = dto.DaysWorking,
-                DailyRate = dto.DailyRate,
                 Status = dto.Status,
                 address = dto.address
 
@@ -98,7 +96,6 @@ namespace BuildAndHire.Application.Services
                 StartDate = job.StartDate,
                 EndDate = job.EndDate,
                 DaysWorking = job.DaysWorking,
-                DailyRate = job.DailyRate,
                 Status = job.Status,
                 address = job.address,
 

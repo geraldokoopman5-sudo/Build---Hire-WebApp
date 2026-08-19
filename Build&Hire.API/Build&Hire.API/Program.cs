@@ -1,6 +1,6 @@
 
-
 using BuildAndHire.Infrastructure.Authentication;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +8,24 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers();
     builder.Services.AddScoped<IJwtService, JwtService>();
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Enter your JWT token."
+    });
 
-    builder.Services.AddDbContext<BuildAndHireDbContext>(options =>
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+        });
+});
+
+builder.Services.AddDbContext<BuildAndHireDbContext>(options =>
         options.UseNpgsql(
             builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -34,22 +49,39 @@ builder.Services
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-
             ValidateAudience = true,
-
             ValidateLifetime = true,
-
             ValidateIssuerSigningKey = true,
 
             ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
-
             ValidAudience = builder.Configuration["JwtConfig:Audience"],
 
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
                     builder.Configuration["JwtConfig:Key"]!
                 )
-            )
+            ),
+
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine(
+                    $"JWT Authentication Failed: {context.Exception.Message}");
+
+                return Task.CompletedTask;
+            },
+
+            OnChallenge = context =>
+            {
+                Console.WriteLine(
+                    $"JWT Challenge: {context.Error} - {context.ErrorDescription}");
+
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -71,8 +103,6 @@ var app = builder.Build();
     app.UseAuthorization();
 
     app.UseHttpsRedirection();
-
-    app.UseAuthorization();
 
     app.MapControllers();
 

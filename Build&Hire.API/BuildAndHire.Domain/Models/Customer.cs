@@ -17,6 +17,7 @@ namespace BuildAndHire.Domain.Models
         public string Email { get; set; } = string.Empty;
 
         public AccountStatus Status { get; set; } = AccountStatus.Active;
+        public AccountType accountType { get; set; } = AccountType.Customer;
 
         public Address address { get; set; } = null!;
 

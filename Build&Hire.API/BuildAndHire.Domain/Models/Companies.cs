@@ -20,7 +20,7 @@ namespace BuildAndHire.Domain.Models
         public Address address { get; set; } = null!;
 
         public AccountStatus Status { get; set; } = AccountStatus.Active;
-
+        public AccountType account { get; set; } = AccountType.Company;
         public string RegistrationNumber { get; set; } = string.Empty;
 
         public string TaxNumber { get; set; } = string.Empty;

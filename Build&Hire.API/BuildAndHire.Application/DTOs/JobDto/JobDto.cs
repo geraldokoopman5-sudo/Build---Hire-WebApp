@@ -19,7 +19,7 @@ namespace BuildAndHire.Application.DTOs.JobDto
 
         public int DaysWorking { get; set; }
 
-        public decimal DailyRate { get; set; }
+        public decimal Qoute { get; set; }
 
         public DateTime StartDate { get; set; }
 

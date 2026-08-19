@@ -15,6 +15,7 @@ namespace BuildAndHire.Domain.Models
         public string PasswordHash { get; set; } = string.Empty;
 
         public AccountStatus Status { get; set; } = AccountStatus.Pending;
+        public AccountType accountType { get; set; } = AccountType.Admin;
 
         public AdminEnums AdminRole { get; set; } = AdminEnums.Admin;
     }

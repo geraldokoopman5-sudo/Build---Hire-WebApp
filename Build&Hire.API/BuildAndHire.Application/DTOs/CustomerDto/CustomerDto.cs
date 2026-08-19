@@ -20,6 +20,7 @@ namespace BuildAndHire.Application.DTOs.CustomerDto
         public Jobs? jobs { get; set; }
 
         public AccountStatus Status { get; set; }
+        public AccountType accountType { get; set; } = AccountType.Customer;
 
         public Address? address { get; set; }
     }

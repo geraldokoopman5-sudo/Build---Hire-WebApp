@@ -46,6 +46,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("accountType")
+                        .HasColumnType("integer");
+
                     b.HasKey("AdminId");
 
                     b.ToTable("Admin");
@@ -80,6 +83,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("account")
+                        .HasColumnType("integer");
+
                     b.HasKey("CompanyId");
 
                     b.HasIndex("CompanyEmail")
@@ -107,6 +113,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("accountType")
                         .HasColumnType("integer");
 
                     b.HasKey("CustomerId");

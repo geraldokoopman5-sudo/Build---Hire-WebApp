@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BuildAndHire.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class working : Migration
+    public partial class enumtype : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,6 +20,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
+                    accountType = table.Column<int>(type: "integer", nullable: false),
                     AdminRole = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -42,6 +43,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                     address_Province = table.Column<string>(type: "text", nullable: false),
                     address_PostalCode = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
+                    account = table.Column<int>(type: "integer", nullable: false),
                     RegistrationNumber = table.Column<string>(type: "text", nullable: false),
                     TaxNumber = table.Column<string>(type: "text", nullable: false)
                 },
@@ -59,6 +61,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
+                    accountType = table.Column<int>(type: "integer", nullable: false),
                     address_AddressId = table.Column<Guid>(type: "uuid", nullable: false),
                     address_StreetAddress = table.Column<string>(type: "text", nullable: false),
                     address_Suburb = table.Column<string>(type: "text", nullable: false),
