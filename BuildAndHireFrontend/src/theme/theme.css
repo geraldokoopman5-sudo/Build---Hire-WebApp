@@ -1,0 +1,13 @@
+:root {
+  --color-primary: #C36F43;
+  --color-primary-dark: #A85A34;
+  --color-secondary: #543A32;
+  --color-tertiary: #D8A373;
+  --color-neutral: #F9F3E5;
+  --color-white: #FFFFFF;
+  --color-text-muted: #8A7B6E;
+  --color-border: #E8DCC8;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
