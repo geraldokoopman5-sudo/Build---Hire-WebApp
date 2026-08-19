@@ -2,7 +2,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   background: var(--color-white);
   border-radius: 16px;
   padding: 2.75rem 2.5rem;
@@ -27,8 +27,79 @@
   font-size: 0.95rem;
 }
 
+.roleGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.roleCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-neutral);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.roleCard:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.roleLabel {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-secondary);
+  font-size: 1.05rem;
+}
+
+.roleDescription {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.stepHeader .title {
+  text-align: left;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.changeRoleButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.changeRoleButton:hover {
+  text-decoration: underline;
+}
+
 .field {
   margin-bottom: 1.25rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }
 
 .label {
@@ -66,34 +137,20 @@
   margin-top: 0.35rem;
 }
 
-.rowBetween {
+.hint {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.35rem;
+}
+
+.buttonRow {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
-
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--color-secondary);
-}
-
-.link {
-  color: var(--color-primary);
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.link:hover {
-  text-decoration: underline;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
 }
 
 .submitButton {
-  width: 100%;
+  flex: 1;
   padding: 0.85rem;
   border: none;
   border-radius: 8px;
@@ -114,32 +171,15 @@
   cursor: not-allowed;
 }
 
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1.75rem 0;
-  color: var(--color-text-muted);
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
+.secondaryButton {
   flex: 1;
-  height: 1px;
-  background: var(--color-border);
-}
-
-.oauthButton {
-  width: 100%;
-  padding: 0.75rem;
+  padding: 0.85rem;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-white);
   color: var(--color-secondary);
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -165,4 +205,8 @@
   .card {
     padding: 2rem 1.5rem;
   }
-}
+  .roleGrid,
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}   

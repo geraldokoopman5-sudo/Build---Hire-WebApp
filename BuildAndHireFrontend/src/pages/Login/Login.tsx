@@ -1,7 +1,8 @@
 import { useState, type ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
+import AuthLayout from '../AuthLayout/AuthLayout';
 import styles from './Login.module.css';
-import type { LoginFormValues, LoginFormErrors } from './login.types.ts';
+import type { LoginFormValues, LoginFormErrors } from './login.types';
 
 const INITIAL_VALUES: LoginFormValues = {
   email: '',
@@ -57,114 +58,89 @@ export default function Login() {
   };
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <h1 className={styles.logo}>Build & Hire co</h1>
-      </header>
+    <AuthLayout>
+      <div className={styles.card}>
+        <h2 className={styles.title}>Welcome Back</h2>
+        <p className={styles.subtitle}>Experience conscious living once again.</p>
 
-      <main className={styles.main}>
-        <div className={`${styles.decorPanel} ${styles['decorPanel--left']}`} aria-hidden="true" />
-        <div className={`${styles.decorPanel} ${styles['decorPanel--right']}`} aria-hidden="true" />
+        <form onSubmit={handleSubmit} noValidate>
+          <div className={styles.field}>
+            <label htmlFor="email" className={styles.label}>
+              Email Address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="hello@example.com"
+              value={values.email}
+              onChange={handleChange}
+              className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? 'email-error' : undefined}
+            />
+            {errors.email && (
+              <p id="email-error" className={styles.errorText}>
+                {errors.email}
+              </p>
+            )}
+          </div>
 
-        <div className={styles.card}>
-          <h2 className={styles.title}>Welcome Back</h2>
-          <p className={styles.subtitle}>Experience conscious living once again.</p>
+          <div className={styles.field}>
+            <label htmlFor="password" className={styles.label}>
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              value={values.password}
+              onChange={handleChange}
+              className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
+              aria-invalid={Boolean(errors.password)}
+              aria-describedby={errors.password ? 'password-error' : undefined}
+            />
+            {errors.password && (
+              <p id="password-error" className={styles.errorText}>
+                {errors.password}
+              </p>
+            )}
+          </div>
 
-          <form onSubmit={handleSubmit} noValidate>
-            <div className={styles.field}>
-              <label htmlFor="email" className={styles.label}>
-                Email Address
-              </label>
+          <div className={styles.rowBetween}>
+            <label className={styles.checkboxLabel}>
               <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="hello@example.com"
-                value={values.email}
+                type="checkbox"
+                name="rememberMe"
+                checked={values.rememberMe}
                 onChange={handleChange}
-                className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
-                aria-invalid={Boolean(errors.email)}
-                aria-describedby={errors.email ? 'email-error' : undefined}
               />
-              {errors.email && (
-                <p id="email-error" className={styles.errorText}>
-                  {errors.email}
-                </p>
-              )}
-            </div>
-
-            <div className={styles.field}>
-              <label htmlFor="password" className={styles.label}>
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="••••••••"
-                value={values.password}
-                onChange={handleChange}
-                className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
-                aria-invalid={Boolean(errors.password)}
-                aria-describedby={errors.password ? 'password-error' : undefined}
-              />
-              {errors.password && (
-                <p id="password-error" className={styles.errorText}>
-                  {errors.password}
-                </p>
-              )}
-            </div>
-
-            <div className={styles.rowBetween}>
-              <label className={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  checked={values.rememberMe}
-                  onChange={handleChange}
-                />
-                Remember me
-              </label>
-            </div>
-
-            <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
-              {isSubmitting ? 'Signing in…' : 'Sign In'}
-            </button>
-          </form>
-
-          <div className={styles.divider}>OR CONTINUE WITH</div>
-
-          <button type="button" className={styles.oauthButton}>
-            Company
-          </button>
-                    <button type="button" className={styles.oauthButton}>
-            Customer
-          </button>
-
-          <p className={styles.footerText}>
-            Don&apos;t have an account?
-            <Link to="/signup" className={styles.footerLink}>
-              Sign up
+              Remember me
+            </label>
+            <Link to="/forgot-password" className={styles.link}>
+              Forgot password?
             </Link>
-          </p>
-        </div>
-      </main>
+          </div>
 
-      <footer className={styles.siteFooter}>
-        <span>👑 Made by Crown 2026 👑</span>
-        <nav className={styles.footerNav}>
-          <a   href="https://www.youtube.com/watch?v=Aq5WXmQQooo&pp=ygUJcmljayByb2xs"
-             target="_blank"
-               rel="noopener noreferrer"
-          >Privacy Policy</a>
-          <a href="https://www.youtube.com/watch?v=Aq5WXmQQooo&pp=ygUJcmljayByb2xs"
-             target="_blank"
-               rel="noopener noreferrer">Terms of Service</a>
-          <a href="https://www.youtube.com/watch?v=Aq5WXmQQooo&pp=ygUJcmljayByb2xs"
-             target="_blank"
-               rel="noopener noreferrer">Contact Us</a>
-        </nav>
-      </footer>
-    </div>
+          <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+            {isSubmitting ? 'Signing in…' : 'Sign In'}
+          </button>
+        </form>
+
+        <div className={styles.divider}>OR CONTINUE WITH</div>
+
+        <button type="button" className={styles.oauthButton}>
+          Company
+        </button>
+
+        <p className={styles.footerText}>
+          Don&apos;t have an account?
+          <Link to="/signup" className={styles.footerLink}>
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </AuthLayout>
   );
 }
