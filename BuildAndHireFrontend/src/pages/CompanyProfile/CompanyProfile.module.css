@@ -1,0 +1,199 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-neutral);
+}
+
+.notFound {
+  padding: 4rem 1.5rem;
+  text-align: center;
+  color: var(--color-secondary);
+}
+
+.backLink {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.hero {
+  padding: 5rem 1.5rem;
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  color: var(--color-white);
+}
+
+.heroTitle {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  margin: 0 0 1rem;
+}
+
+.heroSubtitle {
+  max-width: 640px;
+  margin: 0 auto 1.75rem;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.heroButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.primaryButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondaryButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-white);
+  color: var(--color-secondary);
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.infoGrid {
+  max-width: 1100px;
+  margin: -2.5rem auto 0;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.infoCard {
+  background: var(--color-white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 12px 32px rgba(84, 58, 50, 0.08);
+}
+
+.infoTitle {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--color-secondary);
+  margin: 0 0 1rem;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  background: var(--color-neutral);
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+}
+
+.infoText {
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  margin: 0 0 1rem;
+}
+
+.projectsCount {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.projectsLabel {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.certList {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--color-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contactSection {
+  max-width: 1100px;
+  margin: 3rem auto 4rem;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.contactTitle {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--color-secondary);
+  margin: 0 0 0.5rem;
+}
+
+.contactSubtitle {
+  color: var(--color-text-muted);
+  margin: 0 0 1.5rem;
+}
+
+.contactRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+}
+
+.contactLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.proposalCard {
+  background: var(--color-white);
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 12px 32px rgba(84, 58, 50, 0.08);
+}
+
+.proposalTitle {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--color-secondary);
+  margin: 0 0 0.5rem;
+}
+
+.proposalHint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .infoGrid,
+  .contactSection {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,73 @@
+import type { CompanyProfile } from '../types/company';
+
+export const companies: CompanyProfile[] = [
+  {
+    id: 'summit-structural',
+    companyName: 'Summit Structural',
+    companyEmail: 'hello@summitstructural.com',
+    phone: '+1 (555) 890-4421',
+    address: {
+      streetAddress: '1280 Industrial Pkwy',
+      suburb: 'Denver District',
+      city: 'Denver',
+      province: 'CO',
+      postalCode: 8022,
+    },
+    registrationNumber: '1234567890',
+    taxNumber: '0987654321',
+    category: 'Industrial',
+    rating: 4.9,
+    about:
+      'Elevating the standards of modern infrastructure through sustainable engineering and artisanal structural integrity. Over 25 years of delivering complex commercial and industrial structural solutions across North America.',
+    services: ['Structural Framing', 'Steel Fabrication', 'Reinforced Concrete', 'Sustainable Retrofitting'],
+    completedProjects: 150,
+    certifications: ['ISO 9001:2015 Quality Management', 'LEED Gold Certified Partner', 'OSHA Safety Excellence Award'],
+    imageUrl: '/assets/companies/summit-structural.jpg',
+  },
+  {
+    id: 'ironclad-masonry',
+    companyName: 'Ironclad Masonry',
+    companyEmail: 'hello@ironcladmasonry.com',
+    phone: '+1 (555) 221-7734',
+    address: {
+      streetAddress: '48 Kiln Row',
+      suburb: 'Foundry Quarter',
+      city: 'Denver',
+      province: 'CO',
+      postalCode: 8014,
+    },
+    registrationNumber: '2345678901',
+    taxNumber: '1098765432',
+    category: 'Residential',
+    rating: 4.8,
+    about:
+      'Artisanal stonework and bricklaying for luxury homes, specializing in eco-friendly materials and heritage-inspired finishes. Every project is built by hand with a focus on longevity.',
+    services: ['Brick Masonry', 'Stonework', 'Chimney Restoration', 'Eco-Friendly Materials'],
+    completedProjects: 96,
+    certifications: ['Master Mason Guild Member', 'Heritage Restoration Accredited'],
+    imageUrl: '/assets/companies/ironclad-masonry.jpg',
+  },
+  {
+    id: 'terraform-build',
+    companyName: 'Terraform Build',
+    companyEmail: 'hello@terraformbuild.com',
+    phone: '+1 (555) 664-2290',
+    address: {
+      streetAddress: '77 Greenline Ave',
+      suburb: 'Riverside',
+      city: 'Denver',
+      province: 'CO',
+      postalCode: 8033,
+    },
+    registrationNumber: '3456789012',
+    taxNumber: '2109876543',
+    category: 'Commercial',
+    rating: 5.0,
+    about:
+      'Sustainable commercial spaces designed with organic materials and energy-efficient systems. We partner with architects to bring low-impact, high-performance buildings to life.',
+    services: ['Commercial Fit-Out', 'Sustainable Design', 'Energy-Efficient Systems', 'Timber Framing'],
+    completedProjects: 62,
+    certifications: ['LEED Platinum Partner', 'Passive House Certified Builder'],
+    imageUrl: '/assets/companies/terraform-build.jpg',
+  },
+];

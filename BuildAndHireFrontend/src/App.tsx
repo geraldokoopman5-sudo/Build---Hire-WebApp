@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import SignUp from './pages/SignUp/SignUp';
+import Marketplace from './pages/Marketplace/Marketplace';
+import CompanyProfile from './pages/CompanyProfile/ComapanyProfile';
 import './theme/theme.css';
 
 function App() {
@@ -8,8 +10,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        {/* <Route path="/signup" element={<SignUp />} /> — coming next */}
-        <Route path="/signup" element={<SignUp/>} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/companies/:id" element={<CompanyProfile />} />
       </Routes>
     </BrowserRouter>
   );
