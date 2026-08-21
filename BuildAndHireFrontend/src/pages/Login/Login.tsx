@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../AuthLayout/AuthLayout';
 import styles from './Login.module.css';
 import type { LoginFormValues, LoginFormErrors } from './login.types';
@@ -27,6 +27,7 @@ function validate(values: LoginFormValues): LoginFormErrors {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
   const [values, setValues] = useState<LoginFormValues>(INITIAL_VALUES);
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -52,6 +53,7 @@ export default function Login() {
     try {
       // TODO: replace with real sign-in request
       await new Promise((resolve) => setTimeout(resolve, 800));
+      navigate('/marketplace');
     } finally {
       setIsSubmitting(false);
     }
@@ -118,12 +120,21 @@ export default function Login() {
               />
               Remember me
             </label>
+            <Link to="/forgot-password" className={styles.link}>
+              Forgot password?
+            </Link>
           </div>
 
           <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
             {isSubmitting ? 'Signing in…' : 'Sign In'}
           </button>
         </form>
+
+        <div className={styles.divider}>OR CONTINUE WITH</div>
+
+        <button type="button" className={styles.oauthButton}>
+          Company
+        </button>
 
         <p className={styles.footerText}>
           Don&apos;t have an account?
