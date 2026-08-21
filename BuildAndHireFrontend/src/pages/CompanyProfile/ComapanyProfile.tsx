@@ -1,6 +1,8 @@
 import { useParams, Link } from 'react-router-dom';
-import AppHeader from '../../components/AppHeader/AppHeader';
+import DashboardHeader from '../../components/DashboardHeader/DashboardHeader';
 import { companies } from '../../data/companies';
+
+import { getAccountStatusLabel, getAccountTypeLabel } from '../../utils/accountLabels';
 import styles from './CompanyProfile.module.css';
 
 export default function CompanyProfile() {
@@ -10,7 +12,7 @@ export default function CompanyProfile() {
   if (!company) {
     return (
       <div className={styles.page}>
-        <AppHeader />
+        <DashboardHeader activeLink="marketplace" />
         <main className={styles.notFound}>
           <p>Company not found.</p>
           <Link to="/marketplace" className={styles.backLink}>
@@ -23,7 +25,7 @@ export default function CompanyProfile() {
 
   return (
     <div className={styles.page}>
-      <AppHeader />
+      <DashboardHeader activeLink="projects" />
 
       <section
         className={styles.hero}
@@ -36,14 +38,14 @@ export default function CompanyProfile() {
             Request Quote
           </button>
           <a href={`mailto:${company.companyEmail}`} className={styles.secondaryButton}>
-            Contact Company
+            View Portfolio
           </a>
         </div>
       </section>
 
       <section className={styles.infoGrid}>
         <div className={styles.infoCard}>
-          <h2 className={styles.infoTitle}>Services</h2>
+          <h2 className={styles.infoTitle}>Specialties</h2>
           <div className={styles.tagList}>
             {company.services.map((service) => (
               <span key={service} className={styles.tag}>
@@ -76,9 +78,9 @@ export default function CompanyProfile() {
 
       <section className={styles.contactSection}>
         <div>
-          <h2 className={styles.contactTitle}>Get in Touch</h2>
+          <h2 className={styles.contactTitle}>Company Info</h2>
           <p className={styles.contactSubtitle}>
-            Ready to discuss your next project? Our team is standing by.
+            Ready to discuss your next landmark project? Our estimators are standing by.
           </p>
 
           <div className={styles.contactRow}>
@@ -93,16 +95,64 @@ export default function CompanyProfile() {
             <span className={styles.contactLabel}>Location</span>
             <span>
               {company.address.streetAddress}, {company.address.suburb}, {company.address.city},{' '}
-              {company.address.province}
+              {company.address.province}, {company.address.postalCode}
             </span>
+          </div>
+          <div className={styles.contactRow}>
+            <span className={styles.contactLabel}>Company Details</span>
+            <span>Reg: {company.registrationNumber}</span>
+            <span>Tax: {company.taxNumber}</span>
+          </div>
+          <div className={styles.contactRow}>
+            <span className={styles.contactLabel}>Account Info</span>
+            <span>Status: {getAccountStatusLabel(company.status)}</span>
+            <span>Type: {getAccountTypeLabel(company.accountType)}</span>
           </div>
         </div>
 
         <div className={styles.proposalCard}>
           <h3 className={styles.proposalTitle}>Request a Proposal</h3>
-          <p className={styles.proposalHint}>
-            This form isn&apos;t wired up yet — swap in your real submission handler when ready.
-          </p>
+
+          <div className={styles.proposalGrid}>
+            <div className={styles.proposalField}>
+              <label htmlFor="fullName" className={styles.proposalLabel}>
+                Full Name
+              </label>
+              <input id="fullName" type="text" placeholder="John Doe" className={styles.proposalInput} />
+            </div>
+            <div className={styles.proposalField}>
+              <label htmlFor="companyField" className={styles.proposalLabel}>
+                Company
+              </label>
+              <input id="companyField" type="text" placeholder="Acme Corp" className={styles.proposalInput} />
+            </div>
+          </div>
+
+          <div className={styles.proposalField}>
+            <label htmlFor="projectType" className={styles.proposalLabel}>
+              Project Type
+            </label>
+            <select id="projectType" className={styles.proposalInput}>
+              <option>Commercial Structural</option>
+              <option>Residential</option>
+              <option>Industrial</option>
+            </select>
+          </div>
+
+          <div className={styles.proposalField}>
+            <label htmlFor="projectDescription" className={styles.proposalLabel}>
+              Project Description
+            </label>
+            <textarea
+              id="projectDescription"
+              placeholder="Tell us about your project requirements..."
+              className={styles.proposalTextarea}
+            />
+          </div>
+
+          <button type="button" className={styles.submitButton}>
+            Submit Proposal Request
+          </button>
         </div>
       </section>
     </div>

@@ -1,3 +1,5 @@
+import { AccountStatus, AccountType } from './enums';
+
 export interface Address {
   streetAddress: string;
   suburb: string;
@@ -14,6 +16,8 @@ export interface CompanyProfile {
   address: Address;
   registrationNumber: string;
   taxNumber: string;
+  status: AccountStatus;
+  accountType: AccountType;
   category: string;
   rating: number;
   about: string;

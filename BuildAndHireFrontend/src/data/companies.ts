@@ -1,4 +1,5 @@
 import type { CompanyProfile } from '../types/company';
+import { AccountStatus, AccountType } from '../types/enums';
 
 export const companies: CompanyProfile[] = [
   {
@@ -8,13 +9,15 @@ export const companies: CompanyProfile[] = [
     phone: '+1 (555) 890-4421',
     address: {
       streetAddress: '1280 Industrial Pkwy',
-      suburb: 'Denver District',
+      suburb: 'LoDo',
       city: 'Denver',
-      province: 'CO',
-      postalCode: 8022,
+      province: 'Colorado',
+      postalCode: 80202,
     },
-    registrationNumber: '1234567890',
-    taxNumber: '0987654321',
+    registrationNumber: '2012987654',
+    taxNumber: '1234567890',
+    status: AccountStatus.Active,
+    accountType: AccountType.Company,
     category: 'Industrial',
     rating: 4.9,
     about:
@@ -33,11 +36,13 @@ export const companies: CompanyProfile[] = [
       streetAddress: '48 Kiln Row',
       suburb: 'Foundry Quarter',
       city: 'Denver',
-      province: 'CO',
-      postalCode: 8014,
+      province: 'Colorado',
+      postalCode: 80140,
     },
     registrationNumber: '2345678901',
     taxNumber: '1098765432',
+    status: AccountStatus.Active,
+    accountType: AccountType.Company,
     category: 'Residential',
     rating: 4.8,
     about:
@@ -56,11 +61,13 @@ export const companies: CompanyProfile[] = [
       streetAddress: '77 Greenline Ave',
       suburb: 'Riverside',
       city: 'Denver',
-      province: 'CO',
-      postalCode: 8033,
+      province: 'Colorado',
+      postalCode: 80330,
     },
     registrationNumber: '3456789012',
     taxNumber: '2109876543',
+    status: AccountStatus.Pending,
+    accountType: AccountType.Company,
     category: 'Commercial',
     rating: 5.0,
     about:
