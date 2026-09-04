@@ -127,7 +127,7 @@ export default function QuoteReview() {
                 <span className={styles.paymentLabel}>Select Payment Method</span>
 
                 <div className={styles.paymentOptions}>
-                  <label
+                  {/* <label
                     className={`${styles.paymentOption} ${paymentMethod === 'eft' ? styles.paymentOptionActive : ''}`}
                   >
                     <input
@@ -137,8 +137,8 @@ export default function QuoteReview() {
                       checked={paymentMethod === 'eft'}
                       onChange={() => setPaymentMethod('eft')}
                     />
-                    🏦 EFT / Bank Transfer
-                  </label>
+                     EFT / Bank Transfer
+                  </label> */}
                   <label
                     className={`${styles.paymentOption} ${paymentMethod === 'card' ? styles.paymentOptionActive : ''}`}
                   >
@@ -149,9 +149,9 @@ export default function QuoteReview() {
                       checked={paymentMethod === 'card'}
                       onChange={() => setPaymentMethod('card')}
                     />
-                    💳 Credit / Debit Card
+                     Credit / Debit Card
                   </label>
-                  <label
+                  {/* <label
                     className={`${styles.paymentOption} ${paymentMethod === 'paypal' ? styles.paymentOptionActive : ''}`}
                   >
                     <input
@@ -161,8 +161,8 @@ export default function QuoteReview() {
                       checked={paymentMethod === 'paypal'}
                       onChange={() => setPaymentMethod('paypal')}
                     />
-                    💰 PayPal
-                  </label>
+                     PayPal
+                  </label> */}
                 </div>
 
                 <button type="button" className={styles.acceptButton} onClick={handleAcceptQuote}>

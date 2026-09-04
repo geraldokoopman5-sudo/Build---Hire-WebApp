@@ -5,6 +5,7 @@ import Marketplace from './pages/Marketplace/Marketplace';
 import CompanyProfile from './pages/CompanyProfile/ComapanyProfile';
 import QuoteReview from './pages/QuoteReview/QuoteReview';
 import CompanyJobs from './pages/CompanyJobs/CompanyJobs';
+import CompanyWorkforce from './pages/CompanyWorkforce/CompanyWorkforce';
 import './theme/theme.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/companies/:id" element={<CompanyProfile />} />
         <Route path="/quotes/:id" element={<QuoteReview />} />
         <Route path="/company/jobs" element={<CompanyJobs />} />
+        <Route path="/company/workforce" element={<CompanyWorkforce />} />
       </Routes>
     </BrowserRouter>
   );

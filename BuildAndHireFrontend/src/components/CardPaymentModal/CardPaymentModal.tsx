@@ -66,7 +66,7 @@ export default function CardPaymentModal({ amount, onClose, onSuccess }: CardPay
 
         <div className={styles.cardVisual}>
           <div className={styles.cardTopRow}>
-            <span className={styles.chipIcon} aria-hidden="true">📶</span>
+            <span className={styles.chipIcon} aria-hidden="true">Build And Hire</span>
             <span className={styles.cardBrand}>VISA</span>
           </div>
           <div className={styles.cardNumberDisplay}>{maskedNumber}</div>
