@@ -4,6 +4,7 @@ import SignUp from './pages/SignUp/SignUp';
 import Marketplace from './pages/Marketplace/Marketplace';
 import CompanyProfile from './pages/CompanyProfile/ComapanyProfile';
 import QuoteReview from './pages/QuoteReview/QuoteReview';
+import CompanyJobs from './pages/CompanyJobs/CompanyJobs';
 import './theme/theme.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/companies/:id" element={<CompanyProfile />} />
         <Route path="/quotes/:id" element={<QuoteReview />} />
+        <Route path="/company/jobs" element={<CompanyJobs />} />
       </Routes>
     </BrowserRouter>
   );

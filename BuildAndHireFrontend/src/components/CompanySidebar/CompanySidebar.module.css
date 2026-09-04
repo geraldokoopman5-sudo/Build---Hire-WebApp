@@ -1,0 +1,69 @@
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--color-neutral);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem 1rem;
+  min-height: calc(100vh - 65px);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+.navItem:hover {
+  background: rgba(84, 58, 50, 0.06);
+}
+
+.navItemActive {
+  background: rgba(195, 111, 67, 0.15);
+  color: var(--color-primary-dark);
+}
+
+.icon {
+  font-size: 1rem;
+}
+
+.settingsItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+.settingsItem:hover {
+  color: var(--color-primary-dark);
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+}

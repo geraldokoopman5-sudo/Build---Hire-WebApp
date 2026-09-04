@@ -48,3 +48,16 @@
     display: none;
   }
 }
+.rightGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0.25rem;
+}

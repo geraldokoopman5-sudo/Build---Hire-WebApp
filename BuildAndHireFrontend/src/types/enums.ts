@@ -16,3 +16,22 @@ export const AccountType = {
 } as const;
 
 export type AccountType = (typeof AccountType)[keyof typeof AccountType];
+
+export const PaymentMethod = {
+  EFT: 0,
+  Cash: 1,
+  Payshap: 2,
+  Paypal: 3,
+  DebitOrCreditCard: 4,
+} as const;
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
+
+export const PaymentEnum = {
+  Pending: 1,
+  Successful: 2,
+  Failed: 3,
+  Refunded: 4,
+} as const;
+
+export type PaymentEnum = (typeof PaymentEnum)[keyof typeof PaymentEnum];
