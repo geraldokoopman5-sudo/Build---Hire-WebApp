@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import SignUp from './pages/SignUp/SignUp';
+import Home from './pages/Home/Home';
 import Marketplace from './pages/Marketplace/Marketplace';
 import CompanyProfile from './pages/CompanyProfile/CompanyProfile';
 import QuoteReview from './pages/QuoteReview/QuoteReview';
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/companies/:id" element={<CompanyProfile />} />
         <Route path="/quotes/:id" element={<QuoteReview />} />

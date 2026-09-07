@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '.././AuthLayout/AuthLayout';
 import styles from './SignUp.module.css';
 import {
@@ -120,6 +120,7 @@ function validateAddress(values: AddressFormValues): FormErrors {
 }
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [role, setRole] = useState<SignUpRole | null>(null);
   const [step, setStep] = useState<SignUpStep>('role');
   const [customerValues, setCustomerValues] = useState<CustomerFormValues>(INITIAL_CUSTOMER);
@@ -231,6 +232,7 @@ export default function SignUp() {
       //   body: JSON.stringify(payload),
       // });
       console.log('Sign up payload:', payload);
+      navigate('/home');
     } finally {
       setIsSubmitting(false);
     }

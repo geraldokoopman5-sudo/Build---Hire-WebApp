@@ -53,7 +53,7 @@ export default function Login() {
     try {
       // TODO: replace with real sign-in request
       await new Promise((resolve) => setTimeout(resolve, 800));
-      navigate('/marketplace');
+      navigate('/home');
     } finally {
       setIsSubmitting(false);
     }
