@@ -41,6 +41,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize (Roles= $"{nameof(AccountType.Admin)},{nameof(AccountType.Customer)}")]
         public async Task<IActionResult>UpdateCustomerDetails(Guid id, UpdateCustomerDto dto)
         {
             var update = await _service.UpdateCustomerDto(id, dto);
@@ -49,6 +50,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = $"{nameof(AccountType.Admin)},{nameof(AccountType.Customer)}")]
         public async Task<IActionResult>DeleteCustomerAccount(Guid id)
         {
             var deleted = await _service.DeleteCustomerAccountAsync(id);

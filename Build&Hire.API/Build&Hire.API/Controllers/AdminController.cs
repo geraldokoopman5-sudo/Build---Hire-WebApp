@@ -16,6 +16,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = nameof(AdminEnums.SuperAdmin))]
         public async Task<IActionResult> GetAllAdmins()
         {
             var admins = await _service.GetAllAdminsAsync();
@@ -24,6 +25,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [Authorize(Roles = nameof(AdminEnums.SuperAdmin))]
         public async Task<IActionResult> GetAdminById(Guid id)
         {
             try
@@ -39,6 +41,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpPost]
+        [Authorize (Roles = nameof(AdminEnums.SuperAdmin))]
         public async Task<IActionResult> RegisterAdmin(AddAdmin dto)
         {
             var admin = await _service.RegisterAdminAsync(dto);
@@ -66,6 +69,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = nameof(AdminEnums.SuperAdmin))]
         public async Task<IActionResult> DeleteAdmin(Guid id)
         {
             try
