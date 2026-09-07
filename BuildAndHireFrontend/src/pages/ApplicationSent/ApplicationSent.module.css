@@ -1,0 +1,164 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-neutral);
+  padding: 2rem 1.5rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--color-white);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px rgba(84, 58, 50, 0.12);
+  text-align: center;
+}
+
+.iconCircle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  color: var(--color-secondary);
+  margin: 0 0 0.75rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+}
+
+.referenceBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-neutral);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.referenceLabel {
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+}
+
+.referenceValue {
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.nextStepsLabel {
+  display: block;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.stepList {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 0;
+  text-align: left;
+}
+
+.step {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.step::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.stepLast::before {
+  display: none;
+}
+
+.stepIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-neutral);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.stepIconActive {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.stepText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-top: 0.25rem;
+}
+
+.stepTitle {
+  font-weight: 700;
+  color: var(--color-secondary);
+  font-size: 0.95rem;
+}
+
+.stepTitlePending {
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  font-size: 0.95rem;
+}
+
+.stepDescription {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.viewJobsButton {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.9rem;
+  border-radius: 10px;
+  background: var(--color-primary-dark);
+  color: var(--color-white);
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  text-align: center;
+}
+
+.viewJobsButton:hover {
+  background: #8a4a2e;
+}

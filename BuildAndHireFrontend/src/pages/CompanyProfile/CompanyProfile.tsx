@@ -1,13 +1,45 @@
-import { useParams, Link } from 'react-router-dom';
+import { useState, type ChangeEvent } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import DashboardHeader from '../../components/DashboardHeader/DashboardHeader';
 import { companies } from '../../data/companies';
-
 import { getAccountStatusLabel, getAccountTypeLabel } from '../../utils/accountLabels';
+import { generateApplicationReference } from '../../utils/generateReference';
+import type { ProposalFormValues, ProposalFormErrors } from '../../types/proposal';
 import styles from './CompanyProfile.module.css';
+
+const INITIAL_VALUES: ProposalFormValues = {
+  fullName: '',
+  company: '',
+  projectType: 'Commercial Structural',
+  projectDescription: '',
+};
+
+function validateProposal(values: ProposalFormValues): ProposalFormErrors {
+  const errors: ProposalFormErrors = {};
+
+  if (!values.fullName.trim()) {
+    errors.fullName = 'Full name is required.';
+  }
+
+  if (!values.company.trim()) {
+    errors.company = 'Company is required.';
+  }
+
+  if (!values.projectDescription.trim()) {
+    errors.projectDescription = 'Project description is required.';
+  }
+
+  return errors;
+}
 
 export default function CompanyProfile() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const company = companies.find((entry) => entry.id === id);
+
+  const [values, setValues] = useState<ProposalFormValues>(INITIAL_VALUES);
+  const [errors, setErrors] = useState<ProposalFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   if (!company) {
     return (
@@ -22,6 +54,33 @@ export default function CompanyProfile() {
       </div>
     );
   }
+
+  const handleFieldChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ): void => {
+    const { name, value } = event.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitProposal = async (): Promise<void> => {
+    const validationErrors = validateProposal(values);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
+
+    setIsSubmitting(true);
+
+    // Simulated submission — no backend yet. Replace with a real API call, e.g.
+    // await fetch('/api/applications', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ companyId: company.id, ...values }),
+    // });
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    const reference = generateApplicationReference();
+    setIsSubmitting(false);
+    navigate(`/applications/${reference}/sent`);
+  };
 
   return (
     <div className={styles.page}>
@@ -118,13 +177,31 @@ export default function CompanyProfile() {
               <label htmlFor="fullName" className={styles.proposalLabel}>
                 Full Name
               </label>
-              <input id="fullName" type="text" placeholder="John Doe" className={styles.proposalInput} />
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                placeholder="John Doe"
+                value={values.fullName}
+                onChange={handleFieldChange}
+                className={styles.proposalInput}
+              />
+              {errors.fullName && <p className={styles.proposalErrorText}>{errors.fullName}</p>}
             </div>
             <div className={styles.proposalField}>
               <label htmlFor="companyField" className={styles.proposalLabel}>
                 Company
               </label>
-              <input id="companyField" type="text" placeholder="Acme Corp" className={styles.proposalInput} />
+              <input
+                id="companyField"
+                name="company"
+                type="text"
+                placeholder="Acme Corp"
+                value={values.company}
+                onChange={handleFieldChange}
+                className={styles.proposalInput}
+              />
+              {errors.company && <p className={styles.proposalErrorText}>{errors.company}</p>}
             </div>
           </div>
 
@@ -132,7 +209,13 @@ export default function CompanyProfile() {
             <label htmlFor="projectType" className={styles.proposalLabel}>
               Project Type
             </label>
-            <select id="projectType" className={styles.proposalInput}>
+            <select
+              id="projectType"
+              name="projectType"
+              value={values.projectType}
+              onChange={handleFieldChange}
+              className={styles.proposalInput}
+            >
               <option>Commercial Structural</option>
               <option>Residential</option>
               <option>Industrial</option>
@@ -145,13 +228,24 @@ export default function CompanyProfile() {
             </label>
             <textarea
               id="projectDescription"
+              name="projectDescription"
               placeholder="Tell us about your project requirements..."
+              value={values.projectDescription}
+              onChange={handleFieldChange}
               className={styles.proposalTextarea}
             />
+            {errors.projectDescription && (
+              <p className={styles.proposalErrorText}>{errors.projectDescription}</p>
+            )}
           </div>
 
-          <button type="button" className={styles.submitButton}>
-            Submit Proposal Request
+          <button
+            type="button"
+            className={styles.submitButton}
+            onClick={handleSubmitProposal}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting…' : 'Submit Proposal Request'}
           </button>
         </div>
       </section>

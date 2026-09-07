@@ -2,10 +2,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import SignUp from './pages/SignUp/SignUp';
 import Marketplace from './pages/Marketplace/Marketplace';
-import CompanyProfile from './pages/CompanyProfile/ComapanyProfile';
+import CompanyProfile from './pages/CompanyProfile/CompanyProfile';
 import QuoteReview from './pages/QuoteReview/QuoteReview';
 import CompanyJobs from './pages/CompanyJobs/CompanyJobs';
 import CompanyWorkforce from './pages/CompanyWorkforce/CompanyWorkforce';
+import ApplicationSent from './pages/ApplicationSent/ApplicationSent';
 import './theme/theme.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/quotes/:id" element={<QuoteReview />} />
         <Route path="/company/jobs" element={<CompanyJobs />} />
         <Route path="/company/workforce" element={<CompanyWorkforce />} />
+        <Route path="/applications/:reference/sent" element={<ApplicationSent />} />
       </Routes>
     </BrowserRouter>
   );

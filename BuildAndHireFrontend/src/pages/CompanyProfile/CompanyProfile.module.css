@@ -270,3 +270,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+.proposalErrorText {
+  color: #C0392B;
+  font-size: 0.75rem;
+  margin-top: 0.35rem;
+}
