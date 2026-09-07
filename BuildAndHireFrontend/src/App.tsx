@@ -7,6 +7,7 @@ import QuoteReview from './pages/QuoteReview/QuoteReview';
 import CompanyJobs from './pages/CompanyJobs/CompanyJobs';
 import CompanyWorkforce from './pages/CompanyWorkforce/CompanyWorkforce';
 import ApplicationSent from './pages/ApplicationSent/ApplicationSent';
+import AdminPortal from './pages/AdminPortal/AdminPortal';
 import './theme/theme.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/company/jobs" element={<CompanyJobs />} />
         <Route path="/company/workforce" element={<CompanyWorkforce />} />
         <Route path="/applications/:reference/sent" element={<ApplicationSent />} />
+        <Route path="/admin" element={<AdminPortal />} />
       </Routes>
     </BrowserRouter>
   );

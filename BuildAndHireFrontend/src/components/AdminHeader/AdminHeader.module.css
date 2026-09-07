@@ -1,0 +1,18 @@
+.brandBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 2rem;
+}
+
+.brandName {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--color-primary-dark);
+}
+
+.brandSubtitle {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
