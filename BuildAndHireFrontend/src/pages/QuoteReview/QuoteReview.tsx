@@ -20,7 +20,7 @@ import styles from './QuoteReview.module.css';
 export default function QuoteReview() {
   const { id } = useParams<{ id: string }>();
 
-  const quote = quotes.find((entry) => entry.id === id);
+ const quote = quotes.find((entry) => entry.id === id);
 
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethod>('card');

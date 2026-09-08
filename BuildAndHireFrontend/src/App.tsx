@@ -9,6 +9,7 @@ import CompanyJobs from './pages/CompanyJobs/CompanyJobs';
 import CompanyWorkforce from './pages/CompanyWorkforce/CompanyWorkforce';
 import ApplicationSent from './pages/ApplicationSent/ApplicationSent';
 import AdminPortal from './pages/AdminPortal/AdminPortal';
+import CompanyJobManagement from './pages/CompanyJobManagement/CompanyJobManagement';
 import './theme/theme.css';
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
         <Route path="/companies/:id" element={<CompanyProfile />} />
         <Route path="/quotes/:id" element={<QuoteReview />} />
         <Route path="/company/jobs" element={<CompanyJobs />} />
+        <Route path="/company/jobs/:jobId" element={<CompanyJobManagement />}
+        />
         <Route path="/company/workforce" element={<CompanyWorkforce />} />
         <Route
           path="/applications/:reference/sent"

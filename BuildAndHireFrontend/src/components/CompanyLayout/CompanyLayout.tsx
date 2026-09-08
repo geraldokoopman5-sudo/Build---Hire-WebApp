@@ -4,7 +4,6 @@ import CompanySidebar from '../CompanySidebar/CompanySidebar';
 import styles from './CompanyLayout.module.css';
 
 type CompanyNavLink =
-  | 'home'
   | 'my-jobs'
   | 'workforce'
   | 'browse-companies';

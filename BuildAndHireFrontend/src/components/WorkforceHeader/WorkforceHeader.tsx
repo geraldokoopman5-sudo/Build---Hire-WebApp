@@ -16,7 +16,7 @@ export default function WorkforceHeader({
         Build &amp; Hire
       </Link>
 
-      <nav className={styles.nav}>
+      <nav className={styles.nav} aria-label="Workforce navigation">
         <Link
           to="/marketplace"
           className={`${styles.navLink} ${
