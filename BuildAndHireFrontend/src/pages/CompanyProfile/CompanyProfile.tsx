@@ -84,7 +84,7 @@ export default function CompanyProfile() {
 
   return (
     <div className={styles.page}>
-      <DashboardHeader activeLink="projects" />
+      {/* <DashboardHeader activeLink="projects" /> */}
 
       <section
         className={styles.hero}

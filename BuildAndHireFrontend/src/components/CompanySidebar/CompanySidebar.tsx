@@ -38,37 +38,29 @@ export default function CompanySidebar({ activeLink }: CompanySidebarProps) {
           <span className={styles.brandName}>Build &amp; Hire</span>
         </div>
 
-        <nav className={styles.nav}>
-          <Link
-            to="/company/jobs"
-            className={`${styles.navItem} ${activeLink === 'home' ? styles.navItemActive : ''}`}
-          >
-            <span className={styles.icon} aria-hidden="true"></span>
-            Home
-          </Link>
-          <Link
-            to="/company/jobs"
-            className={`${styles.navItem} ${activeLink === 'my-jobs' ? styles.navItemActive : ''}`}
-          >
-            <span className={styles.icon} aria-hidden="true"></span>
-            My Jobs
-          </Link>
-          <Link
-            to="/company/workforce"
-            className={`${styles.navItem} ${activeLink === 'workforce' ? styles.navItemActive : ''}`}
-          >
-            <span className={styles.icon} aria-hidden="true"></span>
-            Workforce
-          </Link>
-          <Link
-            to="/marketplace"
-            className={`${styles.navItem} ${activeLink === 'browse-companies' ? styles.navItemActive : ''}`}
-          >
-            <span className={styles.icon} aria-hidden="true"></span>
-            Browse Companies
-          </Link>
-        </nav>
+       <nav className={styles.nav}>
+  <Link
+    to="/company/jobs"
+    className={`${styles.navItem} ${
+      activeLink === 'my-jobs' ? styles.navItemActive : ''
+    }`}
+  >
+    <span className={styles.icon} aria-hidden="true"></span>
+    My Jobs
+  </Link>
 
+  <Link
+    to="/company/workforce"
+    className={`${styles.navItem} ${
+      activeLink === 'workforce' ? styles.navItemActive : ''
+    }`}
+  >
+    <span className={styles.icon} aria-hidden="true"></span>
+    Workforce
+  </Link>
+
+
+</nav>
         <button
           type="button"
           className={styles.settingsItem}

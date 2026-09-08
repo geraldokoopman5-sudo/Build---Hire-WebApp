@@ -66,9 +66,9 @@ export default function ApplicationSent() {
           </li>
         </ol>
 
-        <Link to="/my-jobs" className={styles.viewJobsButton}>
-          View My Jobs
-        </Link>
+        <Link to="/home" className={styles.viewJobsButton}>
+        Back to Home
+      </Link>
       </div>
     </div>
   );

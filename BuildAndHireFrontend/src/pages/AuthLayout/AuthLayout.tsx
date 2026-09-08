@@ -29,10 +29,6 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       <footer className={styles.siteFooter}>
         <span>👑 Made by Crown 2026 👑</span>
         <nav className={styles.footerNav}>
-          <a href="/privacy">Privacy Policy</a>
-          <a href="/terms">Terms of Service</a>
-          <a href="/shipping">Shipping Info</a>
-          <a href="/contact">Contact Us</a>
         </nav>
       </footer>
     </div>

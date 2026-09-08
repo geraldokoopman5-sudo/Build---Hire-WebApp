@@ -173,42 +173,41 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className={styles.footer}>
-        <div className={styles.footerBrand}>
-          <span className={styles.footerLogo}>Build &amp; Hire</span>
-          <p className={styles.footerTagline}>
-            Connecting customers with construction companies, across residential and commercial
-            projects.
-          </p>
-        </div>
+     <footer className={styles.footer}>
+  <div className={styles.footerBrand}>
+    <span className={styles.footerLogo}>Build &amp; Hire</span>
 
-        <div className={styles.footerColumns}>
-          <div className={styles.footerColumn}>
-            <span className={styles.footerHeading}>Platform</span>
-            <Link to="/marketplace">Find Companies</Link>
-            <Link to="/marketplace">Post a Project</Link>
-            <Link to="/home">How It Works</Link>
-          </div>
-          <div className={styles.footerColumn}>
-            <span className={styles.footerHeading}>Companies</span>
-            <Link to="/signup">Join as a Company</Link>
-            <Link to="/company/jobs">Company Dashboard</Link>
-          </div>
-          <div className={styles.footerColumn}>
-            <span className={styles.footerHeading}>Company</span>
-            <Link to="/home">About</Link>
-            <Link to="/home">Contact</Link>
-          </div>
-        </div>
+    <p className={styles.footerTagline}>
+      Connecting customers with construction companies, across residential
+      and commercial projects.
+    </p>
+  </div>
 
-        <div className={styles.footerBottom}>
-          <span>© 2024 Build &amp; Hire. All rights reserved.</span>
-          <div className={styles.footerLegal}>
-            <Link to="/terms">Terms of Service</Link>
-            <Link to="/privacy">Privacy Policy</Link>
-          </div>
-        </div>
-      </footer>
+  <div className={styles.footerColumns}>
+    <div className={styles.footerColumn}>
+      <span className={styles.footerHeading}>Platform</span>
+      <span>Find Companies</span>
+      <span>Post a Project</span>
+      <span>How It Works</span>
+    </div>
+
+    <div className={styles.footerColumn}>
+      <span className={styles.footerHeading}>Companies</span>
+      <span>Join as a Company</span>
+      <span>Company Dashboard</span>
+    </div>
+
+    <div className={styles.footerColumn}>
+      <span className={styles.footerHeading}>Company</span>
+      <span>About</span>
+      <span>Contact</span>
+    </div>
+  </div>
+
+  <div className={styles.footerBottom}>
+    <span>© 2024 Build &amp; Hire. All rights reserved.</span>
+  </div>
+</footer>
     </div>
   );
 }

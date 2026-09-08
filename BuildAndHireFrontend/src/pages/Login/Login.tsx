@@ -110,20 +110,17 @@ export default function Login() {
             )}
           </div>
 
-          <div className={styles.rowBetween}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                name="rememberMe"
-                checked={values.rememberMe}
-                onChange={handleChange}
-              />
-              Remember me
-            </label>
-            <Link to="/forgot-password" className={styles.link}>
-              Forgot password?
-            </Link>
-          </div>
+        <div className={styles.rowBetween}>
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              name="rememberMe"
+              checked={values.rememberMe}
+              onChange={handleChange}
+            />
+            Remember me
+          </label>
+        </div>
 
           <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
             {isSubmitting ? 'Signing in…' : 'Sign In'}

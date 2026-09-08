@@ -30,7 +30,7 @@ export default function CompanyWorkforce() {
 
   return (
     <div className={styles.page}>
-      <WorkforceHeader activeLink="my-projects" />
+      <WorkforceHeader activeLink="find-talent" />
 
       <div className={styles.body}>
         <CompanySidebar activeLink="workforce" />

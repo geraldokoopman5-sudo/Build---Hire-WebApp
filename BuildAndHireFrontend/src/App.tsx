@@ -23,7 +23,10 @@ function App() {
         <Route path="/quotes/:id" element={<QuoteReview />} />
         <Route path="/company/jobs" element={<CompanyJobs />} />
         <Route path="/company/workforce" element={<CompanyWorkforce />} />
-        <Route path="/applications/:reference/sent" element={<ApplicationSent />} />
+        <Route
+          path="/applications/:reference/sent"
+          element={<ApplicationSent />}
+        />
         <Route path="/admin" element={<AdminPortal />} />
       </Routes>
     </BrowserRouter>
