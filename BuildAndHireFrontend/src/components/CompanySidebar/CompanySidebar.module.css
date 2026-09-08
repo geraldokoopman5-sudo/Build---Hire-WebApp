@@ -102,3 +102,26 @@
     display: none;
   }
 }
+
+.settingsItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  text-decoration: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.settingsItem:hover {
+  color: var(--color-primary-dark);
+}
