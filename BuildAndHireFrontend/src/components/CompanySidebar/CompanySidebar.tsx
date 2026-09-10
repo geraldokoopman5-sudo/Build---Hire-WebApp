@@ -20,6 +20,8 @@ const PLACEHOLDER_SETTINGS: CompanySettingsValues = {
   companyEmail: '',
   phone: '',
 };
+const COMPANY_SETTINGS_KEY =
+  'buildandhire.companySettings';
 
 export default function CompanySidebar({ activeLink }: CompanySidebarProps) {
   const navigate = useNavigate();
@@ -31,6 +33,46 @@ export default function CompanySidebar({ activeLink }: CompanySidebarProps) {
     setIsSettingsOpen(false);
     navigate('/');
   };
+
+  const defaultSettings = {
+  companyName: '',
+  companyEmail: '',
+  phone: '',
+};
+
+const storedSettings =
+  localStorage.getItem(
+    COMPANY_SETTINGS_KEY
+  );
+
+const initialSettings =
+  storedSettings
+    ? JSON.parse(storedSettings)
+    : defaultSettings;
+
+    <CompanySettingsModal
+  initialValues={initialSettings}
+  onClose={() =>
+    setIsSettingsOpen(false)
+  }
+  onSave={(values) => {
+    localStorage.setItem(
+      COMPANY_SETTINGS_KEY,
+      JSON.stringify(values)
+    );
+
+    setIsSettingsOpen(false);
+  }}
+  onDeleteAccount={() => {
+    localStorage.removeItem(
+      COMPANY_SETTINGS_KEY
+    );
+
+    logout();
+    setIsSettingsOpen(false);
+    navigate('/');
+  }}
+/>
 
   return (
     <aside className={styles.sidebar}>

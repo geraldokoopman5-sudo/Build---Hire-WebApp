@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 
 import JobsHeader from '../../components/JobsHeader/JobsHeader';
 import CardPaymentModal from '../../components/CardPaymentModal/CardPaymentModal';
-
+import RequestRevisionModal from '../../components/RequestRevisionModal/RequestRevisionModal';
 import { quotes } from '../../data/qoutes';
 import { formatCurrency, getQuoteTotal } from '../../utils/quoteMath';
 
@@ -30,14 +30,18 @@ export default function QuoteReview() {
 
   const [completedPayment, setCompletedPayment] =
     useState<Payment | null>(null);
+  const [isRevisionModalOpen, setIsRevisionModalOpen] =
+  useState<boolean>(false);
 
+const [revisionRequested, setRevisionRequested] =
+  useState<boolean>(false);
   /*
    * Quote does not exist
    */
   if (!quote) {
     return (
       <div className={styles.page}>
-        <JobsHeader activeLink="home" />
+        <JobsHeader activeLink="my-jobs" />
 
         <main className={styles.notFound}>
           <p>Quote not found.</p>
@@ -94,6 +98,25 @@ export default function QuoteReview() {
     setCompletedPayment(payment);
     setIsCardModalOpen(false);
   };
+
+  const handleRevisionSubmit = (
+  quoteId: string,
+  reason: string,
+  requestedChanges: string
+): void => {
+  /*
+   * Frontend-only for now.
+   * This will become the API request during integration.
+   */
+  console.log('Revision requested:', {
+    quoteId,
+    reason,
+    requestedChanges,
+  });
+
+  setRevisionRequested(true);
+  setIsRevisionModalOpen(false);
+};
 
   return (
     <div className={styles.page}>
@@ -239,17 +262,17 @@ export default function QuoteReview() {
                   Accept Quote &amp; Pay →
                 </button>
 
-                <button
+                                <button
                   type="button"
                   className={styles.revisionButton}
-                  onClick={() => {
-                    console.log(
-                      'Request revision clicked for quote:',
-                      quote.id
-                    );
-                  }}
+                  onClick={() =>
+                    setIsRevisionModalOpen(true)
+                  }
+                  disabled={revisionRequested}
                 >
-                  Request Revision
+                  {revisionRequested
+                    ? 'Revision Requested'
+                    : 'Request Revision'}
                 </button>
 
                 <p className={styles.termsText}>
@@ -269,6 +292,16 @@ export default function QuoteReview() {
           onSuccess={handleCardSuccess}
         />
       )}
+
+      {isRevisionModalOpen && (
+  <RequestRevisionModal
+    quoteId={quote.id}
+    onClose={() =>
+      setIsRevisionModalOpen(false)
+    }
+    onSubmit={handleRevisionSubmit}
+  />
+)}
     </div>
   );
 }

@@ -149,3 +149,14 @@
   font-weight: 700;
   cursor: pointer;
 }
+.inputError {
+  border-color: #b34d3c;
+}
+
+.errorText {
+  display: block;
+  margin-top: 0.25rem;
+  color: #b34d3c;
+  font-size: 0.72rem;
+  font-weight: 600;
+}

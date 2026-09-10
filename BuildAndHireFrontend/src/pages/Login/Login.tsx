@@ -1,14 +1,28 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from 'react';
+
+import {
+  Link,
+  useNavigate,
+} from 'react-router-dom';
 
 import AuthLayout from '../AuthLayout/AuthLayout';
 import styles from './Login.module.css';
-import type { LoginFormValues, LoginFormErrors } from './login.types';
+
+import type {
+  LoginFormValues,
+  LoginFormErrors,
+} from './login.types';
 
 import {
-  login,
+  AccountType,
+} from '../../types/enums';
+
+import {
   getPostLoginRoute,
-  InvalidCredentialsError,
 } from '../../utils/auth';
 
 const INITIAL_VALUES: LoginFormValues = {
@@ -17,29 +31,86 @@ const INITIAL_VALUES: LoginFormValues = {
   rememberMe: false,
 };
 
-function validate(values: LoginFormValues): LoginFormErrors {
+function validate(
+  values: LoginFormValues
+): LoginFormErrors {
   const errors: LoginFormErrors = {};
 
   if (!values.email.trim()) {
-    errors.email = 'Email address is required.';
+    errors.email =
+      'Email address is required.';
   } else if (
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+      values.email
+    )
   ) {
-    errors.email = 'Enter a valid email address.';
+    errors.email =
+      'Enter a valid email address.';
   }
 
   if (!values.password) {
-    errors.password = 'Password is required.';
+    errors.password =
+      'Password is required.';
   }
 
   return errors;
+}
+
+/*
+ * FRONTEND-ONLY DEVELOPMENT LOGIN
+ *
+ * This will be replaced by the real API
+ * authentication during backend integration.
+ */
+function getDevelopmentAccountType(
+  email: string
+): AccountType {
+  const normalizedEmail =
+    email.trim().toLowerCase();
+
+  /*
+   * Use these email patterns while testing:
+   *
+   * company@buildandhire.test
+   * admin@buildandhire.test
+   * anything-else@example.com → Customer
+   */
+  if (
+    normalizedEmail.includes('company')
+  ) {
+    return AccountType.Company;
+  }
+
+  if (
+    normalizedEmail.includes('admin')
+  ) {
+    return AccountType.Admin;
+  }
+
+  return AccountType.Customer;
+}
+
+function createDevelopmentSession(
+  accountType: AccountType
+): void {
+  localStorage.setItem(
+    'buildandhire.accessToken',
+    `dev-token-${crypto.randomUUID()}`
+  );
+
+  localStorage.setItem(
+    'buildandhire.accountType',
+    String(accountType)
+  );
 }
 
 export default function Login() {
   const navigate = useNavigate();
 
   const [values, setValues] =
-    useState<LoginFormValues>(INITIAL_VALUES);
+    useState<LoginFormValues>(
+      INITIAL_VALUES
+    );
 
   const [errors, setErrors] =
     useState<LoginFormErrors>({});
@@ -60,50 +131,31 @@ export default function Login() {
       checked,
     } = event.target;
 
-    setValues((prev) => ({
-      ...prev,
+    setValues((current) => ({
+      ...current,
       [name]:
         type === 'checkbox'
           ? checked
           : value,
     }));
 
-    // Clear the general login error once
-    // the user starts changing the form again.
-    if (submitError) {
-      setSubmitError('');
-    }
+    setSubmitError('');
 
-    // Clear field-specific error while typing.
-    if (
-      name === 'email' &&
-      errors.email
-    ) {
-      setErrors((prev) => ({
-        ...prev,
-        email: undefined,
-      }));
-    }
-
-    if (
-      name === 'password' &&
-      errors.password
-    ) {
-      setErrors((prev) => ({
-        ...prev,
-        password: undefined,
-      }));
-    }
+    setErrors((current) => ({
+      ...current,
+      [name]: undefined,
+    }));
   };
 
-  const handleSubmit = async (
+  const handleSubmit = (
     event: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  ): void => {
     event.preventDefault();
 
     setSubmitError('');
 
-    const validationErrors = validate(values);
+    const validationErrors =
+      validate(values);
 
     setErrors(validationErrors);
 
@@ -116,35 +168,38 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const response = await login(
-        values.email.trim(),
-        values.password
+      /*
+       * Determine the account type from the
+       * development email being used.
+       */
+      const accountType =
+        getDevelopmentAccountType(
+          values.email
+        );
+
+      /*
+       * Create a temporary local session.
+       */
+      createDevelopmentSession(
+        accountType
       );
 
+      /*
+       * Use the exact same routing logic
+       * as production authentication.
+       */
       const destination =
         getPostLoginRoute(
-          response.accountType
+          accountType
         );
 
       navigate(destination, {
         replace: true,
       });
-    } catch (error: unknown) {
-      if (
-        error instanceof InvalidCredentialsError
-      ) {
-        setSubmitError(
-          'Invalid email or password.'
-        );
-      } else if (
-        error instanceof Error
-      ) {
-        setSubmitError(error.message);
-      } else {
-        setSubmitError(
-          'Unable to sign you in. Please try again.'
-        );
-      }
+    } catch {
+      setSubmitError(
+        'Unable to sign you in. Please try again.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -197,20 +252,12 @@ export default function Login() {
               aria-invalid={Boolean(
                 errors.email
               )}
-              aria-describedby={
-                errors.email
-                  ? 'email-error'
-                  : undefined
-              }
               autoComplete="email"
               disabled={isSubmitting}
             />
 
             {errors.email && (
-              <p
-                id="email-error"
-                className={styles.errorText}
-              >
+              <p className={styles.errorText}>
                 {errors.email}
               </p>
             )}
@@ -239,20 +286,12 @@ export default function Login() {
               aria-invalid={Boolean(
                 errors.password
               )}
-              aria-describedby={
-                errors.password
-                  ? 'password-error'
-                  : undefined
-              }
               autoComplete="current-password"
               disabled={isSubmitting}
             />
 
             {errors.password && (
-              <p
-                id="password-error"
-                className={styles.errorText}
-              >
+              <p className={styles.errorText}>
                 {errors.password}
               </p>
             )}

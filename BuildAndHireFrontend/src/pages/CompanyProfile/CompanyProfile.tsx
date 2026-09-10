@@ -40,6 +40,7 @@ export default function CompanyProfile() {
   const [values, setValues] = useState<ProposalFormValues>(INITIAL_VALUES);
   const [errors, setErrors] = useState<ProposalFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
 
   if (!company) {
     return (
@@ -54,7 +55,7 @@ export default function CompanyProfile() {
       </div>
     );
   }
-
+  
   const handleFieldChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ): void => {
