@@ -1,12 +1,24 @@
-import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import {
+  useState,
+  type ChangeEvent,
+} from 'react';
 
+import {
+  Link,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
+
+import JobWorkers from '../../components/JobWorkers/JobWorkers';
 import CompanyLayout from '../../components/CompanyLayout/CompanyLayout';
+
 import { companyJobs } from '../../data/companyJobs';
+
 import {
   getJobStatusLabel,
   getPaymentStateLabel,
 } from '../../utils/jobLabels';
+
 import type { JobStatus } from '../../types/job';
 
 import styles from './CompanyJobManagement.module.css';
@@ -15,7 +27,9 @@ export default function CompanyJobManagement() {
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
 
-  const job = companyJobs.find((entry) => entry.id === jobId);
+  const job = companyJobs.find(
+    (entry) => entry.id === jobId
+  );
 
   const [status, setStatus] = useState<JobStatus>(
     job?.status ?? 'working'
@@ -31,14 +45,17 @@ export default function CompanyJobManagement() {
     return (
       <CompanyLayout activeSidebarLink="my-jobs">
         <div className={styles.notFound}>
-          <span className={styles.eyebrow}>Job Management</span>
+          <span className={styles.eyebrow}>
+            Job Management
+          </span>
 
           <h1 className={styles.notFoundTitle}>
             Job Not Found
           </h1>
 
           <p className={styles.notFoundText}>
-            The job you are trying to manage could not be found.
+            The job you are trying to manage could
+            not be found.
           </p>
 
           <Link
@@ -53,16 +70,18 @@ export default function CompanyJobManagement() {
   }
 
   const handleStatusChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: ChangeEvent<HTMLSelectElement>
   ): void => {
-    setStatus(event.target.value as JobStatus);
+    setStatus(
+      event.target.value as JobStatus
+    );
   };
 
   const handleSaveStatus = (): void => {
     /*
-     * TODO:
-     * Replace this local state update with the backend request
-     * once Jobs API integration is implemented.
+     * Frontend-only for now.
+     * This will become the backend status update
+     * once the Jobs API is connected.
      */
     console.log('Updating job status:', {
       jobId: job.id,
@@ -74,13 +93,28 @@ export default function CompanyJobManagement() {
 
   const handleCloseJob = (): void => {
     /*
-     * TODO:
-     * Replace this with the backend close-job request.
+     * Frontend-only for now.
+     * This will become the backend close-job request.
      */
     console.log('Closing job:', job.id);
 
     setStatus('unavailable');
     setIsClosingJob(false);
+  };
+
+  const handleViewApplications = (): void => {
+    navigate('/company/applications');
+  };
+
+  const handleViewPayment = (): void => {
+    /*
+     * Payment functionality will be implemented
+     * during the payment step.
+     */
+    console.log(
+      'View payment for job:',
+      job.id
+    );
   };
 
   return (
@@ -103,8 +137,8 @@ export default function CompanyJobManagement() {
           </h1>
 
           <p className={styles.subtitle}>
-            Review the job details and manage the current
-            project.
+            Review the job details and manage
+            the current project.
           </p>
         </div>
 
@@ -119,6 +153,7 @@ export default function CompanyJobManagement() {
 
       <div className={styles.layout}>
         <main className={styles.mainColumn}>
+          {/* JOB DETAILS */}
           <section className={styles.card}>
             <div className={styles.cardHeader}>
               <div>
@@ -169,7 +204,9 @@ export default function CompanyJobManagement() {
                 </span>
 
                 <span className={styles.detailValue}>
-                  {getPaymentStateLabel(job.paymentState)}
+                  {getPaymentStateLabel(
+                    job.paymentState
+                  )}
                 </span>
               </div>
 
@@ -205,6 +242,7 @@ export default function CompanyJobManagement() {
             </div>
           </section>
 
+          {/* JOB ACTIONS */}
           <section className={styles.card}>
             <div className={styles.cardHeader}>
               <div>
@@ -222,13 +260,17 @@ export default function CompanyJobManagement() {
               <button
                 type="button"
                 className={styles.actionButton}
-                onClick={() => setIsChangingStatus(true)}
+                onClick={() =>
+                  setIsChangingStatus(true)
+                }
               >
                 <span className={styles.actionTitle}>
                   Change Status
                 </span>
 
-                <span className={styles.actionDescription}>
+                <span
+                  className={styles.actionDescription}
+                >
                   Update the current job status.
                 </span>
               </button>
@@ -244,7 +286,9 @@ export default function CompanyJobManagement() {
                   Manage Workers
                 </span>
 
-                <span className={styles.actionDescription}>
+                <span
+                  className={styles.actionDescription}
+                >
                   Open the workforce management area.
                 </span>
               </button>
@@ -252,43 +296,39 @@ export default function CompanyJobManagement() {
               <button
                 type="button"
                 className={styles.actionButton}
-                onClick={() => {
-                  console.log(
-                    'View applications for job:',
-                    job.id
-                  );
-                }}
+                onClick={handleViewApplications}
               >
                 <span className={styles.actionTitle}>
                   View Applications
                 </span>
 
-                <span className={styles.actionDescription}>
-                  Review people who applied to this job.
+                <span
+                  className={styles.actionDescription}
+                >
+                  Review job applications for your
+                  company.
                 </span>
               </button>
 
               <button
                 type="button"
                 className={styles.actionButton}
-                onClick={() => {
-                  console.log(
-                    'View payment for job:',
-                    job.id
-                  );
-                }}
+                onClick={handleViewPayment}
               >
                 <span className={styles.actionTitle}>
                   View Payment
                 </span>
 
-                <span className={styles.actionDescription}>
+                <span
+                  className={styles.actionDescription}
+                >
                   Review payment information for this job.
                 </span>
               </button>
             </div>
           </section>
 
+          {/* WORKERS */}
           <section className={styles.card}>
             <div className={styles.cardHeader}>
               <div>
@@ -302,28 +342,10 @@ export default function CompanyJobManagement() {
               </div>
             </div>
 
-            <div className={styles.emptyState}>
-              <h3 className={styles.emptyStateTitle}>
-                Worker assignments will appear here
-              </h3>
-
-              <p className={styles.emptyStateText}>
-                Once the backend is connected, this section
-                will show the workers assigned to this job.
-              </p>
-
-              <button
-                type="button"
-                className={styles.secondaryButton}
-                onClick={() =>
-                  navigate('/company/workforce')
-                }
-              >
-                Manage Workforce
-              </button>
-            </div>
+            <JobWorkers jobId={job.id} />
           </section>
 
+          {/* APPLICATIONS */}
           <section className={styles.card}>
             <div className={styles.cardHeader}>
               <div>
@@ -339,24 +361,19 @@ export default function CompanyJobManagement() {
 
             <div className={styles.emptyState}>
               <h3 className={styles.emptyStateTitle}>
-                Applications will appear here
+                Review Company Applications
               </h3>
 
               <p className={styles.emptyStateText}>
-                This area will display customer or worker
-                applications connected to this job once the
-                API is integrated.
+                Open the applications area to review
+                jobs and requests associated with
+                your company.
               </p>
 
               <button
                 type="button"
                 className={styles.secondaryButton}
-                onClick={() =>
-                  console.log(
-                    'Applications requested for:',
-                    job.id
-                  )
-                }
+                onClick={handleViewApplications}
               >
                 View Applications
               </button>
@@ -364,7 +381,9 @@ export default function CompanyJobManagement() {
           </section>
         </main>
 
+        {/* RIGHT SIDE */}
         <aside className={styles.sideColumn}>
+          {/* PAYMENT */}
           <section className={styles.summaryCard}>
             <span className={styles.sectionEyebrow}>
               Financial Summary
@@ -397,27 +416,27 @@ export default function CompanyJobManagement() {
 
               <span
                 className={`${styles.paymentBadge} ${
-                  styles[`payment-${job.paymentState}`]
+                  styles[
+                    `payment-${job.paymentState}`
+                  ]
                 }`}
               >
-                {getPaymentStateLabel(job.paymentState)}
+                {getPaymentStateLabel(
+                  job.paymentState
+                )}
               </span>
             </div>
 
             <button
               type="button"
               className={styles.secondaryButton}
-              onClick={() =>
-                console.log(
-                  'Payment details requested for:',
-                  job.id
-                )
-              }
+              onClick={handleViewPayment}
             >
               View Payment Details
             </button>
           </section>
 
+          {/* CLOSE JOB */}
           <section className={styles.dangerCard}>
             <span className={styles.sectionEyebrow}>
               Job Controls
@@ -428,15 +447,16 @@ export default function CompanyJobManagement() {
             </h2>
 
             <p className={styles.dangerText}>
-              Closing this job will mark it as unavailable.
-              You can replace this with your final backend
-              status once the API is connected.
+              Closing this job will mark it as
+              unavailable.
             </p>
 
             <button
               type="button"
               className={styles.dangerButton}
-              onClick={() => setIsClosingJob(true)}
+              onClick={() =>
+                setIsClosingJob(true)
+              }
               disabled={status === 'unavailable'}
             >
               {status === 'unavailable'
@@ -447,12 +467,15 @@ export default function CompanyJobManagement() {
         </aside>
       </div>
 
+      {/* STATUS MODAL */}
       {isChangingStatus && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
               <div>
-                <span className={styles.sectionEyebrow}>
+                <span
+                  className={styles.sectionEyebrow}
+                >
                   Job Status
                 </span>
 
@@ -464,7 +487,9 @@ export default function CompanyJobManagement() {
               <button
                 type="button"
                 className={styles.closeButton}
-                onClick={() => setIsChangingStatus(false)}
+                onClick={() =>
+                  setIsChangingStatus(false)
+                }
                 aria-label="Close status dialog"
               >
                 ×
@@ -501,7 +526,9 @@ export default function CompanyJobManagement() {
               <button
                 type="button"
                 className={styles.cancelButton}
-                onClick={() => setIsChangingStatus(false)}
+                onClick={() =>
+                  setIsChangingStatus(false)
+                }
               >
                 Cancel
               </button>
@@ -518,12 +545,15 @@ export default function CompanyJobManagement() {
         </div>
       )}
 
+      {/* CLOSE JOB MODAL */}
       {isClosingJob && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
               <div>
-                <span className={styles.sectionEyebrow}>
+                <span
+                  className={styles.sectionEyebrow}
+                >
                   Confirmation
                 </span>
 
@@ -535,7 +565,9 @@ export default function CompanyJobManagement() {
               <button
                 type="button"
                 className={styles.closeButton}
-                onClick={() => setIsClosingJob(false)}
+                onClick={() =>
+                  setIsClosingJob(false)
+                }
                 aria-label="Close confirmation dialog"
               >
                 ×
@@ -543,16 +575,19 @@ export default function CompanyJobManagement() {
             </div>
 
             <p className={styles.modalText}>
-              This will mark "{job.title}" as unavailable.
-              The backend will handle the permanent status
-              change once integration is complete.
+              This will mark "{job.title}" as
+              unavailable. The change is currently
+              local and will be persisted by the
+              backend during integration.
             </p>
 
             <div className={styles.modalActions}>
               <button
                 type="button"
                 className={styles.cancelButton}
-                onClick={() => setIsClosingJob(false)}
+                onClick={() =>
+                  setIsClosingJob(false)
+                }
               >
                 Cancel
               </button>

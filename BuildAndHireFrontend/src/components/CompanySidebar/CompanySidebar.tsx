@@ -6,8 +6,10 @@ import CompanySettingsModal, {
 import { logout } from '../../utils/auth';
 import styles from './CompanySidebar.module.css';
 
-type CompanyNavLink = 'home' | 'my-jobs' | 'workforce' | 'browse-companies';
-
+type CompanyNavLink =
+  | 'my-jobs'
+  | 'workforce'
+  | 'applications';
 interface CompanySidebarProps {
   activeLink?: CompanyNavLink;
 }
@@ -59,6 +61,17 @@ export default function CompanySidebar({ activeLink }: CompanySidebarProps) {
     Workforce
   </Link>
 
+<Link
+  to="/company/applications"
+  className={`${styles.navItem} ${
+    activeLink === 'applications'
+      ? styles.navItemActive
+      : ''
+  }`}
+>
+  <span className={styles.icon} aria-hidden="true"></span>
+  Applications
+</Link>
 
 </nav>
         <button

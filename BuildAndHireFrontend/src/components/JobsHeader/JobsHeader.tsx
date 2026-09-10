@@ -1,17 +1,27 @@
 import { Link } from 'react-router-dom';
+
 import styles from './JobsHeader.module.css';
 
-type JobsNavLink = 'home' | 'browse-companies';
+type JobsNavLink =
+  | 'home'
+  | 'browse-companies'
+  | 'my-jobs';
 
 interface JobsHeaderProps {
   activeLink?: JobsNavLink;
   avatarUrl?: string;
 }
 
-export default function JobsHeader({ activeLink, avatarUrl }: JobsHeaderProps) {
+export default function JobsHeader({
+  activeLink,
+  avatarUrl,
+}: JobsHeaderProps) {
   return (
     <header className={styles.header}>
-      <Link to="/marketplace" className={styles.logo}>
+      <Link
+        to="/home"
+        className={styles.logo}
+      >
         Build &amp; Hire
       </Link>
 
@@ -19,7 +29,9 @@ export default function JobsHeader({ activeLink, avatarUrl }: JobsHeaderProps) {
         <Link
           to="/home"
           className={`${styles.navLink} ${
-            activeLink === 'home' ? styles.navLinkActive : ''
+            activeLink === 'home'
+              ? styles.navLinkActive
+              : ''
           }`}
         >
           Home
@@ -28,10 +40,23 @@ export default function JobsHeader({ activeLink, avatarUrl }: JobsHeaderProps) {
         <Link
           to="/marketplace"
           className={`${styles.navLink} ${
-            activeLink === 'browse-companies' ? styles.navLinkActive : ''
+            activeLink === 'browse-companies'
+              ? styles.navLinkActive
+              : ''
           }`}
         >
           Browse Companies
+        </Link>
+
+        <Link
+          to="/my-jobs"
+          className={`${styles.navLink} ${
+            activeLink === 'my-jobs'
+              ? styles.navLinkActive
+              : ''
+          }`}
+        >
+          My Jobs
         </Link>
       </nav>
 

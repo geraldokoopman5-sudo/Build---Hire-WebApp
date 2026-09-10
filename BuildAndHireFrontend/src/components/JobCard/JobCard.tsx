@@ -15,18 +15,15 @@ interface JobCardProps {
 export default function JobCard({ job }: JobCardProps) {
   const navigate = useNavigate();
 
-  const isUnavailable = job.status === 'unavailable';
+  const isUnavailable =
+    job.status === 'unavailable';
 
   const handleManageJob = (): void => {
     navigate(`/company/jobs/${job.id}`);
   };
 
-  const handleViewJob = (): void => {
-    navigate(`/company/jobs/${job.id}`);
-  };
-
   return (
-    <div className={styles.card}>
+    <article className={styles.card}>
       <div className={styles.topRow}>
         <span
           className={`${styles.statusBadge} ${
@@ -35,14 +32,6 @@ export default function JobCard({ job }: JobCardProps) {
         >
           {getJobStatusLabel(job.status)}
         </span>
-
-        <button
-          type="button"
-          className={styles.menuButton}
-          aria-label="More options"
-        >
-          ⋮
-        </button>
       </div>
 
       <h3 className={styles.title}>
@@ -53,10 +42,13 @@ export default function JobCard({ job }: JobCardProps) {
         {job.description}
       </p>
 
-      <p className={styles.meta}>
-        {job.dateRange} &nbsp;&nbsp; $
-        {job.quoteAmount.toLocaleString()} Quote
-      </p>
+      <div className={styles.meta}>
+        <span>{job.dateRange}</span>
+
+        <span>
+          ${job.quoteAmount.toLocaleString()} Quote
+        </span>
+      </div>
 
       <div className={styles.paymentBox}>
         <div className={styles.paymentTopRow}>
@@ -84,30 +76,19 @@ export default function JobCard({ job }: JobCardProps) {
         </div>
       </div>
 
-      <div className={styles.actionRow}>
-        <button
-          type="button"
-          className={`${styles.manageButton} ${
-            isUnavailable
-              ? styles.manageButtonDisabled
-              : ''
-          }`}
-          disabled={isUnavailable}
-          onClick={handleManageJob}
-        >
-          Manage Job
-        </button>
-
-        <button
-          type="button"
-          className={styles.viewButton}
-          onClick={handleViewJob}
-          aria-label="View job"
-          title="View job"
-        >
-          →
-        </button>
-      </div>
-    </div>
+      <button
+        type="button"
+        className={`${styles.manageButton} ${
+          isUnavailable
+            ? styles.manageButtonClosed
+            : ''
+        }`}
+        onClick={handleManageJob}
+      >
+        {isUnavailable
+          ? 'View Job'
+          : 'Manage Job'}
+      </button>
+    </article>
   );
 }

@@ -1,0 +1,95 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.worker {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-white);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  color: var(--color-white);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.identity h3 {
+  margin: 0 0 0.2rem;
+  color: var(--color-secondary);
+  font-size: 0.85rem;
+}
+
+.identity span {
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+}
+
+.status {
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  background: var(--color-neutral);
+  color: var(--color-secondary);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.removeButton {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: var(--color-white);
+  color: #8a3f32;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.removeButton:hover {
+  border-color: #8a3f32;
+}
+
+.empty {
+  padding: 2rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.empty h3 {
+  margin: 0 0 0.4rem;
+  color: var(--color-secondary);
+}
+
+.empty p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 700px) {
+  .worker {
+    grid-template-columns: 1fr;
+  }
+}

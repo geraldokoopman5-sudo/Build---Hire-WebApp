@@ -167,3 +167,112 @@
   color: var(--color-primary-dark);
   cursor: pointer;
 }
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1.1rem;
+  color: var(--color-secondary);
+  font-size: 0.8rem;
+}
+
+.paymentBox {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: var(--color-neutral);
+}
+
+.paymentTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.paymentLabel {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.paymentBadge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.payment-successful {
+  background: var(--color-primary-dark);
+  color: var(--color-white);
+}
+
+.payment-pending,
+.payment-on-hold {
+  background: #f4c9b8;
+  color: var(--color-primary-dark);
+}
+
+.paymentBottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.amountPaid {
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+.paymentNote {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.manageButton {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-secondary);
+  color: var(--color-white);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.manageButton:hover {
+  background: #3f2b25;
+}
+
+.manageButtonClosed {
+  background: var(--color-primary-dark);
+}
+
+.manageButtonClosed:hover {
+  background: var(--color-secondary);
+}
+
+@media (max-width: 600px) {
+  .meta,
+  .paymentBottomRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .paymentNote {
+    text-align: left;
+  }
+}

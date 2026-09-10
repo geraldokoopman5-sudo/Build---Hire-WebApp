@@ -6,7 +6,7 @@ import styles from './CompanyLayout.module.css';
 type CompanyNavLink =
   | 'my-jobs'
   | 'workforce'
-  | 'browse-companies';
+  | 'applications';
 
 interface CompanyLayoutProps {
   activeSidebarLink?: CompanyNavLink;

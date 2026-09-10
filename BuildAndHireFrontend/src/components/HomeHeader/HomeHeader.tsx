@@ -18,7 +18,12 @@ export default function HomeHeader() {
 
       <div className={styles.actions}>
         <Link to="/" className={styles.logInLink}>Log In</Link>
-        <Link to="/marketplace" className={styles.postButton}>Post a Project</Link>
+       <Link
+  to="/my-jobs/new"
+  className={styles.postButton}
+>
+  Post a Project
+</Link>
       </div>
     </header>
   );
