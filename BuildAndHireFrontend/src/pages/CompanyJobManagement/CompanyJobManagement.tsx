@@ -77,45 +77,18 @@ export default function CompanyJobManagement() {
     );
   };
 
-  const handleSaveStatus = (): void => {
-    /*
-     * Frontend-only for now.
-     * This will become the backend status update
-     * once the Jobs API is connected.
-     */
-    console.log('Updating job status:', {
-      jobId: job.id,
-      status,
-    });
-
-    setIsChangingStatus(false);
-  };
-
-  const handleCloseJob = (): void => {
-    /*
-     * Frontend-only for now.
-     * This will become the backend close-job request.
-     */
-    console.log('Closing job:', job.id);
-
-    setStatus('unavailable');
-    setIsClosingJob(false);
-  };
+ const handleSaveStatus = (): void => {
+  setIsChangingStatus(false);
+};
+ const handleCloseJob = (): void => {
+  setStatus('unavailable');
+  setIsClosingJob(false);
+};
 
   const handleViewApplications = (): void => {
     navigate('/company/applications');
   };
 
-  const handleViewPayment = (): void => {
-    /*
-     * Payment functionality will be implemented
-     * during the payment step.
-     */
-    console.log(
-      'View payment for job:',
-      job.id
-    );
-  };
 
   return (
     <CompanyLayout activeSidebarLink="my-jobs">
@@ -310,21 +283,6 @@ export default function CompanyJobManagement() {
                 </span>
               </button>
 
-              <button
-                type="button"
-                className={styles.actionButton}
-                onClick={handleViewPayment}
-              >
-                <span className={styles.actionTitle}>
-                  View Payment
-                </span>
-
-                <span
-                  className={styles.actionDescription}
-                >
-                  Review payment information for this job.
-                </span>
-              </button>
             </div>
           </section>
 
@@ -426,14 +384,7 @@ export default function CompanyJobManagement() {
                 )}
               </span>
             </div>
-
-            <button
-              type="button"
-              className={styles.secondaryButton}
-              onClick={handleViewPayment}
-            >
-              View Payment Details
-            </button>
+            
           </section>
 
           {/* CLOSE JOB */}

@@ -1,140 +1,242 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {
+  useEffect,
+  useState,
+} from 'react';
+
+import {
+  Link,
+  useNavigate,
+} from 'react-router-dom';
+
 import CompanySettingsModal, {
   type CompanySettingsValues,
 } from '../CompanySettingsModal/CompanySettingsModal';
-import { logout } from '../../utils/auth';
+
+import {
+  logout,
+} from '../../utils/auth';
+
 import styles from './CompanySidebar.module.css';
 
 type CompanyNavLink =
   | 'my-jobs'
   | 'workforce'
   | 'applications';
+
 interface CompanySidebarProps {
   activeLink?: CompanyNavLink;
 }
 
-// TODO: replace with the authenticated company's real details once auth is wired up.
-const PLACEHOLDER_SETTINGS: CompanySettingsValues = {
-  companyName: '',
-  companyEmail: '',
-  phone: '',
-};
 const COMPANY_SETTINGS_KEY =
   'buildandhire.companySettings';
 
-export default function CompanySidebar({ activeLink }: CompanySidebarProps) {
-  const navigate = useNavigate();
-  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
-
-  const handleDeleteAccount = (): void => {
-    // TODO: replace with a real DELETE /api/companies/:id call once auth is wired up.
-    logout();
-    setIsSettingsOpen(false);
-    navigate('/');
-  };
-
-  const defaultSettings = {
+const DEFAULT_SETTINGS: CompanySettingsValues = {
   companyName: '',
   companyEmail: '',
   phone: '',
 };
 
-const storedSettings =
-  localStorage.getItem(
-    COMPANY_SETTINGS_KEY
-  );
+function loadSettings():
+  CompanySettingsValues {
+  try {
+    const stored =
+      localStorage.getItem(
+        COMPANY_SETTINGS_KEY
+      );
 
-const initialSettings =
-  storedSettings
-    ? JSON.parse(storedSettings)
-    : defaultSettings;
+    if (!stored) {
+      return DEFAULT_SETTINGS;
+    }
 
-    <CompanySettingsModal
-  initialValues={initialSettings}
-  onClose={() =>
-    setIsSettingsOpen(false)
+    const parsed: unknown =
+      JSON.parse(stored);
+
+    if (
+      typeof parsed !== 'object' ||
+      parsed === null
+    ) {
+      return DEFAULT_SETTINGS;
+    }
+
+    const settings =
+      parsed as Partial<CompanySettingsValues>;
+
+    return {
+      companyName:
+        settings.companyName ?? '',
+      companyEmail:
+        settings.companyEmail ?? '',
+      phone:
+        settings.phone ?? '',
+    };
+  } catch {
+    return DEFAULT_SETTINGS;
   }
-  onSave={(values) => {
+}
+
+export default function CompanySidebar({
+  activeLink,
+}: CompanySidebarProps) {
+  const navigate = useNavigate();
+
+  const [
+    isSettingsOpen,
+    setIsSettingsOpen,
+  ] = useState<boolean>(false);
+
+  const [
+    settings,
+    setSettings,
+  ] =
+    useState<CompanySettingsValues>(
+      loadSettings
+    );
+
+  useEffect(() => {
     localStorage.setItem(
       COMPANY_SETTINGS_KEY,
-      JSON.stringify(values)
+      JSON.stringify(settings)
     );
+  }, [settings]);
 
+  const handleSaveSettings = (
+    values: CompanySettingsValues
+  ): void => {
+    setSettings(values);
     setIsSettingsOpen(false);
-  }}
-  onDeleteAccount={() => {
-    localStorage.removeItem(
-      COMPANY_SETTINGS_KEY
-    );
+  };
 
-    logout();
-    setIsSettingsOpen(false);
-    navigate('/');
-  }}
-/>
+  const handleDeleteAccount =
+    (): void => {
+      localStorage.removeItem(
+        COMPANY_SETTINGS_KEY
+      );
+
+      logout();
+
+      setIsSettingsOpen(false);
+
+      navigate('/');
+    };
 
   return (
-    <aside className={styles.sidebar}>
+    <aside
+      className={styles.sidebar}
+    >
       <div>
-        <div className={styles.brandBlock}>
-          <span className={styles.brandEyebrow}>Marketplace</span>
-          <span className={styles.brandName}>Build &amp; Hire</span>
+        <div
+          className={
+            styles.brandBlock
+          }
+        >
+          <span
+            className={
+              styles.brandEyebrow
+            }
+          >
+            Marketplace
+          </span>
+
+          <span
+            className={
+              styles.brandName
+            }
+          >
+            Build &amp; Hire
+          </span>
         </div>
 
-       <nav className={styles.nav}>
-  <Link
-    to="/company/jobs"
-    className={`${styles.navItem} ${
-      activeLink === 'my-jobs' ? styles.navItemActive : ''
-    }`}
-  >
-    <span className={styles.icon} aria-hidden="true"></span>
-    My Jobs
-  </Link>
+        <nav
+          className={styles.nav}
+        >
+          <Link
+            to="/company/jobs"
+            className={`${
+              styles.navItem
+            } ${
+              activeLink ===
+              'my-jobs'
+                ? styles.navItemActive
+                : ''
+            }`}
+          >
+            <span
+              className={styles.icon}
+              aria-hidden="true"
+            />
 
-  <Link
-    to="/company/workforce"
-    className={`${styles.navItem} ${
-      activeLink === 'workforce' ? styles.navItemActive : ''
-    }`}
-  >
-    <span className={styles.icon} aria-hidden="true"></span>
-    Workforce
-  </Link>
+            My Jobs
+          </Link>
 
-<Link
-  to="/company/applications"
-  className={`${styles.navItem} ${
-    activeLink === 'applications'
-      ? styles.navItemActive
-      : ''
-  }`}
->
-  <span className={styles.icon} aria-hidden="true"></span>
-  Applications
-</Link>
+          <Link
+            to="/company/workforce"
+            className={`${
+              styles.navItem
+            } ${
+              activeLink ===
+              'workforce'
+                ? styles.navItemActive
+                : ''
+            }`}
+          >
+            <span
+              className={styles.icon}
+              aria-hidden="true"
+            />
 
-</nav>
+            Workforce
+          </Link>
+
+          <Link
+            to="/company/applications"
+            className={`${
+              styles.navItem
+            } ${
+              activeLink ===
+              'applications'
+                ? styles.navItemActive
+                : ''
+            }`}
+          >
+            <span
+              className={styles.icon}
+              aria-hidden="true"
+            />
+
+            Applications
+          </Link>
+        </nav>
+
         <button
           type="button"
-          className={styles.settingsItem}
-          onClick={() => setIsSettingsOpen(true)}
+          className={
+            styles.settingsItem
+          }
+          onClick={() =>
+            setIsSettingsOpen(true)
+          }
         >
-          <span className={styles.icon} aria-hidden="true"></span>
+          <span
+            className={styles.icon}
+            aria-hidden="true"
+          />
+
           Settings
         </button>
       </div>
 
       {isSettingsOpen && (
         <CompanySettingsModal
-          initialValues={PLACEHOLDER_SETTINGS}
-          onClose={() => setIsSettingsOpen(false)}
-          onSave={(values) => {
-            // TODO: replace with a real PUT /api/companies/:id call once auth is wired up.
-            console.log('Updated company settings:', values);
-          }}
-          onDeleteAccount={handleDeleteAccount}
+          initialValues={settings}
+          onClose={() =>
+            setIsSettingsOpen(false)
+          }
+          onSave={
+            handleSaveSettings
+          }
+          onDeleteAccount={
+            handleDeleteAccount
+          }
         />
       )}
     </aside>

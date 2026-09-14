@@ -231,8 +231,8 @@ export default function SignUp() {
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify(payload),
       // });
-      console.log('Sign up payload:', payload);
-      navigate('/home');
+      void payload;
+      navigate('/');;
     } finally {
       setIsSubmitting(false);
     }
