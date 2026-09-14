@@ -22,6 +22,10 @@ import {
 } from '../../types/enums';
 
 import {
+  AdminRole,
+} from '../../types/admin';
+
+import {
   getPostLoginRoute,
 } from '../../utils/auth';
 
@@ -30,6 +34,11 @@ const INITIAL_VALUES: LoginFormValues = {
   password: '',
   rememberMe: false,
 };
+
+interface DevelopmentAccount {
+  accountType: AccountType;
+  adminRole: AdminRole | null;
+}
 
 function validate(
   values: LoginFormValues
@@ -61,37 +70,83 @@ function validate(
  *
  * This will be replaced by the real API
  * authentication during backend integration.
+ *
+ * Development accounts:
+ *
+ * superadmin@buildandhire.test
+ *   -> Admin account + SuperAdmin role
+ *
+ * admin@buildandhire.test
+ *   -> Admin account + Admin role
+ *
+ * company@buildandhire.test
+ *   -> Company account
+ *
+ * anything@example.com
+ *   -> Customer account
  */
-function getDevelopmentAccountType(
+function getDevelopmentAccount(
   email: string
-): AccountType {
+): DevelopmentAccount {
   const normalizedEmail =
     email.trim().toLowerCase();
 
   /*
-   * Use these email patterns while testing:
-   *
-   * company@buildandhire.test
-   * admin@buildandhire.test
-   * anything-else@example.com → Customer
+   * Super Admin must be checked before
+   * normal Admin because "superadmin"
+   * also contains "admin".
    */
   if (
-    normalizedEmail.includes('company')
+    normalizedEmail.includes(
+      'superadmin'
+    )
   ) {
-    return AccountType.Company;
+    return {
+      accountType:
+        AccountType.Admin,
+
+      adminRole:
+        AdminRole.SuperAdmin,
+    };
   }
 
   if (
-    normalizedEmail.includes('admin')
+    normalizedEmail.includes(
+      'admin'
+    )
   ) {
-    return AccountType.Admin;
+    return {
+      accountType:
+        AccountType.Admin,
+
+      adminRole:
+        AdminRole.Admin,
+    };
   }
 
-  return AccountType.Customer;
+  if (
+    normalizedEmail.includes(
+      'company'
+    )
+  ) {
+    return {
+      accountType:
+        AccountType.Company,
+
+      adminRole: null,
+    };
+  }
+
+  return {
+    accountType:
+      AccountType.Customer,
+
+    adminRole: null,
+  };
 }
 
 function createDevelopmentSession(
-  accountType: AccountType
+  account: DevelopmentAccount
 ): void {
   localStorage.setItem(
     'buildandhire.accessToken',
@@ -100,8 +155,26 @@ function createDevelopmentSession(
 
   localStorage.setItem(
     'buildandhire.accountType',
-    String(accountType)
+    String(account.accountType)
   );
+
+  /*
+   * Only Admin accounts need an AdminRole.
+   */
+  if (account.adminRole !== null) {
+    localStorage.setItem(
+      'buildandhire.adminRole',
+      String(account.adminRole)
+    );
+  } else {
+    /*
+     * Make sure an old admin role does not
+     * remain when switching to another account.
+     */
+    localStorage.removeItem(
+      'buildandhire.adminRole'
+    );
+  }
 }
 
 export default function Login() {
@@ -168,29 +241,17 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      /*
-       * Determine the account type from the
-       * development email being used.
-       */
-      const accountType =
-        getDevelopmentAccountType(
+      const account =
+        getDevelopmentAccount(
           values.email
         );
 
-      /*
-       * Create a temporary local session.
-       */
-      createDevelopmentSession(
-        accountType
-      );
+      createDevelopmentSession(account);
 
-      /*
-       * Use the exact same routing logic
-       * as production authentication.
-       */
       const destination =
         getPostLoginRoute(
-          accountType
+          account.accountType,
+          account.adminRole
         );
 
       navigate(destination, {

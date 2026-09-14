@@ -1,55 +1,75 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import {
+  Navigate,
+  Outlet,
+  useLocation,
+} from 'react-router-dom';
 
 import {
   AccountType,
 } from '../../types/enums';
 
 import {
+  AdminRole,
+  type AdminRole as AdminRoleType,
+} from '../../types/admin';
+
+import {
   getStoredAccessToken,
+  getStoredAccountType,
+  getStoredAdminRole,
 } from '../../utils/auth';
 
 interface ProtectedRouteProps {
-  allowedRoles?: AccountType[];
+  allowedAccountTypes?: AccountType[];
+  requiredAdminRole?: AdminRoleType;
 }
 
-function getStoredAccountType(): AccountType | null {
-  const stored = localStorage.getItem(
-    'buildandhire.accountType'
-  );
+/**
+ * Redirect the user to the dashboard that matches
+ * their current account.
+ */
+function getDashboardRoute(
+  accountType: AccountType,
+  adminRole: AdminRoleType | null
+): string {
+  switch (accountType) {
+    case AccountType.Company:
+      return '/company/jobs';
 
-  if (stored === null) {
-    return null;
+    case AccountType.Admin:
+      return adminRole === AdminRole.SuperAdmin
+        ? '/super-admin'
+        : '/admin';
+
+    case AccountType.Customer:
+    default:
+      return '/home';
   }
-
-  const accountType = Number(stored);
-
-  if (
-    accountType === AccountType.Customer ||
-    accountType === AccountType.Company ||
-    accountType === AccountType.Admin
-  ) {
-    return accountType;
-  }
-
-  return null;
 }
 
 export default function ProtectedRoute({
-  allowedRoles,
+  allowedAccountTypes,
+  requiredAdminRole,
 }: ProtectedRouteProps) {
-  const location = useLocation();
+  const location =
+    useLocation();
 
-  const token =
+  const accessToken =
     getStoredAccessToken();
 
   const accountType =
     getStoredAccountType();
 
+  const adminRole =
+    getStoredAdminRole();
+
   /*
-   * No authentication token:
-   * send the user back to login.
+   * No authenticated session.
    */
-  if (!token || accountType === null) {
+  if (
+    !accessToken ||
+    accountType === null
+  ) {
     return (
       <Navigate
         to="/"
@@ -62,38 +82,114 @@ export default function ProtectedRoute({
   }
 
   /*
-   * User is authenticated but does not
-   * have permission to access this route.
+   * The user's account type is not allowed
+   * to access this route.
    */
   if (
-    allowedRoles &&
-    !allowedRoles.includes(accountType)
+    allowedAccountTypes &&
+    !allowedAccountTypes.includes(
+      accountType
+    )
   ) {
-    switch (accountType) {
-      case AccountType.Company:
-        return (
-          <Navigate
-            to="/company/jobs"
-            replace
-          />
-        );
+    return (
+      <Navigate
+        to={getDashboardRoute(
+          accountType,
+          adminRole
+        )}
+        replace
+      />
+    );
+  }
 
-      case AccountType.Admin:
+  /*
+   * If this route requires an AdminRole,
+   * make sure the user is actually an Admin
+   * account and has sufficient privileges.
+   *
+   * AdminRole.Admin:
+   *   Admin        -> allowed
+   *   SuperAdmin   -> allowed
+   *
+   * AdminRole.SuperAdmin:
+   *   Admin        -> blocked
+   *   SuperAdmin   -> allowed
+   */
+  if (
+    requiredAdminRole !==
+    undefined
+  ) {
+    /*
+     * Only AccountType.Admin can have
+     * an AdminRole.
+     */
+    if (
+      accountType !==
+      AccountType.Admin
+    ) {
+      return (
+        <Navigate
+          to={getDashboardRoute(
+            accountType,
+            adminRole
+          )}
+          replace
+        />
+      );
+    }
+
+    /*
+     * A missing AdminRole is not valid
+     * for an Admin account.
+     */
+    if (adminRole === null) {
+      return (
+        <Navigate
+          to="/admin"
+          replace
+        />
+      );
+    }
+
+    /*
+     * Normal Admin routes accept both
+     * Admin and SuperAdmin.
+     */
+    if (
+      requiredAdminRole ===
+      AdminRole.Admin
+    ) {
+      if (
+        adminRole !==
+          AdminRole.Admin &&
+        adminRole !==
+          AdminRole.SuperAdmin
+      ) {
         return (
           <Navigate
             to="/admin"
             replace
           />
         );
+      }
+    }
 
-      case AccountType.Customer:
-      default:
-        return (
-          <Navigate
-            to="/home"
-            replace
-          />
-        );
+    /*
+     * Super Admin routes require the
+     * SuperAdmin role specifically.
+     */
+    if (
+      requiredAdminRole ===
+      AdminRole.SuperAdmin &&
+      adminRole !==
+        AdminRole.SuperAdmin
+    ) {
+      return (
+        <Navigate
+          to="/admin"
+          replace
+        />
+      );
     }
   }
 
