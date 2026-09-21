@@ -53,23 +53,29 @@ namespace BuildAndHire.Application.Services
 
         }
 
-        public async Task<JobDto> GetJobByIdAsync(Guid Id)
-        {
-            var job = await _repo.GetJobById(Id);
+        public async Task<JobDto?> GetJobByIdAsync(Guid Id)
+{
+    var job =
+        await _repo.GetJobById(Id);
 
-            return new JobDto
-            {
-                JobId = job.JobId,
-                JobDescription = job.JobDescription,
-                CompanyId = job.CompanyId,
-                CustomerId = job.CustomerId,
-                StartDate = job.StartDate,
-                Qoute = job.Qoute,
-                EndDate = job.EndDate,
-                Status = job.Status,
-                address = job.address,
-            };
-        }
+    if (job == null)
+    {
+        return null;
+    }
+
+    return new JobDto
+    {
+        JobId = job.JobId,
+        JobDescription = job.JobDescription,
+        CompanyId = job.CompanyId,
+        CustomerId = job.CustomerId,
+        StartDate = job.StartDate,
+        Qoute = job.Qoute,
+        EndDate = job.EndDate,
+        Status = job.Status,
+        address = job.address,
+    };
+}
 
         public async Task<RegisterJobDto> RegisterJobAsync(RegisterJobDto dto)
         {

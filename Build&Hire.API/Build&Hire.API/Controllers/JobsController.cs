@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Build_Hire.API.Controllers
@@ -14,43 +15,124 @@ namespace Build_Hire.API.Controllers
             _service = service;
         }
 
+        /*
+         * All authenticated users can view jobs.
+         *
+         * This supports the marketplace/customer/company
+         * browsing flow while we defer ownership checks
+         * to the later security pass.
+         */
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllJobs()
         {
-            var jobs = await _service.GetAllJobsAsync();
+            var jobs =
+                await _service.GetAllJobsAsync();
 
             return Ok(jobs);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetJobsById(Guid id)
+        /*
+         * All authenticated users can view a specific job.
+         */
+        [HttpGet("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetJobsById(
+            Guid id)
         {
-            var jobs = await _service.GetJobByIdAsync(id);
-            //if (id == null) return NotFound("No Jobs were found, wrong Id fn!!");
+            var job =
+                await _service.GetJobByIdAsync(id);
 
-            return Ok(jobs);
+            if (job == null)
+            {
+                return NotFound(
+                    "Job not found.");
+            }
+
+            return Ok(job);
         }
 
+        /*
+         * Only Customers can create jobs.
+         */
         [HttpPost]
-        public async Task<IActionResult> Registerjob(RegisterJobDto dto)
+        [Authorize(Roles = nameof(AccountType.Customer))]
+        public async Task<IActionResult> RegisterJob(
+            RegisterJobDto dto)
         {
-            var jobs = await _service.RegisterJobAsync(dto);
+            var job =
+                await _service.RegisterJobAsync(dto);
 
-            return CreatedAtAction(nameof(GetJobsById), new { id = jobs.JobId }, jobs);
+            return CreatedAtAction(
+                nameof(GetJobsById),
+                new { id = job.JobId },
+                job);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdatejobDetails(Guid id, UpdateJobDetailsDto dto)
+        /*
+         * Companies manage jobs.
+         *
+         * Admin and SuperAdmin can also update jobs
+         * for administrative purposes.
+         *
+         * SuperAdmin uses the AdminEnums.SuperAdmin
+         * role through the JWT.
+         */
+        [HttpPut("{id:guid}")]
+        [Authorize(
+            Roles =
+                nameof(AccountType.Company) +
+                "," +
+                nameof(AdminEnums.Admin) +
+                "," +
+                nameof(AdminEnums.SuperAdmin)
+        )]
+        public async Task<IActionResult> UpdateJobDetails(
+            Guid id,
+            UpdateJobDetailsDto dto)
         {
-            var jobs = await _service.UpdateJobDetailsAsync(id, dto);
-            return Ok(jobs);
+            var job =
+                await _service.UpdateJobDetailsAsync(
+                    id,
+                    dto);
+
+            if (job == null)
+            {
+                return NotFound(
+                    "Job not found.");
+            }
+
+            return Ok(job);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult>DeleteJob(Guid id)
+        /*
+         * Customers can cancel jobs.
+         *
+         * Admin and SuperAdmin can also remove jobs
+         * administratively.
+         */
+        [HttpDelete("{id:guid}")]
+        [Authorize(
+            Roles =
+                nameof(AccountType.Customer) +
+                "," +
+                nameof(AdminEnums.Admin) +
+                "," +
+                nameof(AdminEnums.SuperAdmin)
+        )]
+        public async Task<IActionResult> DeleteJob(
+            Guid id)
         {
-            var delete = await _service.DeleteJobAsync(id);
-            return Ok(delete);
+            var result =
+                await _service.DeleteJobAsync(id);
+
+            if (result == null)
+            {
+                return NotFound(
+                    "Job not found.");
+            }
+
+            return Ok(result);
         }
     }
 }
