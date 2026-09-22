@@ -1,5 +1,8 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -169,13 +172,14 @@ export function CustomerJobsProvider({
     return job;
   };
 
-  const getJobById = (
-    jobId: string
-  ): CustomerJob | undefined => {
-    return jobs.find(
-      (job) => job.jobId === jobId
-    );
-  };
+  const getJobById = useCallback(
+    (jobId: string): CustomerJob | undefined => {
+      return jobs.find(
+        (job) => job.jobId === jobId
+      );
+    },
+    [jobs]
+  );
 
   const value = useMemo(
     () => ({
@@ -183,7 +187,7 @@ export function CustomerJobsProvider({
       createJob,
       getJobById,
     }),
-    [jobs]
+    [jobs, getJobById]
   );
 
   return (

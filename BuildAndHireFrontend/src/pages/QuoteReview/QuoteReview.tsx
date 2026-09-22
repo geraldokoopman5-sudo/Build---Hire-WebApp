@@ -259,7 +259,7 @@ const [revisionRequested, setRevisionRequested] =
                   className={styles.acceptButton}
                   onClick={handleAcceptQuote}
                 >
-                  Accept Quote &amp; Pay →
+                  Accept Quote &amp; Simulate Payment →
                 </button>
 
                                 <button

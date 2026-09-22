@@ -1,5 +1,8 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -149,14 +152,15 @@ export function AdminManagementProvider({
     );
   };
 
-  const getAdminById = (
-    adminId: string
-  ): Admin | undefined => {
-    return admins.find(
-      (admin) =>
-        admin.adminId === adminId
-    );
-  };
+  const getAdminById = useCallback(
+    (adminId: string): Admin | undefined => {
+      return admins.find(
+        (admin) =>
+          admin.adminId === adminId
+      );
+    },
+    [admins]
+  );
 
   const value =
     useMemo<AdminManagementContextValue>(
@@ -167,7 +171,7 @@ export function AdminManagementProvider({
         deleteAdmin,
         getAdminById,
       }),
-      [admins]
+      [admins, getAdminById]
     );
 
   return (

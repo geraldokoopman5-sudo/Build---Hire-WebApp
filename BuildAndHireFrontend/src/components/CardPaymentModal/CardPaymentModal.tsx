@@ -60,9 +60,9 @@ export default function CardPaymentModal({ amount, onClose, onSuccess }: CardPay
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true">
       <div className={styles.modal}>
-        <h2 className={styles.title}>Card Details</h2>
-        <p className={styles.subtitle}>Secure payment via Build &amp; Hire Marketplace</p>
-        <p className={styles.simulationNote}>This is a demo — no real payment is processed.</p>
+        <h2 className={styles.title}>Demo Card Details</h2>
+        <p className={styles.subtitle}>Simulate a payment in the Build &amp; Hire Marketplace.</p>
+        <p className={styles.simulationNote}>Use test values only. No payment is processed or card data stored.</p>
 
         <div className={styles.cardVisual}>
           <div className={styles.cardTopRow}>
@@ -152,7 +152,7 @@ export default function CardPaymentModal({ amount, onClose, onSuccess }: CardPay
         </div>
 
         <button type="button" className={styles.confirmButton} onClick={handleConfirm} disabled={isProcessing}>
-          {isProcessing ? 'Processing…' : `Confirm & Pay ${amount}`}
+          {isProcessing ? 'Simulating…' : `Simulate Payment ${amount}`}
         </button>
 
         <button type="button" className={styles.backButton} onClick={onClose} disabled={isProcessing}>

@@ -29,6 +29,7 @@ import CompanyWorkforce from './pages/CompanyWorkforce/CompanyWorkforce';
 import AdminPortal from './pages/AdminPortal/AdminPortal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard/SuperAdminDashboard';
 import AdminManagement from './pages/AdminManagement/AdminManagement';
+import NotFound from './pages/NotFound/NotFound';
 
 // Route protection
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
@@ -74,6 +75,11 @@ function App() {
               <Route
                 path="/signup"
                 element={<SignUp />}
+              />
+
+              <Route
+                path="*"
+                element={<NotFound />}
               />
 
               {/* =========================
