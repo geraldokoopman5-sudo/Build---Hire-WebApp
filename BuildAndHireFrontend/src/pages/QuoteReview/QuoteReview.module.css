@@ -1,0 +1,313 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-neutral);
+}
+
+.notFound {
+  padding: 4rem 1.5rem;
+  text-align: center;
+  color: var(--color-secondary);
+}
+
+.backLink {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  color: var(--color-secondary);
+  margin: 0.35rem 0 0.4rem;
+}
+
+.companyLine {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.referenceBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.referenceLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.referenceValue {
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin-top: 0.25rem;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.descriptionCard,
+.summaryCard {
+  background: var(--color-white);
+  border-radius: 14px;
+  padding: 2rem;
+  box-shadow: 0 12px 32px rgba(84, 58, 50, 0.08);
+}
+
+.summaryCard {
+  border: 1px solid var(--color-primary);
+  position: sticky;
+  top: 1.5rem;
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--color-secondary);
+  margin: 0 0 1rem;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: var(--color-secondary);
+  line-height: 1.6;
+  margin: 0 0 1.25rem;
+}
+
+.scopeList {
+  margin: 0 0 1.5rem;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+}
+
+.dateRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+}
+
+.dateBox {
+  background: var(--color-neutral);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dateLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.dateValue {
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.companyCard {
+  background: var(--color-white);
+  border-radius: 14px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 12px 32px rgba(84, 58, 50, 0.08);
+}
+
+.companyBadge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-neutral);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  text-align: center;
+}
+
+.companyInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.companyName {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--color-secondary);
+  margin: 0;
+}
+
+.companyMeta {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  padding: 0.6rem 0;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0;
+  padding: 0.5rem 0 1rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--color-secondary);
+}
+
+.totalValue {
+  color: var(--color-primary);
+}
+
+.paymentLabel {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 1.5rem 0 0.75rem;
+}
+
+.paymentOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.paymentOption {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  cursor: pointer;
+}
+
+.paymentOptionActive {
+  border-color: var(--color-primary);
+  background: rgba(195, 111, 67, 0.08);
+}
+
+.acceptButton {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+}
+
+.acceptButton:hover {
+  background: var(--color-primary-dark);
+}
+
+.revisionButton {
+  width: 100%;
+  padding: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-white);
+  color: var(--color-secondary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.termsText {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.termsText a {
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryCard {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .dateRow {
+    grid-template-columns: 1fr;
+  }
+}

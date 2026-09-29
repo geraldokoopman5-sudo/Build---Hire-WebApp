@@ -1,0 +1,97 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-neutral);
+  font-family: var(--font-body);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 3rem;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--color-primary-dark);
+  margin: 0;
+}
+
+.cartButton {
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 3rem 1.5rem;
+  overflow: hidden;
+}
+
+.decorPanel {
+  position: absolute;
+  width: 320px;
+  height: 500px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--color-tertiary), var(--color-neutral));
+  opacity: 0.35;
+  z-index: 0;
+}
+
+.decorPanel--left {
+  left: 6%;
+  transform: rotate(-6deg);
+}
+
+.decorPanel--right {
+  right: 6%;
+  transform: rotate(4deg);
+  background: linear-gradient(200deg, var(--color-secondary), var(--color-tertiary));
+}
+
+.siteFooter {
+  padding: 1.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.footerNav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footerNav a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.footerNav a:hover {
+  color: var(--color-secondary);
+}
+
+@media (max-width: 900px) {
+  .decorPanel {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header,
+  .siteFooter {
+    padding: 1.25rem 1.5rem;
+  }
+}

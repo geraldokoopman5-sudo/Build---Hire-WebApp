@@ -1,0 +1,29 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+}
+
+.success {
+  background: rgba(46, 125, 50, 0.12);
+  color: #2e7d32;
+}
+
+.pending {
+  background: rgba(216, 163, 115, 0.25);
+  color: var(--color-primary-dark);
+}
+
+.danger {
+  background: rgba(192, 57, 43, 0.1);
+  color: #c0392b;
+}
+
+.neutral {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}

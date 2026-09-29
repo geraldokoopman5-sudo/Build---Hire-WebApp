@@ -1,0 +1,245 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-neutral);
+  padding: 2.5rem 3rem 4rem;
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  color: var(--color-secondary);
+  margin: 0 0 0.6rem;
+}
+
+.subtitle {
+  max-width: 520px;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.tabToggle {
+  display: flex;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.3rem;
+}
+
+.tabButton {
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--color-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tabButtonActive {
+  background: var(--color-primary-dark);
+  color: var(--color-white);
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.tableCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.tableTitle {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--color-secondary);
+  margin: 0;
+}
+
+.searchWrapper {
+  position: relative;
+  min-width: 240px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+}
+
+.searchInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 1rem 0.65rem 2.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-neutral);
+  font-size: 0.85rem;
+  color: var(--color-secondary);
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--color-primary);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead tr {
+  background: var(--color-neutral);
+}
+
+.table th {
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 0.9rem 1.75rem;
+}
+
+.actionsHeader {
+  text-align: right;
+}
+
+.table td {
+  padding: 1rem 1.75rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  vertical-align: middle;
+}
+
+.entityCell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(195, 111, 67, 0.15);
+  color: var(--color-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.entityName {
+  display: block;
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.entityLocation {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.approveButton,
+.rejectButton,
+.suspendButton,
+.deleteButton {
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.approveButton {
+  background: var(--color-primary-dark);
+  color: var(--color-white);
+}
+
+.approveButton:hover {
+  background: #8a4a2e;
+}
+
+.rejectButton,
+.deleteButton {
+  background: none;
+  border: 1px solid #c0392b;
+  color: #c0392b;
+}
+
+.rejectButton:hover,
+.deleteButton:hover {
+  background: rgba(192, 57, 43, 0.08);
+}
+
+.suspendButton {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-secondary);
+}
+
+.suspendButton:hover {
+  background: var(--color-neutral);
+}
+
+.noActions {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .page {
+    padding: 2rem 1.5rem 3rem;
+  }
+
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
+}

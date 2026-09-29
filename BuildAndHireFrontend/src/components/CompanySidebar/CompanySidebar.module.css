@@ -1,0 +1,127 @@
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--color-neutral);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem 1rem;
+  min-height: calc(100vh - 65px);
+}
+
+.brandBlock {
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.brandEyebrow {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.brandName {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+.navItem:hover {
+  background: rgba(84, 58, 50, 0.06);
+}
+
+.navItemActive {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.icon {
+  font-size: 1rem;
+}
+
+.settingsItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+.settingsItem:hover {
+  color: var(--color-primary-dark);
+}
+
+.postJobButton {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-primary-dark);
+  color: var(--color-white);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.postJobButton:hover {
+  background: #8a4a2e;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+.settingsItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  text-decoration: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.settingsItem:hover {
+  color: var(--color-primary-dark);
+}

@@ -1,0 +1,134 @@
+.headerRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.eyebrow,
+.sectionEyebrow {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0 0 0.5rem;
+  color: var(--color-secondary);
+  font-family: var(--font-display);
+  font-size: 2.35rem;
+}
+
+.subtitle {
+  max-width: 680px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.summary {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.summaryItem {
+  min-width: 120px;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-white);
+}
+
+.summaryLabel {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.summaryValue {
+  color: var(--color-secondary);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+}
+
+.sectionHeader {
+  margin-bottom: 1rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--color-secondary);
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.emptyState {
+  padding: 3rem 1.5rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 12px;
+  background: var(--color-white);
+  text-align: center;
+}
+
+.emptyStateTitle {
+  margin: 0 0 0.5rem;
+  color: var(--color-secondary);
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+}
+
+.emptyStateText {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 950px) {
+  .headerRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .summary {
+    width: 100%;
+  }
+
+  .summaryItem {
+    flex: 1;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .summary {
+    flex-direction: column;
+  }
+
+  .summaryItem {
+    width: 100%;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+}
