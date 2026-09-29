@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
+      "projectUniqueName": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
       "projectName": "BuildAndHire.Domain",
-      "projectPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
+      "projectPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\BuildAndHire.Domain.csproj",
       "packagesPath": "C:\\Users\\Geraldo\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\obj\\",
+      "outputPath": "c:\\Users\\Geraldo\\Documents\\Github repos\\Build---Hire-WebApp\\BuildAndHire.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "centralPackageVersionsManagementEnabled": true,
       "fallbackFolders": [
@@ -53,7 +53,7 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.300"
+      "SdkAnalysisLevel": "10.0.400"
     },
     "frameworks": {
       "net10.0": {
@@ -64,7 +64,7 @@
           "Microsoft.EntityFrameworkCore": "10.0.9",
           "Microsoft.EntityFrameworkCore.Design": "10.0.9",
           "Microsoft.EntityFrameworkCore.Tools": "10.0.9",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "*",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.3",
           "OpenApiUi": "1.1.0"
         },
         "imports": [
@@ -83,7 +83,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -360,12 +360,5 @@
         }
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1011",
-      "level": "Error",
-      "message": "The following PackageVersion items cannot specify a floating version: Npgsql.EntityFrameworkCore.PostgreSQL. For more information on how to enable this functionality for projects using Central Package Management, visit https://aka.ms/nu1011"
-    }
-  ]
+  }
 }

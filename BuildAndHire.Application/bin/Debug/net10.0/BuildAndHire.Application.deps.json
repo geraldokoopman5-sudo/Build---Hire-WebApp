@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "BuildAndHire.Application/1.0.0": {
+        "dependencies": {
+          "BuildAndHire.Domain": "1.0.0"
+        },
+        "runtime": {
+          "BuildAndHire.Application.dll": {}
+        }
+      },
+      "BuildAndHire.Domain/1.0.0": {
+        "runtime": {
+          "BuildAndHire.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BuildAndHire.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BuildAndHire.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,16 @@
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\bin\Debug\net10.0\BuildAndHire.Application.deps.json
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\bin\Debug\net10.0\BuildAndHire.Application.dll
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\bin\Debug\net10.0\BuildAndHire.Application.pdb
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\bin\Debug\net10.0\BuildAndHire.Domain.dll
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\bin\Debug\net10.0\BuildAndHire.Domain.pdb
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\BuildAndHire.Application.csproj.AssemblyReference.cache
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\BuildAndHire.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\BuildAndHire.Application.AssemblyInfoInputs.cache
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\BuildAndHire.Application.AssemblyInfo.cs
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\BuildAndHire.Application.csproj.CoreCompileInputs.cache
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\BuildAndHire.Application.sourcelink.json
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\BuildAnd.1974D108.Up2Date
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\BuildAndHire.Application.dll
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\refint\BuildAndHire.Application.dll
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\BuildAndHire.Application.pdb
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Application\obj\Debug\net10.0\ref\BuildAndHire.Application.dll

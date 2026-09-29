@@ -9,7 +9,7 @@ public  class BuildAndHireDbContext : DbContext
 {
     public BuildAndHireDbContext(DbContextOptions<BuildAndHireDbContext>options) : base(options){}
     
-    public DbSet<Customer> Customers { get; set; }}
+    public DbSet<Customer> Customers { get; set; }
     public DbSet<Companies> Companies { get; set; }
     public DbSet<Workers>Workers{get; set;}
     public DbSet<Jobs> Jobs { get; set; }

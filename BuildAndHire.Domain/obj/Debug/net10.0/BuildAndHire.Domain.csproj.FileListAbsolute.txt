@@ -1,0 +1,12 @@
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\bin\Debug\net10.0\BuildAndHire.Domain.deps.json
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\bin\Debug\net10.0\BuildAndHire.Domain.dll
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\bin\Debug\net10.0\BuildAndHire.Domain.pdb
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\obj\Debug\net10.0\BuildAndHire.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\obj\Debug\net10.0\BuildAndHire.Domain.AssemblyInfoInputs.cache
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\obj\Debug\net10.0\BuildAndHire.Domain.AssemblyInfo.cs
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\obj\Debug\net10.0\BuildAndHire.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\obj\Debug\net10.0\BuildAndHire.Domain.sourcelink.json
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\obj\Debug\net10.0\BuildAndHire.Domain.dll
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\obj\Debug\net10.0\refint\BuildAndHire.Domain.dll
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\obj\Debug\net10.0\BuildAndHire.Domain.pdb
+C:\Users\Geraldo\Documents\Github repos\Build---Hire-WebApp\BuildAndHire.Domain\obj\Debug\net10.0\ref\BuildAndHire.Domain.dll
