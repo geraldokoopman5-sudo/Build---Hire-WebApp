@@ -1,63 +1,79 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Security.Claims;
 
 namespace Build_Hire.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomerController(ICustomerService service, 
+                                BuildAndHireDbContext db) : ControllerBase
     {
-        private readonly ICustomerService _service;
-
-        public CustomerController(ICustomerService service)
+        private bool CanAccess(Guid id)
         {
-            _service = service;
+            if(User.IsInRole("Admin") ||
+            User.IsInRole("SuperAdmin"))
+            return true;
+
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("sub");
+     return User.IsInRole("Customer") &&
+               Guid.TryParse(subject, out var accountId) &&
+               accountId == id;
+
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<CustomerDto>), StatusCodes.Status200OK)]
+        [Authorize(Roles = "Admin, SuperAdmin")]
         public async Task<IActionResult> GetAllCustomerAccounts()
         {
-            var customers = await _service.GetAllCustomersAsync();
-            return Ok(customers);
+            return Ok(await service.GetAllCustomersAsync());
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCustomersById(Guid id)
+        [HttpGet("{Id:guid}")]
+        public async Task<IActionResult>GetCustomersById(Guid id)
         {
-            var customer = await _service.GetCustomersByIdAsync(id);
+          if(!CanAccess(id)) return NotFound();
 
-            if (customer == null) return NotFound("Customer not found, wrong Id");
+          var customer = await service.GetCustomersByIdAsync(id);
 
-            return Ok(customer);
+          return customer == null ?  NotFound() : Ok(customer);
+
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CustomerDto), StatusCodes.Status201Created)]
+        [AllowAnonymous]
         public async Task<IActionResult> AddNewCustomer(CreateCustomerDto dto)
         {
-            var customer = await _service.AddCustomerAsync(dto);
+            var customer = await service.AddCustomerAsync(dto);
 
-            return CreatedAtAction(nameof(GetCustomersById), new { id = customer.CustomerId }, customer);
-              
+            return CreatedAtAction(nameof(GetCustomersById), new {id = customer.CustomerId}, customer);
         }
 
-        [HttpPut("{id}")]
-        [Authorize (Roles= $"{nameof(AccountType.Admin)},{nameof(AccountType.Customer)}")]
-        public async Task<IActionResult>UpdateCustomerDetails(Guid id, UpdateCustomerDto dto)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateCustomerDetails(Guid id, UpdateCustomerDto dto)
         {
-            var update = await _service.UpdateCustomerDto(id, dto);
+                if(!CanAccess(id)) return NotFound();
 
-            return Ok(update);
+                var updated = await service.UpdateCustomerDto(id, dto);
+                return updated == null ? NotFound() : Ok(updated);
         }
 
-        [HttpDelete("{id}")]
-        [Authorize(Roles = $"{nameof(AccountType.Admin)},{nameof(AccountType.Customer)}")]
+        [HttpDelete("id:guid")]
         public async Task<IActionResult>DeleteCustomerAccount(Guid id)
         {
-            var deleted = await _service.DeleteCustomerAccountAsync(id);
+            if(!CanAccess(id)) return NotFound();
 
-            return Ok(deleted);
+            if(!await db.Customers.AnyAsync(c => c.CustomerId == id))
+            return NotFound();
+
+
+            if(await db.Jobs.AnyAsync(j => j.CustomerId == id))
+            return Conflict(
+                "This customer has jobs. Resolve those jobs before deleting the account.");
+
+                return Ok (await service.DeleteCustomerAccountAsync(id));  
         }
     }
 }

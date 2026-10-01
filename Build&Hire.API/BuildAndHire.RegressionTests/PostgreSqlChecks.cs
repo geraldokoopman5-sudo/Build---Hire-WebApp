@@ -84,6 +84,24 @@ internal static class PostgreSqlChecks
             Require(customer.CustomerId != Guid.Empty && company.CompanyId != Guid.Empty, "Signup persists real GUIDs in PostgreSQL");
             Require(await jwt.AuthenticateUser(new LoginRequestDto { Email = "customer@example.test", Password = "wrong" }) == null, "Wrong login password is rejected");
             Require(await jwt.AuthenticateUser(new LoginRequestDto { Email = "customer@example.test", Password = password }) is CustomerLoginResponseDto, "Registered customer can log in");
+            var customerEntity = await db.Customers.SingleAsync(c => c.CustomerId == customer.CustomerId);
+            customerEntity.Status = AccountStatus.InActive;
+            await db.SaveChangesAsync();
+            Require(await jwt.AuthenticateUser(new LoginRequestDto { Email = "customer@example.test", Password = password }) == null, "Inactive customer cannot log in");
+            customerEntity.Status = AccountStatus.Active;
+            var companyEntity = await db.Companies.SingleAsync(c => c.CompanyId == company.CompanyId);
+            Require(companyEntity.Status == AccountStatus.Pending &&
+                await jwt.AuthenticateUser(new LoginRequestDto { Email = "company@example.test", Password = password }) == null,
+                "Pending company cannot log in");
+            companyEntity.Status = AccountStatus.Active;
+            await db.SaveChangesAsync();
+            Require(await jwt.AuthenticateUser(new LoginRequestDto { Email = "company@example.test", Password = password }) is CompanyLoginResponseDto,
+                "Approved company can log in");
+            var adminEntity = await db.Admin.SingleAsync(a => a.Email == "superadmin@example.test");
+            adminEntity.Status = AccountStatus.Deleted;
+            await db.SaveChangesAsync();
+            Require(await jwt.AuthenticateUser(new LoginRequestDto { Email = "superadmin@example.test", Password = password }) == null,
+                "Deleted admin cannot log in");
 
             var start = DateTime.UtcNow.Date.AddDays(1);
             var jobs = new JobService(new JobRepository(db));

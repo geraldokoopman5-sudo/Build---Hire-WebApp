@@ -1,4 +1,4 @@
-﻿using BuildAndHire.Application.DTOs.AuthDto;
+using BuildAndHire.Application.DTOs.AuthDto;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -28,6 +28,7 @@ namespace BuildAndHire.Infrastructure.Authentication
         public async Task<LoginresponseDto?> AuthenticateUser(
     LoginRequestDto dto)
         {
+
             if (string.IsNullOrWhiteSpace(dto.Email) ||
                 string.IsNullOrWhiteSpace(dto.Password))
             {
@@ -41,6 +42,10 @@ namespace BuildAndHire.Infrastructure.Authentication
 
             if (company != null)
             {
+                  if(company.Status != AccountStatus.Active)
+                {
+                    return null;
+                }
                 var passwordIsValid = _passwordService.VerifyPassword(
                     dto.Password,
                     company.PasswordHash);
@@ -124,7 +129,7 @@ namespace BuildAndHire.Infrastructure.Authentication
             var customer = await _context.Customers
                 .FirstOrDefaultAsync(c => c.Email == dto.Email);
 
-            if (customer == null)
+            if (customer == null || customer.Status != AccountStatus.Active)
             {
                 return null;
             }
@@ -173,7 +178,7 @@ namespace BuildAndHire.Infrastructure.Authentication
                 Address = customer.address
             };
 
-       
+
         }
 
         private string GenerateToken(
@@ -251,7 +256,7 @@ namespace BuildAndHire.Infrastructure.Authentication
             var admin = await _context.Admin
                 .FirstOrDefaultAsync(a => a.Email == dto.Email);
 
-            if (admin == null)
+            if (admin == null || admin.Status != AccountStatus.Active)
             {
                 return null;
             }
@@ -299,5 +304,5 @@ namespace BuildAndHire.Infrastructure.Authentication
             };
         }
     }
-    
+
 }

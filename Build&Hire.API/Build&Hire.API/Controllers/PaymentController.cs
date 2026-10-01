@@ -1,56 +1,54 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Build_Hire.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : ControllerBase
+    [Authorize]
+    public class PaymentController(IPaymentService service, BuildAndHireDbContext context) : ControllerBase
     {
-        private readonly IPaymentService _service;
-
-        public PaymentController(IPaymentService service)
+       [HttpGet]
+        [Authorize(Roles ="Admin,SuperAdmin")]
+        public async Task<IActionResult> GetAllPayments()
         {
-            _service = service;
+            return Ok(await service.GetAllPaymentsAsync());
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllpayments()
-        {
-            var payment = await _service.GetAllPaymentsAsync();
+      [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetPaymentById(Guid id)
+    {
+        var owner = await context.Payment
+            .AsNoTracking()
+            .Where(payment => payment.PaymentId == id)
+            .Select(payment => new
+            {
+                payment.Job.CustomerId,
+                payment.Job.CompanyId
+            })
+            .SingleOrDefaultAsync();
 
-            return Ok(payment);
-        }
+        if (owner == null) return NotFound();
 
-        [HttpGet("{Id}")]
-        public async Task<IActionResult> GetPaymentById(Guid Id)
-        {
-            var payment = await _service.GetPaymentsByIdAsync(Id);
+        var subject = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("sub");
 
-            return Ok(payment);
-        }
+        var isAdmin = User.IsInRole("Admin") ||
+                      User.IsInRole("SuperAdmin");
 
-        [HttpPost]
-        public async Task<IActionResult>MakePayments(PayPaymentsDto dto)
-        {
-            var pay = await _service.CompletePaymentAsync(dto);
+        var ownsPayment =
+            Guid.TryParse(subject, out var accountId) &&
+            (
+                User.IsInRole("Customer") &&
+                owner.CustomerId == accountId ||
+                User.IsInRole("Company") &&
+                owner.CompanyId == accountId
+            );
 
-            return CreatedAtAction(nameof(GetPaymentById), new { Id = pay.PaymentId }, pay);
-        }
+        if (!isAdmin && !ownsPayment) return NotFound();
 
-        [HttpPut]
-        public async Task<IActionResult>PaymentResponse(Guid Id, PaymentResponseDto dto)
-        {
-            var payresponse = await _service.PaymentResponseAsync(Id, dto);
-
-            return Ok(payresponse);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult>DeletePaymentHistory(Guid id)
-        {
-            var delete = await _service.DeletePaymentHistoryAsync(id);
-            return Ok(delete);
-        }
+        return Ok(await service.GetPaymentsByIdAsync(id));
+    }
     }
 }
