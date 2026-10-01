@@ -1,31 +1,19 @@
-﻿using BuildAndHire.Application.DTOs.JobDto;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace BuildAndHire.Application.Validators.Jobs;
 
-namespace BuildAndHire.Application.Validators.Jobs
+public class RegisterJobvalidator : AbstractValidator<RegisterJobDto>
 {
-    public class RegisterJobvalidator : AbstractValidator<RegisterJobDto>
+    public RegisterJobvalidator()
     {
-        public RegisterJobvalidator()
-        {
-            RuleFor(j => j.JobDescription)
-                 .MaximumLength(100)
-                 .NotEmpty();
-
-            RuleFor(j => j.DaysWorking)
-                .NotEmpty()
-                .GreaterThan(0);              
-
-            RuleFor(j => j.StartDate)
-                .LessThan(e => e.EndDate)
-                .NotEmpty()
-                .GreaterThan(DateTime.Now);
-
-            RuleFor(j => j.EndDate)
-                .GreaterThan(L => L.StartDate)
-                .NotEmpty();
-
-        }
+        RuleFor(x => x.CompanyId).NotEmpty();
+        RuleFor(x => x.JobDescription).NotEmpty().MaximumLength(1000);
+        RuleFor(x => x.DaysWorking).GreaterThan(0);
+        RuleFor(x => x.StartDate).NotEmpty().Must(x => x.Kind == DateTimeKind.Utc)
+            .WithMessage("StartDate must be UTC (include Z).").Must(x => x.Date >= DateTime.UtcNow.Date)
+            .WithMessage("StartDate cannot be in the past.");
+        RuleFor(x => x.EndDate).NotEmpty().Must(x => x.Kind == DateTimeKind.Utc)
+            .WithMessage("EndDate must be UTC (include Z).").GreaterThanOrEqualTo(x => x.StartDate);
+        RuleFor(x => x.Status).IsInEnum();
+        RuleFor(x => x.PayingMethod).IsInEnum();
+        RuleFor(x => x.address).NotNull().SetValidator(new AddressValidator()!);
     }
 }

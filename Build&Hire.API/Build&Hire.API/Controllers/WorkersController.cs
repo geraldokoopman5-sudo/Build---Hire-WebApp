@@ -15,6 +15,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<WorkerDto>), StatusCodes.Status200OK)]
         [Authorize (Roles=nameof(AccountType.Company))]
         public async Task<IActionResult> GetAllWorkers()
         {

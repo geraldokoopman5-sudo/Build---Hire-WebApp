@@ -48,21 +48,24 @@ namespace BuildAndHire.Application.Services
             };
         }
 
-        public async Task<PayPaymentsDto> CompletePaymentAsync(PayPaymentsDto dto)
+        public async Task<PaymentsDto> CompletePaymentAsync(PayPaymentsDto dto)
         {
             var pay = new Payment
             {
                 PaymentMethod = dto.PaymentMethod,
                 JobId = dto.JobId,
                 Amount = dto.Amount,
-                Status = dto.Status,
+                Status = PaymentEnum.Pending,
+                PaymentDate = DateTime.UtcNow,
                 TransactionReference = dto.TransactionReference,
             };
 
             var payment = await _repo.CompletePaymentAsync(pay);
 
-            return new PayPaymentsDto
+            return new PaymentsDto
             {
+                PaymentId = payment.PaymentId,
+                PaymentDate = payment.PaymentDate,
                 PaymentMethod = payment.PaymentMethod,
                 JobId = payment.JobId,
                 Amount = payment.Amount,

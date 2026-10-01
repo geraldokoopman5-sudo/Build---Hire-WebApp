@@ -1,15 +1,13 @@
-﻿using BuildAndHire.Application.DTOs.JobDto;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace BuildAndHire.Application.Validators.Jobs;
 
-namespace BuildAndHire.Application.Validators.Jobs
+public class UpdateJobsValidator : AbstractValidator<UpdateJobDetailsDto>
 {
-    public class UpdateJobsValidator : AbstractValidator<UpdateJobDetailsDto>
+    public UpdateJobsValidator()
     {
-        public UpdateJobsValidator()
-        {
-
-        }
+        RuleFor(x => x.Quote).GreaterThanOrEqualTo(0);
+        RuleFor(x => x.EndDate).NotEmpty().Must(x => x.Kind == DateTimeKind.Utc)
+            .WithMessage("EndDate must be UTC (include Z).");
+        RuleFor(x => x.Status).IsInEnum();
+        RuleFor(x => x.PayingMethod).IsInEnum();
     }
 }

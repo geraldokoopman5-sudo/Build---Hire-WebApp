@@ -20,7 +20,7 @@ namespace BuildAndHire.Domain.Models
 
         public int DaysWorking { get; set; }
 
-        public decimal Qoute { get; set; }
+        public decimal Quote { get; set; }
 
         public DateTime StartDate { get; set; }
 

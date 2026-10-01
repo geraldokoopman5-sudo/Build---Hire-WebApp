@@ -1,10 +1,9 @@
 import { useState, type ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiRequest } from '../../utils/api';
 import AuthLayout from '.././AuthLayout/AuthLayout';
 import styles from './SignUp.module.css';
 import {
-  AccountStatus,
-  AccountType,
   type SignUpRole,
   type SignUpStep,
   type FormErrors,
@@ -53,8 +52,8 @@ function validateCustomer(values: CustomerFormValues): FormErrors {
 
   if (!values.password) {
     errors.password = 'Password is required.';
-  } else if (values.password.length < 8) {
-    errors.password = 'Password must be at least 8 characters.';
+  } else if (values.password.length < 12) {
+    errors.password = 'Password must be at least 12 characters.';
   }
 
   if (!values.confirmPassword) {
@@ -78,8 +77,8 @@ function validateCompany(values: CompanyFormValues): FormErrors {
 
   if (!values.password) {
     errors.password = 'Password is required.';
-  } else if (values.password.length < 8) {
-    errors.password = 'Password must be at least 8 characters.';
+  } else if (values.password.length < 12) {
+    errors.password = 'Password must be at least 12 characters.';
   }
 
   if (!values.confirmPassword) {
@@ -210,29 +209,23 @@ export default function SignUp() {
               customerName: customerValues.customerName,
               email: customerValues.email,
               password: customerValues.password,
-              status: AccountStatus.Active,
-              accountType: AccountType.Customer,
               address,
             }
           : {
               companyName: companyValues.companyName,
               companyEmail: companyValues.companyEmail,
               password: companyValues.password,
-              status: AccountStatus.Pending,
-              account: AccountType.Company,
               registrationNumber: companyValues.registrationNumber,
               taxNumber: companyValues.taxNumber,
               address,
             };
 
-      // TODO: replace with the real API call, e.g.
-      // await fetch('/api/signup', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(payload),
-      // });
-      void payload;
-      navigate('/');;
+      await apiRequest(role === 'customer' ? '/api/Customer' : '/api/Companies', {
+        method: 'POST', body: JSON.stringify(payload),
+      });
+      navigate('/');
+    } catch (error) {
+      setErrors({ general: error instanceof Error ? error.message : "Could not create your account." });
     } finally {
       setIsSubmitting(false);
     }
@@ -482,6 +475,7 @@ export default function SignUp() {
             </div>
 
             <form onSubmit={handleAddressSubmit} noValidate>
+              {errors.general && <p role="alert" className={styles.errorText}>{errors.general}</p>}
               <div className={styles.field}>
                 <label htmlFor="streetAddress" className={styles.label}>
                   Street Address

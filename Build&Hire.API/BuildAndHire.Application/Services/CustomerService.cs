@@ -23,7 +23,6 @@ namespace BuildAndHire.Application.Services
             {
                 CustomerId = c.CustomerId,
                 CustomerName = c.CustomerName,
-                PasswordHash = c.PasswordHash,
                 Email = c.Email,
                 Status = c.Status,
                 accountType = c.accountType,
@@ -34,35 +33,36 @@ namespace BuildAndHire.Application.Services
         public async Task<CustomerDto> GetCustomersByIdAsync(Guid Id)
         {
             var customer = await _repo.GetCustomerById(Id);
+            if (customer == null) return null!;
 
             return new CustomerDto
             {
                 CustomerId = customer.CustomerId,
                 CustomerName = customer.CustomerName,
-                PasswordHash = customer.PasswordHash,
                 Email = customer.Email,
                 Status = customer.Status,
                 accountType = customer.accountType,
                 address = customer.address,
             };
         }
-        public async Task<CreateCustomerDto> AddCustomerAsync(CreateCustomerDto dto)
+        public async Task<CustomerDto> AddCustomerAsync(CreateCustomerDto dto)
         {
             var newCustomer = new Customer
             {
                 CustomerName = dto.CustomerName,
                 Email = dto.Email,
-                Status = dto.Status,
-                accountType = dto.accountType,
+                Status = AccountStatus.Active,
+                accountType = AccountType.Customer,
                 address = dto.address,
                 PasswordHash = _passwordService.HashPassword(
-                    dto.PasswordHash),
+                    dto.Password),
 
             };
 
             var customer = await _repo.CreateCustomerAccount(newCustomer);
-            return new CreateCustomerDto
+            return new CustomerDto
             {
+                CustomerId = customer.CustomerId,
                 CustomerName = customer.CustomerName,
                 Email = customer.Email,
                 Status = customer.Status,
@@ -83,8 +83,7 @@ namespace BuildAndHire.Application.Services
 
             getCustomer.CustomerName = dto.CustomerName;
             getCustomer.Email = dto.Email;
-            getCustomer.PasswordHash = dto.PasswordHash;
-            getCustomer.Status = dto.Status;    
+            // Account status is managed separately.
             getCustomer.address = dto.Address;
 
             var update = await _repo.UpdateCustomer(getCustomer);
@@ -93,7 +92,6 @@ namespace BuildAndHire.Application.Services
             {
                 CustomerName = update.CustomerName,
                 Email = update.Email,
-                PasswordHash = update.PasswordHash,
                 Status = update.Status,
                 Address = update.address
             };

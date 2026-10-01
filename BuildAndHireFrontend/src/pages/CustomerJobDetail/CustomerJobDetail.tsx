@@ -16,7 +16,7 @@ function formatDate(
   value: string
 ): string {
   const date =
-    new Date(`${value}T00:00:00`);
+    new Date(`${value.slice(0, 10)}T00:00:00Z`);
 
   if (Number.isNaN(date.getTime())) {
     return value;
@@ -25,6 +25,7 @@ function formatDate(
   return new Intl.DateTimeFormat(
     'en-ZA',
     {
+      timeZone: 'UTC',
       day: '2-digit',
       month: 'long',
       year: 'numeric',
@@ -40,8 +41,10 @@ export default function CustomerJobDetails() {
   }>();
 
   const {
-    getJobById,
+    getJobById, loading, error,
   } = useCustomerJobs();
+
+  if (loading || error) return <><JobsHeader activeLink="my-jobs" /><p role={error ? "alert" : "status"}>{error || "Loading job…"}</p></>;
 
   const job =
     jobId
@@ -190,8 +193,8 @@ export default function CustomerJobDetails() {
             <div className={styles.row}>
               <span>Quote</span>
               <strong>
-                {job.qoute > 0
-                  ? `$${job.qoute.toLocaleString()}`
+                {job.quote > 0
+                  ? `$${job.quote.toLocaleString()}`
                   : 'Awaiting quote'}
               </strong>
             </div>

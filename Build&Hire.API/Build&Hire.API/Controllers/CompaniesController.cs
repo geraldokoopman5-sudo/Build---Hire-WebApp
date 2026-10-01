@@ -12,6 +12,7 @@
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<CompanyDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllCompanies()
         {
             var companies = await _cmpService.GetAllCompaniesAsync();
@@ -28,6 +29,7 @@
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(CompanyDto), StatusCodes.Status201Created)]
         public async Task<IActionResult> RegisterComapny(RegisterCompanyDto dto)
         {
             var company = await _cmpService.RegisterCompanyAsync(dto);
@@ -36,18 +38,27 @@
                 company);
         }
         [HttpPatch("{id}/Status")]
-        [Authorize(Roles = nameof(AccountType.Admin))]
-        public async Task<IActionResult> UpdateCompanyStatus(UpdateCompanyDto dto, Guid id)  //Save for when incorparating JWT tokens
+        [Authorize(Roles = "Admin,SuperAdmin")]
+        public async Task<IActionResult> UpdateCompanyStatus(UpdateCompanyStatusDto dto, Guid id, [FromServices] BuildAndHireDbContext db)  //Save for when incorparating JWT tokens
         {
-            await _cmpService.UpdateCompanyAsync(id, dto);
+            var company = await db.Companies.FindAsync(id);
+            if (company == null) return NotFound();
+            company.Status = dto.Status;
+            await db.SaveChangesAsync();
 
             return NoContent();
 
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Company,Admin,SuperAdmin")]
         public async Task<IActionResult>UpdateCompanyDetails(Guid id, UpdateCompanyDto dto)
         {
+            var subject = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                ?? User.FindFirst("sub")?.Value;
+            if (!User.IsInRole("Admin") && !User.IsInRole("SuperAdmin") && subject != id.ToString())
+                return Forbid();
             var update = await _cmpService.UpdateCompanyAsync(id, dto);
+            if (update == null) return NotFound();
             return Ok(update);
         }
 

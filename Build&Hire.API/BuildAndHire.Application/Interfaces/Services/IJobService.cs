@@ -9,7 +9,7 @@ namespace BuildAndHire.Application.Interfaces.Services
     {
         Task<IEnumerable<JobDto>> GetAllJobsAsync();
         Task<JobDto> GetJobByIdAsync(Guid Id);
-        Task<RegisterJobDto> RegisterJobAsync(RegisterJobDto dto);
+        Task<JobDto> RegisterJobAsync(RegisterJobDto dto);
         Task<UpdateJobDetailsDto> UpdateJobDetailsAsync(Guid Id, UpdateJobDetailsDto dto);
         Task<string> DeleteJobAsync(Guid Id);   
     }

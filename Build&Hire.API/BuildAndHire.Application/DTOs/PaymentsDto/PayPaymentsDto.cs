@@ -8,7 +8,6 @@ namespace BuildAndHire.Application.DTOs.PaymentsDto
 {
     public class PayPaymentsDto
     {
-        public Guid PaymentId { get; set; }
 
         public Guid JobId { get; set; }
 
@@ -16,9 +15,7 @@ namespace BuildAndHire.Application.DTOs.PaymentsDto
 
         public PaymentMethod PaymentMethod { get; set; }
 
-        public PaymentEnum Status { get; set; }
 
-        public DateTime PaymentDate { get; set; }
 
         public string? TransactionReference { get; set; }
     }

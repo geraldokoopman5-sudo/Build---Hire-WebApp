@@ -1,22 +1,11 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace BuildAndHire.Application.Validators.Payments;
 
-namespace BuildAndHire.Application.Validators.Payments
+public class PaymentsValidator : AbstractValidator<PayPaymentsDto>
 {
-    public class PaymentsValidator : AbstractValidator<PayPaymentsDto>
+    public PaymentsValidator()
     {
-        public PaymentsValidator()
-        {
-            RuleFor(p => p.Amount)
-                .NotNull()
-                .GreaterThan(0);
-
-            RuleFor(p => p.PaymentDate)
-                .NotNull()
-                .Equal(DateTime.UtcNow);
-
-        }
+        RuleFor(x => x.JobId).NotEmpty();
+        RuleFor(x => x.Amount).GreaterThan(0);
+        RuleFor(x => x.PaymentMethod).IsInEnum();
     }
 }

@@ -4,10 +4,10 @@ import { useParams, Link } from 'react-router-dom';
 import JobsHeader from '../../components/JobsHeader/JobsHeader';
 import CardPaymentModal from '../../components/CardPaymentModal/CardPaymentModal';
 import RequestRevisionModal from '../../components/RequestRevisionModal/RequestRevisionModal';
-import { quotes } from '../../data/qoutes';
+import { quotes } from '../../data/quotes';
 import { formatCurrency, getQuoteTotal } from '../../utils/quoteMath';
 
-import type { PaymentMethod } from '../../types/quote';
+
 import type { Payment } from '../../types/payment';
 
 import {
@@ -23,7 +23,7 @@ export default function QuoteReview() {
  const quote = quotes.find((entry) => entry.id === id);
 
   const [paymentMethod, setPaymentMethod] =
-    useState<PaymentMethod>('card');
+    useState<PaymentMethodEnum>(PaymentMethodEnum.DebitOrCreditCard);
 
   const [isCardModalOpen, setIsCardModalOpen] =
     useState<boolean>(false);
@@ -64,7 +64,7 @@ const [revisionRequested, setRevisionRequested] =
   const total = getQuoteTotal(quote.summary);
 
   const handleAcceptQuote = (): void => {
-    if (paymentMethod === 'card') {
+    if (paymentMethod === PaymentMethodEnum.DebitOrCreditCard) {
       setIsCardModalOpen(true);
       return;
     }
@@ -235,7 +235,7 @@ const [revisionRequested, setRevisionRequested] =
                 <div className={styles.paymentOptions}>
                   <label
                     className={`${styles.paymentOption} ${
-                      paymentMethod === 'card'
+                      paymentMethod === PaymentMethodEnum.DebitOrCreditCard
                         ? styles.paymentOptionActive
                         : ''
                     }`}
@@ -244,9 +244,9 @@ const [revisionRequested, setRevisionRequested] =
                       type="radio"
                       name="paymentMethod"
                       value="card"
-                      checked={paymentMethod === 'card'}
+                      checked={paymentMethod === PaymentMethodEnum.DebitOrCreditCard}
                       onChange={() =>
-                        setPaymentMethod('card')
+                        setPaymentMethod(PaymentMethodEnum.DebitOrCreditCard)
                       }
                     />
 

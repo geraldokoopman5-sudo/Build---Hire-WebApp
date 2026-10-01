@@ -11,11 +11,9 @@ namespace BuildAndHire.Application.DTOs.CompanyDto
 
         public string CompanyEmail { get; set; } = string.Empty;
 
-        public string PasswordHash { get; set; } = string.Empty;
 
         public Address? address { get; set; }
 
-        public AccountStatus Status { get; set; }
 
         public string RegistrationNumber { get; set; } = string.Empty;
 

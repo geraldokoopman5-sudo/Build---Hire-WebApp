@@ -9,7 +9,7 @@ namespace BuildAndHire.Application.Interfaces.Services
     {
         Task<IEnumerable<CustomerDto>> GetAllCustomersAsync();
         Task<CustomerDto> GetCustomersByIdAsync(Guid Id);
-        Task<CreateCustomerDto> AddCustomerAsync(CreateCustomerDto dto);
+        Task<CustomerDto> AddCustomerAsync(CreateCustomerDto dto);
         Task<UpdateCustomerDto> UpdateCustomerDto(Guid Id,UpdateCustomerDto dto);
         Task<string> DeleteCustomerAccountAsync(Guid Id);
     }

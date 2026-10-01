@@ -33,11 +33,11 @@ export interface CustomerJob {
   daysWorking: number;
 
   /*
-   * Mirrors backend Qoute.
+   * Mirrors backend Quote.
    * A newly created job has no company quote yet,
    * so this starts at 0.
    */
-  qoute: number;
+  quote: number;
 
   startDate: string;
   endDate: string;
@@ -48,5 +48,4 @@ export interface CustomerJob {
 
   address: Address;
 
-  createdAt: string;
 }

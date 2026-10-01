@@ -17,15 +17,12 @@ import type {
   LoginFormErrors,
 } from './login.types';
 
-import {
-  AccountType,
-} from '../../types/enums';
+
+
+
 
 import {
-  AdminRole,
-} from '../../types/admin';
-
-import {
+  login,
   getPostLoginRoute,
 } from '../../utils/auth';
 
@@ -35,10 +32,6 @@ const INITIAL_VALUES: LoginFormValues = {
   rememberMe: false,
 };
 
-interface DevelopmentAccount {
-  accountType: AccountType;
-  adminRole: AdminRole | null;
-}
 
 function validate(
   values: LoginFormValues
@@ -63,118 +56,6 @@ function validate(
   }
 
   return errors;
-}
-
-/*
- * FRONTEND-ONLY DEVELOPMENT LOGIN
- *
- * This will be replaced by the real API
- * authentication during backend integration.
- *
- * Development accounts:
- *
- * superadmin@buildandhire.test
- *   -> Admin account + SuperAdmin role
- *
- * admin@buildandhire.test
- *   -> Admin account + Admin role
- *
- * company@buildandhire.test
- *   -> Company account
- *
- * anything@example.com
- *   -> Customer account
- */
-function getDevelopmentAccount(
-  email: string
-): DevelopmentAccount {
-  const normalizedEmail =
-    email.trim().toLowerCase();
-
-  /*
-   * Super Admin must be checked before
-   * normal Admin because "superadmin"
-   * also contains "admin".
-   */
-  if (
-    normalizedEmail.includes(
-      'superadmin'
-    )
-  ) {
-    return {
-      accountType:
-        AccountType.Admin,
-
-      adminRole:
-        AdminRole.SuperAdmin,
-    };
-  }
-
-  if (
-    normalizedEmail.includes(
-      'admin'
-    )
-  ) {
-    return {
-      accountType:
-        AccountType.Admin,
-
-      adminRole:
-        AdminRole.Admin,
-    };
-  }
-
-  if (
-    normalizedEmail.includes(
-      'company'
-    )
-  ) {
-    return {
-      accountType:
-        AccountType.Company,
-
-      adminRole: null,
-    };
-  }
-
-  return {
-    accountType:
-      AccountType.Customer,
-
-    adminRole: null,
-  };
-}
-
-function createDevelopmentSession(
-  account: DevelopmentAccount
-): void {
-  localStorage.setItem(
-    'buildandhire.accessToken',
-    `dev-token-${crypto.randomUUID()}`
-  );
-
-  localStorage.setItem(
-    'buildandhire.accountType',
-    String(account.accountType)
-  );
-
-  /*
-   * Only Admin accounts need an AdminRole.
-   */
-  if (account.adminRole !== null) {
-    localStorage.setItem(
-      'buildandhire.adminRole',
-      String(account.adminRole)
-    );
-  } else {
-    /*
-     * Make sure an old admin role does not
-     * remain when switching to another account.
-     */
-    localStorage.removeItem(
-      'buildandhire.adminRole'
-    );
-  }
 }
 
 export default function Login() {
@@ -220,9 +101,9 @@ export default function Login() {
     }));
   };
 
-  const handleSubmit = (
+  const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
-  ): void => {
+  ): Promise<void> => {
     event.preventDefault();
 
     setSubmitError('');
@@ -241,12 +122,7 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const account =
-        getDevelopmentAccount(
-          values.email
-        );
-
-      createDevelopmentSession(account);
+      const account = await login(values.email.trim(), values.password);
 
       const destination =
         getPostLoginRoute(
@@ -257,10 +133,8 @@ export default function Login() {
       navigate(destination, {
         replace: true,
       });
-    } catch {
-      setSubmitError(
-        'Unable to sign you in. Please try again.'
-      );
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Unable to sign you in.');
     } finally {
       setIsSubmitting(false);
     }

@@ -11,6 +11,7 @@ namespace BuildAndHire.Application.DTOs.JobDto
 
         public Guid CompanyId { get; set; }
 
+        [System.Text.Json.Serialization.JsonIgnore]
         public Guid CustomerId { get; set; }
 
         public string JobDescription { get; set; } = string.Empty;

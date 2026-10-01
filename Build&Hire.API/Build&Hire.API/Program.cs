@@ -1,11 +1,26 @@
 
 using BuildAndHire.Infrastructure.Authentication;
 using Microsoft.OpenApi;
+using FluentValidation;
+using Build_Hire.API.Validation;
+using Build_Hire.API.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 
     // Register services
-    builder.Services.AddControllers();
+    builder.Services.AddControllers(options =>
+    {
+        options.Filters.Add<RequestValidationFilter>();
+        options.Filters.Add<ApiExceptionFilter>();
+    });
+    // Register validators from the application assembly without a second package.
+    foreach (var type in typeof(CustomerService).Assembly.GetTypes()
+        .Where(type => !type.IsAbstract && !type.IsInterface))
+    {
+        foreach (var contract in type.GetInterfaces().Where(contract =>
+            contract.IsGenericType && contract.GetGenericTypeDefinition() == typeof(IValidator<>)))
+            builder.Services.AddScoped(contract, type);
+    }
     builder.Services.AddScoped<IJwtService, JwtService>();
     builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -89,7 +104,28 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+                ?? ["http://localhost:5173", "http://127.0.0.1:5173"])
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+// Explicit maintenance command; normal startup never changes the schema.
+if (args.Contains("--migrate"))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    await scope.ServiceProvider.GetRequiredService<BuildAndHireDbContext>().Database.MigrateAsync();
+    await app.DisposeAsync();
+    return;
+}
+await SuperAdminSeeder.SeedAsync(app.Services, app.Configuration);
 
     // Configure middleware
     if (app.Environment.IsDevelopment())
@@ -98,12 +134,15 @@ var app = builder.Build();
         app.UseSwaggerUI();
     }
 
-    app.UseAuthentication();
+app.UseHttpsRedirection();
 
-    app.UseAuthorization();
+app.UseRouting();
 
-    app.UseHttpsRedirection();
+app.UseCors("Frontend");
 
-    app.MapControllers();
+app.UseAuthentication();
+app.UseAuthorization();
 
-    app.Run();
+app.MapControllers();
+
+app.Run();

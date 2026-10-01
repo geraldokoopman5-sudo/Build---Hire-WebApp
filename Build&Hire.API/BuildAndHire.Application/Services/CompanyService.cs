@@ -29,7 +29,6 @@ namespace BuildAndHire.Application.Services
                 CompanyId = c.CompanyId,
                 CompanyName = c.CompanyName,
                 CompanyEmail = c.CompanyEmail,
-                PasswordHash = c.PasswordHash,
                 address = c.address,
                 Status = c.Status,
                 account = c.account,
@@ -50,7 +49,6 @@ namespace BuildAndHire.Application.Services
                 CompanyId = companies.CompanyId,
                 CompanyName = companies.CompanyName,
                 CompanyEmail = companies.CompanyEmail,
-                PasswordHash = companies.PasswordHash,
                 address = companies.address,
                 Status = companies.Status,
                 account = companies.account,
@@ -60,7 +58,7 @@ namespace BuildAndHire.Application.Services
             };
         }
 
-        public async Task<RegisterCompanyDto> RegisterCompanyAsync(
+        public async Task<CompanyDto> RegisterCompanyAsync(
         RegisterCompanyDto dto)
         {
             var newCompany = new Companies
@@ -69,8 +67,9 @@ namespace BuildAndHire.Application.Services
                 CompanyEmail = dto.CompanyEmail,
 
                 PasswordHash = _passwordService.HashPassword(
-                    dto.PasswordHash),
-                account = dto.account,
+                    dto.Password),
+                account = AccountType.Company,
+                Status = AccountStatus.Pending,
                 RegistrationNumber = dto.RegistrationNumber,
                 TaxNumber = dto.TaxNumber,
                 address = dto.address
@@ -79,8 +78,10 @@ namespace BuildAndHire.Application.Services
             var savedCompany =
                 await _repository.RegisterCompany(newCompany);
 
-            return new RegisterCompanyDto
+            return new CompanyDto
             {
+                CompanyId = savedCompany.CompanyId,
+                Status = savedCompany.Status,
                 CompanyName = savedCompany.CompanyName,
                 CompanyEmail = savedCompany.CompanyEmail,
                 RegistrationNumber = savedCompany.RegistrationNumber,
@@ -99,7 +100,6 @@ namespace BuildAndHire.Application.Services
             UpdateCompany.CompanyName = dto.CompanyName;
             UpdateCompany.CompanyEmail = dto.CompanyEmail;
             UpdateCompany.address = dto.address;
-            UpdateCompany.Status = dto.Status;
             UpdateCompany.RegistrationNumber = dto.RegistrationNumber;
             UpdateCompany.TaxNumber = dto.TaxNumber;
 
@@ -110,7 +110,6 @@ namespace BuildAndHire.Application.Services
                 CompanyName = update.CompanyName,
                 CompanyEmail = update.CompanyEmail,
                 address = update.address,
-               Status = update.Status,
                 RegistrationNumber = update.RegistrationNumber,
                TaxNumber = update.TaxNumber,
             };

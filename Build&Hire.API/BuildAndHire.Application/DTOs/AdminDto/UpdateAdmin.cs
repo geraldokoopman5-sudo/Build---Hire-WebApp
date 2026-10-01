@@ -6,7 +6,7 @@ namespace BuildAndHire.Application.DTOs.AdminDto
 {
     public class UpdateAdmin
     {
-        public string PasswordHash { get; set; } = string.Empty;
+        public string? Password { get; set; }
         public AdminEnums AdminRole { get; set; } = AdminEnums.Admin;
         public string Email { get; set; } = string.Empty;
         public AccountStatus Status { get; set; } = AccountStatus.Pending;

@@ -25,7 +25,6 @@ namespace BuildAndHire.Application.Services
                 AdminId = a.AdminId,
                 UserName = a.UserName,
                 Email = a.Email,
-                PasswordHash = a.PasswordHash,
                 Status = a.Status,
                 AdminRole = a.AdminRole,
                 accountType = a.accountType,
@@ -44,7 +43,6 @@ namespace BuildAndHire.Application.Services
                 AdminId = admin.AdminId,
                 UserName = admin.UserName,
                 Email = admin.Email,
-                PasswordHash = admin.PasswordHash,
                 Status = admin.Status,
                 AdminRole = admin.AdminRole,
                 accountType = admin.accountType,
@@ -59,16 +57,17 @@ namespace BuildAndHire.Application.Services
                 UserName = dto.UserName,
                 Email = dto.Email,
                 PasswordHash = _passwordService.HashPassword(
-                    dto.PasswordHash),
+                    dto.Password),
                 Status = dto.Status,
                 AdminRole = dto.AdminRole,
-                accountType = dto.accountType,
+                accountType = AccountType.Admin,
             };
 
             var createdAdmin = await _repo.RegisterAdmin(admin);
 
             return new AdminDto
             {
+                AdminId = createdAdmin.AdminId,
                 UserName = createdAdmin.UserName,
                 Email = createdAdmin.Email,
                 Status = createdAdmin.Status,
@@ -86,7 +85,8 @@ namespace BuildAndHire.Application.Services
             if (admin == null)
                 throw new KeyNotFoundException("Admin not found");
 
-            admin.PasswordHash = dto.PasswordHash;
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+                admin.PasswordHash = _passwordService.HashPassword(dto.Password);
             admin.Email = dto.Email;
             admin.Status = dto.Status;
             admin.AdminRole = dto.AdminRole;
@@ -98,7 +98,6 @@ namespace BuildAndHire.Application.Services
 
             return new AdminDto
             {
-                PasswordHash = updatedAdmin.PasswordHash,
                 Email = updatedAdmin.Email,
                 Status = updatedAdmin.Status,
                 AdminRole = updatedAdmin.AdminRole

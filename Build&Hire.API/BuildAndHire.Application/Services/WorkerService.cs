@@ -21,7 +21,7 @@ namespace BuildAndHire.Application.Services
             {
                 WorkerId = w.WorkerId,
                 WorkerFirstName = w.WorkerFirstName,
-                WorkerLastNAme = w.WorkerLastNAme,
+                WorkerLastName = w.WorkerLastName,
                 WorkerStatus = w.WorkerStatus,
                 CompanyId = w.CompanyId,
 
@@ -39,7 +39,7 @@ namespace BuildAndHire.Application.Services
             {
                 WorkerId = getWorker.WorkerId,
                 WorkerFirstName = getWorker.WorkerFirstName,
-                WorkerLastNAme = getWorker.WorkerLastNAme,
+                WorkerLastName = getWorker.WorkerLastName,
                 WorkerStatus = getWorker.WorkerStatus,
                 CompanyId = getWorker.CompanyId,
                 JobId = getWorker.JobId,
@@ -51,7 +51,7 @@ namespace BuildAndHire.Application.Services
             var addworker = new Workers
             {
                 WorkerFirstName = dto.WorkerFirstName,
-                WorkerLastNAme = dto.WorkerLastNAme,
+                WorkerLastName = dto.WorkerLastName,
                 WorkerStatus = dto.WorkerStatus,
                 CompanyId = dto.CompanyId,
                 JobId = dto.JobId,
@@ -62,7 +62,7 @@ namespace BuildAndHire.Application.Services
             return new AddWorkerDto
             {
                 WorkerFirstName = worker.WorkerFirstName,
-                WorkerLastNAme = worker.WorkerLastNAme,
+                WorkerLastName = worker.WorkerLastName,
                 WorkerStatus = worker.WorkerStatus,
                 CompanyId = worker.CompanyId,
                 JobId = worker.CompanyId,

@@ -15,6 +15,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<CustomerDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllCustomerAccounts()
         {
             var customers = await _service.GetAllCustomersAsync();
@@ -32,6 +33,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(CustomerDto), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddNewCustomer(CreateCustomerDto dto)
         {
             var customer = await _service.AddCustomerAsync(dto);

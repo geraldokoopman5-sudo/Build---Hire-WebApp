@@ -1,24 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace BuildAndHire.Application.Validators.Customers;
 
-namespace BuildAndHire.Application.Validators.Customers
+public class UpdateCustomerValidator : AbstractValidator<UpdateCustomerDto>
 {
-    public class UpdateCustomerValidator : AbstractValidator<UpdateCustomerDto>
+    public UpdateCustomerValidator()
     {
-        public UpdateCustomerValidator()
-        {
-            RuleFor(c => c.Email)
-    .NotEmpty()
-    .EmailAddress();
-
-            RuleFor(c => c.PasswordHash)
-                .MaximumLength(20)
-                .MinimumLength(6);
-
-            RuleFor(c => c.CustomerName)
-                .MaximumLength(20)
-                .NotEmpty();
-        }
+        RuleFor(x => x.CustomerName).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+        RuleFor(x => x.Status).IsInEnum();
+        RuleFor(x => x.Address).NotNull().SetValidator(new AddressValidator()!);
     }
 }

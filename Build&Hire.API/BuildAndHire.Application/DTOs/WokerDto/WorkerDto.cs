@@ -12,7 +12,7 @@ namespace BuildAndHire.Application.DTOs.WokerDto
 
         public string WorkerFirstName { get; set; } = string.Empty;
 
-        public string WorkerLastNAme { get; set; } = string.Empty;
+        public string WorkerLastName { get; set; } = string.Empty;
 
         public AccountStatus WorkerStatus { get; set; } = AccountStatus.Active;
         public Guid CompanyId { get; set; }

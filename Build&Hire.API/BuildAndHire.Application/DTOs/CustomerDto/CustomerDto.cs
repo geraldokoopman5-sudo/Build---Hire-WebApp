@@ -12,12 +12,10 @@ namespace BuildAndHire.Application.DTOs.CustomerDto
 
         public string CustomerName { get; set; } = string.Empty;
 
-        public string PasswordHash { get; set; } = string.Empty;
 
         public string Email { get; set; } = string.Empty;
 
         public Guid? JobId { get; set; }
-        public Jobs? jobs { get; set; }
 
         public AccountStatus Status { get; set; }
         public AccountType accountType { get; set; } = AccountType.Customer;

@@ -151,7 +151,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.Property<int?>("PayingMethod")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("Qoute")
+                    b.Property<decimal>("Quote")
                         .HasPrecision(10, 2)
                         .HasColumnType("numeric(10,2)");
 
@@ -224,7 +224,7 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("WorkerLastNAme")
+                    b.Property<string>("WorkerLastName")
                         .IsRequired()
                         .HasColumnType("text");
 

@@ -9,7 +9,7 @@ namespace BuildAndHire.Application.Interfaces.Services
     {   
         Task<IEnumerable<CompanyDto>> GetAllCompaniesAsync();
         Task<CompanyDto> GetCompanyByIdAsync(Guid Id);
-        Task<RegisterCompanyDto> RegisterCompanyAsync(RegisterCompanyDto dto);
+        Task<CompanyDto> RegisterCompanyAsync(RegisterCompanyDto dto);
         Task<UpdateCompanyDto> UpdateCompanyAsync(Guid Id ,UpdateCompanyDto dto);
         Task <string>DeleteCompanyAsync(Guid Id);
     }

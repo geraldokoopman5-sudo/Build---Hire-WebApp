@@ -1,4 +1,4 @@
-export type PaymentMethod = 'eft' | 'card' | 'paypal';
+
 
 export interface QuoteSummary {
   labor: number;

@@ -1,5 +1,6 @@
 import {
   useMemo,
+  useEffect,
   useState,
   type ChangeEvent,
   type FormEvent,
@@ -12,12 +13,13 @@ import {
 
 import JobsHeader from '../../components/JobsHeader/JobsHeader';
 
-import { companies } from '../../data/companies';
+import { apiRequest } from '../../utils/api';
+import { AccountStatus } from '../../types/enums';
+interface CompanyOption { companyId: string; companyName: string; status: AccountStatus; }
 
 import { PaymentMethod } from '../../types/enums';
 
 import {
-  getCurrentCustomerId,
   useCustomerJobs,
 } from '../../context/CustomerJobsContext';
 
@@ -75,11 +77,11 @@ function calculateDays(
   }
 
   const start = new Date(
-    `${startDate}T00:00:00`
+    `${startDate}T00:00:00Z`
   );
 
   const end = new Date(
-    `${endDate}T00:00:00`
+    `${endDate}T00:00:00Z`
   );
 
   if (
@@ -132,11 +134,17 @@ export default function CreateJob() {
     ]
   );
 
-  const activeCompanies =
-    companies.filter(
-      (company) =>
-        company.status === 0
-    );
+  const [activeCompanies, setActiveCompanies] = useState<CompanyOption[]>([]);
+  const [companiesLoading, setCompaniesLoading] = useState(true);
+  const [companiesError, setCompaniesError] = useState('');
+  useEffect(() => {
+    const controller = new AbortController();
+    apiRequest<CompanyOption[]>('/api/Companies', { signal: controller.signal })
+      .then(data => { if (!controller.signal.aborted) setActiveCompanies(data.filter(c => c.status === AccountStatus.Active)); })
+      .catch((error: unknown) => { if (!controller.signal.aborted) setCompaniesError(error instanceof Error ? error.message : 'Could not load companies.'); })
+      .finally(() => { if (!controller.signal.aborted) setCompaniesLoading(false); });
+    return () => controller.abort();
+  }, []);
 
   const validate = (): FormErrors => {
     const nextErrors: FormErrors = {};
@@ -184,11 +192,11 @@ export default function CreateJob() {
       values.endDate
     ) {
       const start = new Date(
-        `${values.startDate}T00:00:00`
+        `${values.startDate}T00:00:00Z`
       );
 
       const end = new Date(
-        `${values.endDate}T00:00:00`
+        `${values.endDate}T00:00:00Z`
       );
 
       if (
@@ -201,7 +209,7 @@ export default function CreateJob() {
         }
 
         const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        today.setUTCHours(0, 0, 0, 0);
 
         if (start < today) {
           nextErrors.startDate =
@@ -312,9 +320,9 @@ export default function CreateJob() {
     }));
   };
 
-  const handleSubmit = (
+  const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
-  ): void => {
+  ): Promise<void> => {
     event.preventDefault();
 
     const validationErrors =
@@ -334,7 +342,7 @@ export default function CreateJob() {
       const company =
         activeCompanies.find(
           (entry) =>
-            entry.id === values.companyId
+            entry.companyId === values.companyId
         );
 
       if (!company) {
@@ -346,15 +354,13 @@ export default function CreateJob() {
         return;
       }
 
-      const job = createJob({
+      const job = await createJob({
         companyId:
-          company.id,
+          company.companyId,
 
         companyName:
           company.companyName,
 
-        customerId:
-          getCurrentCustomerId(),
 
         jobDescription:
           values.jobDescription.trim(),
@@ -402,10 +408,9 @@ export default function CreateJob() {
           replace: true,
         }
       );
-    } catch {
+    } catch (error) {
       setErrors({
-        general:
-          'Something went wrong while creating the job. Please try again.',
+        general: error instanceof Error ? error.message : 'Could not create the job.',
       });
     } finally {
       setIsSubmitting(false);
@@ -417,6 +422,9 @@ export default function CreateJob() {
       <JobsHeader activeLink="my-jobs" />
 
       <main className={styles.main}>
+        {companiesLoading && <p role="status">Loading companies…</p>}
+        {companiesError && <p role="alert">{companiesError}</p>}
+        {!companiesLoading && !companiesError && activeCompanies.length === 0 && <p>No approved companies are available yet.</p>}
         <Link
           to="/my-jobs"
           className={styles.backLink}
@@ -491,7 +499,7 @@ export default function CreateJob() {
                     ? 'company-error'
                     : undefined
                 }
-                disabled={isSubmitting}
+                disabled={isSubmitting || companiesLoading || !!companiesError}
               >
                 <option value="">
                   Select a company
@@ -500,8 +508,8 @@ export default function CreateJob() {
                 {activeCompanies.map(
                   (company) => (
                     <option
-                      key={company.id}
-                      value={company.id}
+                      key={company.companyId}
+                      value={company.companyId}
                     >
                       {company.companyName}
                     </option>
@@ -558,7 +566,7 @@ export default function CreateJob() {
                     errors.jobDescription
                   )
                 }
-                disabled={isSubmitting}
+                disabled={isSubmitting || companiesLoading || !!companiesError}
               />
 
               <span className={styles.characterCount}>
@@ -603,7 +611,7 @@ export default function CreateJob() {
                   aria-invalid={
                     Boolean(errors.startDate)
                   }
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || companiesLoading || !!companiesError}
                 />
 
                 {errors.startDate && (
@@ -629,7 +637,7 @@ export default function CreateJob() {
                   aria-invalid={
                     Boolean(errors.endDate)
                   }
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || companiesLoading || !!companiesError}
                 />
 
                 {errors.endDate && (
@@ -666,7 +674,7 @@ export default function CreateJob() {
                     ? styles.inputError
                     : ''
                 }`}
-                disabled={isSubmitting}
+                disabled={isSubmitting || companiesLoading || !!companiesError}
               >
                 <option value="">
                   Choose later
@@ -743,7 +751,7 @@ export default function CreateJob() {
                     : ''
                 }`}
                 placeholder="123 Main Street"
-                disabled={isSubmitting}
+                disabled={isSubmitting || companiesLoading || !!companiesError}
               />
 
               {errors.streetAddress && (
@@ -766,7 +774,7 @@ export default function CreateJob() {
                       ? styles.inputError
                       : ''
                   }`}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || companiesLoading || !!companiesError}
                 />
 
                 {errors.suburb && (
@@ -788,7 +796,7 @@ export default function CreateJob() {
                       ? styles.inputError
                       : ''
                   }`}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || companiesLoading || !!companiesError}
                 />
 
                 {errors.city && (
@@ -810,7 +818,7 @@ export default function CreateJob() {
                       ? styles.inputError
                       : ''
                   }`}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || companiesLoading || !!companiesError}
                 />
 
                 {errors.province && (
@@ -835,7 +843,7 @@ export default function CreateJob() {
                   inputMode="numeric"
                   maxLength={4}
                   placeholder="0000"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || companiesLoading || !!companiesError}
                 />
 
                 {errors.postalCode && (
@@ -858,7 +866,7 @@ export default function CreateJob() {
             <button
               type="submit"
               className={styles.submitButton}
-              disabled={isSubmitting}
+              disabled={isSubmitting || companiesLoading || !!companiesError}
             >
               {isSubmitting
                 ? 'Creating Job…'

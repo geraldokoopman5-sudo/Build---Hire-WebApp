@@ -44,9 +44,10 @@ namespace BuildAndHire.Infrastructure.Repositories
 
             ChangeJob.EndDate = job.EndDate;
             ChangeJob.Workers = job.Workers;
-            ChangeJob.Qoute = job.Qoute;
+            ChangeJob.Quote = job.Quote;
             ChangeJob.address = job.address;
             ChangeJob.Status = job.Status;
+            ChangeJob.PayingMethod = job.PayingMethod;
             
             await _context.SaveChangesAsync();
             return ChangeJob;

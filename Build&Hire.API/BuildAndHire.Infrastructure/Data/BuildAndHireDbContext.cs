@@ -105,7 +105,7 @@ namespace BuildAndHire.Infrastructure.Data
                 .HasPrecision(10, 2);
 
             modelBuilder.Entity<Jobs>()
-                .Property(j => j.Qoute)
+                .Property(j => j.Quote)
                 .HasPrecision(10, 2);
 
             //CompnaiesSeed.Seed(modelBuilder);

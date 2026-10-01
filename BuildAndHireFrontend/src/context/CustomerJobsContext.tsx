@@ -1,217 +1,100 @@
 /* eslint-disable react-refresh/only-export-components */
-
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
-
-import type {
-  CustomerJob,
-} from '../types/job';
-
-import type {
-  PaymentMethod,
-} from '../types/enums';
-
-const STORAGE_KEY =
-  'buildandhire.customerJobs';
-
-const CUSTOMER_ID_KEY =
-  'buildandhire.devCustomerId';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import type { CustomerJob } from '../types/job';
+import { AccountType, JobEnum, type PaymentMethod } from '../types/enums';
+import { apiRequest } from '../utils/api';
+import { getStoredAccessToken, getStoredAccountType } from '../utils/auth';
+import { dateInputToUtc } from '../utils/dates';
+import { jobStatusFromApi } from '../utils/jobStatus';
 
 interface CreateCustomerJobInput {
   companyId: string;
   companyName: string;
-  customerId: string;
-
   jobDescription: string;
   daysWorking: number;
-
   startDate: string;
   endDate: string;
-
   payingMethod: PaymentMethod | null;
-
-  address: {
-    streetAddress: string;
-    suburb: string;
-    city: string;
-    province: string;
-    postalCode: number;
-  };
+  address: CustomerJob['address'];
 }
-
+type ApiJob = Omit<CustomerJob, 'status' | 'createdAt'> & { status: number };
+function fromApi(job: ApiJob): CustomerJob {
+  return { ...job, status: jobStatusFromApi(job.status) };
+}
 interface CustomerJobsContextValue {
   jobs: CustomerJob[];
-
-  createJob: (
-    input: CreateCustomerJobInput
-  ) => CustomerJob;
-
-  getJobById: (
-    jobId: string
-  ) => CustomerJob | undefined;
+  loading: boolean;
+  error: string;
+  createJob: (input: CreateCustomerJobInput) => Promise<CustomerJob>;
+  getJobById: (jobId: string) => CustomerJob | undefined;
 }
+const CustomerJobsContext = createContext<CustomerJobsContextValue | undefined>(undefined);
 
-const CustomerJobsContext =
-  createContext<
-    CustomerJobsContextValue | undefined
-  >(undefined);
-
-function getCustomerId(): string {
-  const existing =
-    localStorage.getItem(
-      CUSTOMER_ID_KEY
-    );
-
-  if (existing) {
-    return existing;
-  }
-
-  const generated =
-    crypto.randomUUID();
-
-  localStorage.setItem(
-    CUSTOMER_ID_KEY,
-    generated
-  );
-
-  return generated;
-}
-
-function loadJobs(): CustomerJob[] {
-  try {
-    const stored =
-      localStorage.getItem(STORAGE_KEY);
-
-    if (!stored) {
-      return [];
-    }
-
-    const parsed: unknown =
-      JSON.parse(stored);
-
-    return Array.isArray(parsed)
-      ? (parsed as CustomerJob[])
-      : [];
-  } catch {
-    return [];
-  }
-}
-
-export function CustomerJobsProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  const [jobs, setJobs] =
-    useState<CustomerJob[]>(loadJobs);
-
+export function CustomerJobsProvider({ children }: { children: ReactNode }) {
+  const [jobs, setJobs] = useState<CustomerJob[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(jobs)
-    );
-  }, [jobs]);
-
-  const createJob = (
-    input: CreateCustomerJobInput
-  ): CustomerJob => {
-    const job: CustomerJob = {
-      jobId: crypto.randomUUID(),
-
-      companyId: input.companyId,
-      companyName:
-        input.companyName,
-
-      customerId:
-        input.customerId,
-
-      jobDescription:
-        input.jobDescription.trim(),
-
-      daysWorking:
-        input.daysWorking,
-
-      /*
-       * No quote exists at creation time.
-       */
-      qoute: 0,
-
-      startDate:
-        input.startDate,
-
-      endDate:
-        input.endDate,
-
-      payingMethod:
-        input.payingMethod,
-
-      /*
-       * This mirrors the current frontend
-       * job state model.
-       */
-      status: 'working',
-
-      address: input.address,
-
-      createdAt:
-        new Date().toISOString(),
+    let controller: AbortController | undefined;
+    const reload = () => {
+      controller?.abort();
+      controller = new AbortController();
+      const signal = controller.signal;
+      setJobs([]);
+      setError('');
+      const token = getStoredAccessToken();
+      if (!token || getStoredAccountType() !== AccountType.Customer) {
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      apiRequest<ApiJob[]>('/api/Jobs', {
+        headers: { Authorization: `Bearer ${token}` }, signal,
+      }).then(data => {
+        if (!signal.aborted) setJobs(data.map(fromApi));
+      }).catch((reason: unknown) => {
+        if (!signal.aborted) setError(reason instanceof Error ? reason.message : 'Could not load jobs.');
+      }).finally(() => { if (!signal.aborted) setLoading(false); });
     };
-
-    setJobs((current) => [
-      job,
-      ...current,
-    ]);
-
+    reload();
+    window.addEventListener('buildandhire:auth', reload);
+    window.addEventListener('storage', reload);
+    return () => {
+      controller?.abort();
+      window.removeEventListener('buildandhire:auth', reload);
+      window.removeEventListener('storage', reload);
+    };
+  }, []);
+  const createJob = useCallback(async (input: CreateCustomerJobInput): Promise<CustomerJob> => {
+    const token = getStoredAccessToken();
+    if (!token) throw new Error('Please sign in again.');
+    const saved = await apiRequest<ApiJob>('/api/Jobs', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        companyId: input.companyId,
+        jobDescription: input.jobDescription.trim(),
+        daysWorking: input.daysWorking,
+        startDate: dateInputToUtc(input.startDate),
+        endDate: dateInputToUtc(input.endDate),
+        payingMethod: input.payingMethod,
+        status: JobEnum.Working,
+        address: input.address,
+      }),
+    });
+    const job = fromApi(saved);
+    if (getStoredAccessToken() === token) setJobs(current => [job, ...current.filter(x => x.jobId !== job.jobId)]);
     return job;
-  };
-
-  const getJobById = useCallback(
-    (jobId: string): CustomerJob | undefined => {
-      return jobs.find(
-        (job) => job.jobId === jobId
-      );
-    },
-    [jobs]
-  );
-
-  const value = useMemo(
-    () => ({
-      jobs,
-      createJob,
-      getJobById,
-    }),
-    [jobs, getJobById]
-  );
-
-  return (
-    <CustomerJobsContext.Provider
-      value={value}
-    >
-      {children}
-    </CustomerJobsContext.Provider>
-  );
+  }, []);
+  const getJobById = useCallback((id: string) => jobs.find(job => job.jobId === id), [jobs]);
+  const value = useMemo(() => ({ jobs, loading, error, createJob, getJobById }), [jobs, loading, error, createJob, getJobById]);
+  return <CustomerJobsContext.Provider value={value}>{children}</CustomerJobsContext.Provider>;
 }
-
 export function useCustomerJobs(): CustomerJobsContextValue {
-  const context =
-    useContext(CustomerJobsContext);
-
-  if (!context) {
-    throw new Error(
-      'useCustomerJobs must be used inside CustomerJobsProvider'
-    );
-  }
-
+  const context = useContext(CustomerJobsContext);
+  if (!context) throw new Error('useCustomerJobs must be used inside CustomerJobsProvider');
   return context;
 }
-
 export function getCurrentCustomerId(): string {
-  return getCustomerId();
+  return localStorage.getItem('buildandhire.customerId') ?? '';
 }

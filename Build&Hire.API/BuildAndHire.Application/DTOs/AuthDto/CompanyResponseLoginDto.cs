@@ -16,7 +16,6 @@ namespace BuildAndHire.Application.DTOs.AuthDto
 
         public Guid? JobId { get; set; }
 
-        public Jobs? Jobs { get; set; }
 
         public Address? Address { get; set; }
 

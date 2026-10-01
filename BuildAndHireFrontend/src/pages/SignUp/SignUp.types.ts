@@ -45,8 +45,6 @@ export interface CustomerSignUpPayload {
   customerName: string;
   email: string;
   password: string;
-  status: AccountStatus;
-  accountType: AccountType;
   address: AddressPayload;
 }
 
@@ -54,8 +52,6 @@ export interface CompanySignUpPayload {
   companyName: string;
   companyEmail: string;
   password: string;
-  status: AccountStatus;
-  account: AccountType;
   registrationNumber: string;
   taxNumber: string;
   address: AddressPayload;

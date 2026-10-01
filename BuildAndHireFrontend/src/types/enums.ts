@@ -35,3 +35,5 @@ export const PaymentEnum = {
 } as const;
 
 export type PaymentEnum = (typeof PaymentEnum)[keyof typeof PaymentEnum];
+export const JobEnum = { Working: 1, Unavailable: 2, Available: 3 } as const;
+export type JobEnum = (typeof JobEnum)[keyof typeof JobEnum];

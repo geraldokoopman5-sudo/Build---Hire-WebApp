@@ -9,17 +9,17 @@ namespace BuildAndHire.Application.DTOs.JobDto
     {
         public Guid JobId { get; set; }
 
+        public string CompanyName { get; set; } = string.Empty;
+
         public Guid CompanyId { get; set; }
-        public Companies? companies { get; set; }
 
         public Guid CustomerId { get; set; }
-        public Customer? customer { get; set; }
 
         public string JobDescription { get; set; } = string.Empty;
 
         public int DaysWorking { get; set; }
 
-        public decimal Qoute { get; set; }
+        public decimal Quote { get; set; }
 
         public DateTime StartDate { get; set; }
 
@@ -27,7 +27,7 @@ namespace BuildAndHire.Application.DTOs.JobDto
 
         public JobEnum Status { get; set; }
 
-        public PaymentMethod? payingBy { get; set; }
+        public PaymentMethod? PayingMethod { get; set; }
 
         public Address? address { get; set; }
     }

@@ -4,14 +4,7 @@ import {
   type AdminRole as AdminRoleType,
 } from '../types/admin';
 
-/**
- * Base URL of the BuildAndHire.API backend.
- * This is still used by the real API login function when
- * backend authentication is enabled.
- */
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ??
-  'https://localhost:7123';
+import { API_BASE_URL } from './api';
 
 /**
  * Shape of the login response returned by the backend.
@@ -52,9 +45,7 @@ const ADMIN_ROLE_STORAGE_KEY =
 /**
  * Calls the real backend login endpoint.
  *
- * This remains here so we can switch from the
- * frontend development login to the real API
- * later without changing the rest of the app.
+ * Stores the authenticated session returned by the API.
  */
 export async function login(
   email: string,
@@ -127,6 +118,8 @@ export async function login(
     );
   }
 
+  localStorage.setItem('buildandhire.customerId', typeof data.customerId === 'string' ? data.customerId : '');
+  window.dispatchEvent(new Event('buildandhire:auth'));
   return data;
 }
 
@@ -170,9 +163,8 @@ export function getPostLoginRoute(
  */
 export function getStoredAccessToken():
   string | null {
-  return localStorage.getItem(
-    TOKEN_STORAGE_KEY
-  );
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+  return token?.startsWith('dev-token-') ? null : token;
 }
 
 /**
@@ -241,6 +233,7 @@ export function getStoredAdminRole():
  * session.
  */
 export function logout(): void {
+  localStorage.removeItem('buildandhire.customerId');
   localStorage.removeItem(
     TOKEN_STORAGE_KEY
   );
@@ -252,4 +245,5 @@ export function logout(): void {
   localStorage.removeItem(
     ADMIN_ROLE_STORAGE_KEY
   );
+  window.dispatchEvent(new Event('buildandhire:auth'));
 }

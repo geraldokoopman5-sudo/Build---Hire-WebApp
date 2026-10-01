@@ -22,8 +22,11 @@ namespace BuildAndHire.Application.Services
                 JobId = j.JobId,
                 JobDescription = j.JobDescription,
                 CompanyId = j.CompanyId,
+                CompanyName = j.companies?.CompanyName ?? string.Empty,
+                DaysWorking = j.DaysWorking,
+                PayingMethod = j.PayingMethod,
                 CustomerId = j.CustomerId,
-                Qoute = j.Qoute,
+                Quote = j.Quote,
                 StartDate = j.StartDate,
                 EndDate = j.EndDate,
                 Status = j.Status,
@@ -37,9 +40,12 @@ namespace BuildAndHire.Application.Services
             var jobs = await _repo.GetJobById(Id);
             if (jobs == null) return null;
 
+            if (dto.EndDate < jobs.StartDate)
+                throw new ValidationException("EndDate cannot precede the existing StartDate.");
+
             jobs.EndDate = dto.EndDate;
             jobs.Status = dto.Status;
-            jobs.Qoute = dto.Qoute;
+            jobs.Quote = dto.Quote;
             jobs.PayingMethod = dto.PayingMethod;
 
             var updated = await _repo.UpdatejobDetails(jobs);
@@ -47,6 +53,7 @@ namespace BuildAndHire.Application.Services
             return new UpdateJobDetailsDto
             {
                 EndDate = updated.EndDate,
+                Quote = updated.Quote,
                 Status = updated.Status,
                 PayingMethod = updated.PayingMethod,
             };
@@ -68,16 +75,19 @@ namespace BuildAndHire.Application.Services
         JobId = job.JobId,
         JobDescription = job.JobDescription,
         CompanyId = job.CompanyId,
+                CompanyName = job.companies?.CompanyName ?? string.Empty,
+                PayingMethod = job.PayingMethod,
         CustomerId = job.CustomerId,
         StartDate = job.StartDate,
-        Qoute = job.Qoute,
+        DaysWorking = job.DaysWorking,
+        Quote = job.Quote,
         EndDate = job.EndDate,
         Status = job.Status,
         address = job.address,
     };
 }
 
-        public async Task<RegisterJobDto> RegisterJobAsync(RegisterJobDto dto)
+        public async Task<JobDto> RegisterJobAsync(RegisterJobDto dto)
         {
             var newJob = new Jobs
             {
@@ -87,17 +97,20 @@ namespace BuildAndHire.Application.Services
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
                 DaysWorking = dto.DaysWorking,
+                PayingMethod = dto.PayingMethod,
                 Status = dto.Status,
                 address = dto.address
 
             };
 
             var job = await _repo.RegisterJob(newJob);
-            return new RegisterJobDto
+            return new JobDto
             {
                 JobId = job.JobId,
                 JobDescription = job.JobDescription,
                 CompanyId = job.CompanyId,
+                CompanyName = job.companies?.CompanyName ?? string.Empty,
+                PayingMethod = job.PayingMethod,
                 CustomerId = job.CustomerId,
                 StartDate = job.StartDate,
                 EndDate = job.EndDate,

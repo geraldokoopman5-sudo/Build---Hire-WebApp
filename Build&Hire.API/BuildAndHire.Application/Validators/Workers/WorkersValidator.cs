@@ -1,21 +1,12 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace BuildAndHire.Application.Validators.Workers;
 
-namespace BuildAndHire.Application.Validators.Workers
+public class WorkersValidator : AbstractValidator<AddWorkerDto>
 {
-    public class WorkersValidator : AbstractValidator<AddWorkerDto>
+    public WorkersValidator()
     {
-        public WorkersValidator()
-        {
-            RuleFor(w => w.WorkerFirstName)
-                .NotEmpty()
-                .MaximumLength(50);
-
-            RuleFor(w => w.WorkerLastNAme)
-            .NotEmpty()
-            .MaximumLength(50); 
-        }
+        RuleFor(x => x.WorkerFirstName).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.WorkerLastName).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.CompanyId).NotEmpty();
+        RuleFor(x => x.WorkerStatus).IsInEnum();
     }
 }

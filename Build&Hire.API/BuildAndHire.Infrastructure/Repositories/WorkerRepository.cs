@@ -38,7 +38,7 @@ namespace BuildAndHire.Infrastructure.Repositories
                 if (workers == null) return null;
 
                 //workers.WorkerFirstName = dto.WorkerFirstName;
-                //workers.WorkerLastNAme = dto.WorkerLastNAme;
+                //workers.WorkerLastName = dto.WorkerLastName;
                 //workers.WorkerStatus = dto.WorkerStatus;
               
               await _context.SaveChangesAsync();

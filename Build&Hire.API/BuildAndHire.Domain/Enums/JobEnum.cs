@@ -6,6 +6,6 @@ namespace BuildAndHire.Domain.Enums
 {
     public enum JobEnum
     {
-        Working=1, Unavailible=2, Availible=3
+        Working=1, Unavailable=2, Available=3
     }
 }
