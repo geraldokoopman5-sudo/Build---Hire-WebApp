@@ -9,7 +9,7 @@ namespace BuildAndHire.Application.Interfaces.Repository
     public interface IJobRepository
     {
         Task<IEnumerable<Jobs>> GetAllJobs();
-        Task<Jobs> GetJobById(Guid id);
+        Task<Jobs?> GetJobById(Guid id);
         Task<Jobs> RegisterJob(Jobs job);
         Task<Jobs> UpdatejobDetails(Jobs job);
         Task<string> CancelJob(Guid Id);

@@ -8,7 +8,7 @@ namespace BuildAndHire.Application.Interfaces.Services
     public interface ICustomerService
     {
         Task<IEnumerable<CustomerDto>> GetAllCustomersAsync();
-        Task<CustomerDto> GetCustomersByIdAsync(Guid Id);
+        Task<CustomerDto?> GetCustomersByIdAsync(Guid Id);
         Task<CustomerDto> AddCustomerAsync(CreateCustomerDto dto);
         Task<UpdateCustomerDto> UpdateCustomerDto(Guid Id,UpdateCustomerDto dto);
         Task<string> DeleteCustomerAccountAsync(Guid Id);

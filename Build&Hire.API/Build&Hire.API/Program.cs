@@ -6,6 +6,24 @@ using Build_Hire.API.Validation;
 using Build_Hire.API.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false);
+    // Environment and CLI overrides must retain precedence over local settings.
+    builder.Configuration.AddEnvironmentVariables().AddCommandLine(args);
+}
+DeploymentConfiguration.Validate(builder.Configuration, builder.Environment.IsDevelopment());
+if (!builder.Environment.IsDevelopment()) builder.Logging.AddJsonConsole();
+builder.Services.AddProblemDetails();
+builder.Services.Configure<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor
+        | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+    foreach (var proxy in builder.Configuration.GetSection("Proxy:KnownProxies").Get<string[]>() ?? [])
+        options.KnownProxies.Add(System.Net.IPAddress.Parse(proxy));
+});
+builder.Services.AddHealthChecks().AddCheck<DatabaseReadinessCheck>("database", tags: ["ready"],
+    timeout: TimeSpan.FromSeconds(10));
 
     // Register services
     builder.Services.AddControllers(options =>
@@ -105,17 +123,15 @@ builder.Services
             },
             OnAuthenticationFailed = context =>
             {
-                Console.WriteLine(
-                    $"JWT Authentication Failed: {context.Exception.Message}");
+                context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                    .CreateLogger("Authentication").LogInformation("Authentication failed. TraceId: {TraceId}",
+                        context.HttpContext.TraceIdentifier);
 
                 return Task.CompletedTask;
             },
 
             OnChallenge = context =>
             {
-                Console.WriteLine(
-                    $"JWT Challenge: {context.Error} - {context.ErrorDescription}");
-
                 return Task.CompletedTask;
             }
         };
@@ -147,6 +163,19 @@ if (args.Contains("--migrate"))
     return;
 }
 await SuperAdminSeeder.SeedAsync(app.Services, app.Configuration);
+app.UseForwardedHeaders();
+app.Use(async (context, next) =>
+{
+    var started = System.Diagnostics.Stopwatch.GetTimestamp();
+    try { await next(context); }
+    finally
+    {
+        app.Logger.LogInformation("HTTP {Method} {Path} returned {StatusCode} in {ElapsedMs} ms. TraceId: {TraceId}",
+            context.Request.Method, context.Request.Path.Value, context.Response.StatusCode,
+            System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds, context.TraceIdentifier);
+    }
+});
+app.UseExceptionHandler();
 
     // Configure middleware
     if (app.Environment.IsDevelopment())
@@ -155,7 +184,8 @@ await SuperAdminSeeder.SeedAsync(app.Services, app.Configuration);
         app.UseSwaggerUI();
     }
 
-app.UseHttpsRedirection();
+// Liveness/readiness can be probed over a private HTTP listener even when HTTPS is enabled.
+app.UseWhen(context => !context.Request.Path.StartsWithSegments("/health"), branch => branch.UseHttpsRedirection());
 
 app.UseRouting();
 
@@ -165,5 +195,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+    { Predicate = _ => false }).AllowAnonymous();
+app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+    { Predicate = check => check.Tags.Contains("ready") }).AllowAnonymous();
 
 app.Run();

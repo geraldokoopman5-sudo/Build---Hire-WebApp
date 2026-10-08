@@ -24,6 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="appsettings.Local*.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
     <ProjectReference Include="..\BuildAndHire.Application\BuildAndHire.Application.csproj" />
     <ProjectReference Include="..\BuildAndHire.Infrastructure\BuildAndHire.Infrastructure.csproj" />
   </ItemGroup>

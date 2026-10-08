@@ -35,7 +35,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         public async Task<Payment> PaymentResponseAsync(Payment Id)//Update
         {
             Payment? pay = await _context.Payment.FindAsync(Id.PaymentId);
-            if (pay == null) return null;
+            if (pay == null) throw new KeyNotFoundException("Payment not found.");
 
                     pay.Status = Id.Status;
 
@@ -47,7 +47,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         public async Task<string> DeletePaymentHistoryAsync(Guid Id)
         {
             var Deletepay = await _context.Payment.FindAsync(Id);
-            if (Deletepay == null) return null;
+            if (Deletepay == null) throw new KeyNotFoundException("Payment not found.");
 
             _context.Payment.Remove(Deletepay);
             await _context.SaveChangesAsync();

@@ -8,7 +8,7 @@ namespace BuildAndHire.Application.Interfaces.Services
     public interface IJobService
     {
         Task<IEnumerable<JobDto>> GetAllJobsAsync();
-        Task<JobDto> GetJobByIdAsync(Guid Id);
+        Task<JobDto?> GetJobByIdAsync(Guid Id);
         Task<JobDto> RegisterJobAsync(RegisterJobDto dto);
         Task<UpdateJobDetailsDto> UpdateJobDetailsAsync(Guid Id, UpdateJobDetailsDto dto);
         Task<string> DeleteJobAsync(Guid Id);   

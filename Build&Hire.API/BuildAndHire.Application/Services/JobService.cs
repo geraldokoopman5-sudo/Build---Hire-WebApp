@@ -33,6 +33,9 @@ namespace BuildAndHire.Application.Services
                 StartDate = j.StartDate,
                 EndDate = j.EndDate,
                 Status = j.Status,
+                AcceptedAt = j.AcceptedAt,
+                QuoteSentAt = j.QuoteSentAt,
+                QuoteAcceptedAt = j.QuoteAcceptedAt,
                 address = j.address,
             });
 
@@ -41,13 +44,25 @@ namespace BuildAndHire.Application.Services
         public async Task<UpdateJobDetailsDto> UpdateJobDetailsAsync(Guid Id, UpdateJobDetailsDto dto)
         {
             var jobs = await _repo.GetJobById(Id);
-            if (jobs == null) return null;
+            if (jobs == null) throw new KeyNotFoundException("Job not found.");
+
+            if (jobs.Status != JobEnum.Accepted)
+                throw new ValidationException("Only accepted jobs can be edited.");
+            if (dto.PayingMethod != jobs.PayingMethod && jobs.Payment != null)
+                throw new ValidationException("The payment method cannot change after a payment record exists.");
+            if (dto.Quote != jobs.Quote)
+            {
+                if (jobs.QuoteAcceptedAt != null || jobs.Payment != null)
+                    throw new ValidationException("The quote is locked after customer acceptance or payment creation.");
+                jobs.QuoteSentAt = dto.Quote > 0 ? new DateTime(DateTime.UtcNow.Ticks / 10 * 10, DateTimeKind.Utc) : null;
+            }
 
             if (dto.EndDate < jobs.StartDate)
                 throw new ValidationException("EndDate cannot precede the existing StartDate.");
 
             jobs.EndDate = dto.EndDate;
-            jobs.Status = dto.Status;
+            if (dto.Status.HasValue && dto.Status != jobs.Status)
+                throw new ValidationException("Use the job lifecycle endpoints to change status.");
             jobs.Quote = dto.Quote;
             jobs.PayingMethod = dto.PayingMethod;
 
@@ -89,6 +104,9 @@ namespace BuildAndHire.Application.Services
         Quote = job.Quote,
         EndDate = job.EndDate,
         Status = job.Status,
+        AcceptedAt = job.AcceptedAt,
+        QuoteSentAt = job.QuoteSentAt,
+        QuoteAcceptedAt = job.QuoteAcceptedAt,
         address = job.address,
     };
 }
@@ -104,8 +122,8 @@ namespace BuildAndHire.Application.Services
                 EndDate = dto.EndDate,
                 DaysWorking = dto.DaysWorking,
                 PayingMethod = dto.PayingMethod,
-                Status = dto.Status,
-                address = dto.address
+                Status = JobEnum.Requested,
+                address = dto.address ?? throw new ValidationException("An address is required.")
 
             };
 
@@ -122,6 +140,9 @@ namespace BuildAndHire.Application.Services
                 EndDate = job.EndDate,
                 DaysWorking = job.DaysWorking,
                 Status = job.Status,
+                AcceptedAt = job.AcceptedAt,
+                QuoteSentAt = job.QuoteSentAt,
+                QuoteAcceptedAt = job.QuoteAcceptedAt,
                 address = job.address,
 
             };

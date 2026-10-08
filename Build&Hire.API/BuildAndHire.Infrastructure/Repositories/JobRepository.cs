@@ -40,7 +40,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         {
             var ChangeJob = await _context.Jobs.FindAsync(job.JobId);
 
-            if (ChangeJob == null) return null;
+            if (ChangeJob == null) throw new KeyNotFoundException("Job not found.");
 
             ChangeJob.EndDate = job.EndDate;
             ChangeJob.Workers = job.Workers;
@@ -56,7 +56,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         public async Task<string> CancelJob(Guid Id)
         {
             var job = await _context.Jobs.FindAsync(Id);
-            if (job == null) return null;
+            if (job == null) throw new KeyNotFoundException("Job not found.");
 
              _context.Jobs.Remove(job);
             await _context.SaveChangesAsync();

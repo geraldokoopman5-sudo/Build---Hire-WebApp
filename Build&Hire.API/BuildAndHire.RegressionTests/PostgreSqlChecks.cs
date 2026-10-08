@@ -27,10 +27,16 @@ using System.Security.Claims;
 
 internal static class PostgreSqlChecks
 {
-    public static async Task RunAsync(string configurationPath)
+    public static async Task RunAsync(string? configurationPath = null)
     {
         // Only the connection string is read; no credentials are printed or persisted.
-        var configuration = new ConfigurationBuilder().AddJsonFile(configurationPath).Build();
+        var configurationBuilder = new ConfigurationBuilder();
+        if (configurationPath is not null)
+        {
+            configurationBuilder.AddJsonFile(configurationPath);
+            configurationBuilder.AddJsonFile(Path.Combine(Path.GetDirectoryName(configurationPath)!, "appsettings.Local.json"), optional: true);
+        }
+        var configuration = configurationBuilder.AddEnvironmentVariables().Build();
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("Missing DefaultConnection.");
         var schema = "integration_" + Guid.NewGuid().ToString("N");
@@ -52,6 +58,7 @@ internal static class PostgreSqlChecks
             }
             await db.Database.MigrateAsync();
             Require(await db.Admin.CountAsync() == 1, "Existing data survives migration");
+            await VerifyWorkerMigrationAsync(db);
 
             var password = "Test-" + Guid.NewGuid().ToString("N");
             var settings = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
@@ -132,6 +139,11 @@ internal static class PostgreSqlChecks
                 new Claim(ClaimTypes.NameIdentifier, company.CompanyId.ToString()),
                 new Claim(ClaimTypes.Role, "Company")
             ], "test"));
+            var acceptanceController = new JobsController(jobs, db)
+                { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
+            acceptanceController.HttpContext.User = workerController.HttpContext.User;
+            Require(await acceptanceController.AcceptJob(job.JobId) is OkObjectResult,
+                "Company accepts job before adding assigned workers");
             var workerResult = await workerController.AddWorker(new AddWorkerDto
             {
                 WorkerFirstName = "Test", WorkerLastName = "Surname", WorkerStatus = AccountStatus.Active,
@@ -161,14 +173,14 @@ internal static class PostgreSqlChecks
             jobsController.HttpContext.User = workerController.HttpContext.User;
             Require(await jobsController.UpdateJobDetails(job.JobId, new UpdateJobDetailsDto
             {
-                Quote = 0, EndDate = storedJob.EndDate, Status = JobEnum.Available,
+                Quote = 0, EndDate = storedJob.EndDate, Status = JobEnum.Accepted,
                 PayingMethod = PaymentMethod.EFT
             }) is OkObjectResult &&
-                await db.Jobs.AnyAsync(j => j.JobId == job.JobId && j.Status == JobEnum.Available),
-                "Company job status persists through the API");
+                await db.Jobs.AnyAsync(j => j.JobId == job.JobId && j.Status == JobEnum.Accepted),
+                "Company job details preserve the accepted lifecycle state");
             Require(await jobsController.UpdateJobDetails(job.JobId, new UpdateJobDetailsDto
             {
-                Quote = 150, EndDate = storedJob.EndDate, Status = JobEnum.Available,
+                Quote = 150, EndDate = storedJob.EndDate, Status = JobEnum.Accepted,
                 PayingMethod = PaymentMethod.EFT
             }) is ConflictObjectResult, "Quote cannot change after payment request");
             var unquotedJob = await jobs.RegisterJobAsync(new RegisterJobDto
@@ -178,9 +190,11 @@ internal static class PostgreSqlChecks
                 DaysWorking = 2, Status = JobEnum.Working, PayingMethod = PaymentMethod.EFT,
                 address = address
             });
+            Require(await jobsController.AcceptJob(unquotedJob.JobId) is OkObjectResult,
+                "Company accepts the new job before sending a quote");
             Require(await jobsController.UpdateJobDetails(unquotedJob.JobId, new UpdateJobDetailsDto
             {
-                Quote = 150, EndDate = start.AddDays(1), Status = JobEnum.Working,
+                Quote = 150, EndDate = start.AddDays(1), Status = JobEnum.Accepted,
                 PayingMethod = PaymentMethod.EFT
             }) is OkObjectResult &&
                 await db.Jobs.AnyAsync(j => j.JobId == unquotedJob.JobId && j.Quote == 150),
@@ -198,6 +212,9 @@ internal static class PostgreSqlChecks
                 new Claim(ClaimTypes.NameIdentifier, customer.CustomerId.ToString()),
                 new Claim(ClaimTypes.Role, "Customer")
             ], "test"));
+            jobsController.HttpContext.User = paymentController.HttpContext.User;
+            Require(await jobsController.AcceptQuote(unquotedJob.JobId, new JobQuoteRequest { Quote = 150 }) is OkObjectResult,
+                "Customer accepts the stored quote before simulated payment");
             var eftResult = await paymentController.RequestEftPayment(new EftPaymentRequest
             { JobId = unquotedJob.JobId, TransactionReference = "bank-ref" });
             Require(eftResult is CreatedAtActionResult { Value: PaymentsDto eft } &&
@@ -264,6 +281,64 @@ internal static class PostgreSqlChecks
             await cleanup.ExecuteNonQueryAsync();
         }
         Console.WriteLine("PostgreSQL integration checks passed; temporary schema removed.");
+    }
+
+    private static async Task VerifyWorkerMigrationAsync(BuildAndHireDbContext db)
+    {
+        // All migration downgrade/upgrade fixtures stay inside the disposable schema.
+        static Address FixtureAddress() => new()
+        { StreetAddress = "Migration Road", Suburb = "Central", City = "Cape Town", Province = "Western Cape", PostalCode = 8001 };
+        var company = new Companies
+        {
+            CompanyId = Guid.NewGuid(), CompanyName = "Migration Company", CompanyEmail = "migration-company@example.test",
+            PasswordHash = "unused", RegistrationNumber = "1234567890", TaxNumber = "0123456789", address = FixtureAddress()
+        };
+        var customer = new Customer
+        { CustomerId = Guid.NewGuid(), CustomerName = "Migration Customer", Email = "migration-customer@example.test", PasswordHash = "unused", address = FixtureAddress() };
+        Jobs FixtureJob() => new()
+        {
+            JobId = Guid.NewGuid(), CompanyId = company.CompanyId, CustomerId = customer.CustomerId,
+            JobDescription = "Existing migration job", StartDate = DateTime.UtcNow.Date, EndDate = DateTime.UtcNow.Date,
+            DaysWorking = 1, address = FixtureAddress()
+        };
+        var assignedJob = FixtureJob();
+        assignedJob.Quote = 100;
+        var emptyJob = FixtureJob();
+        emptyJob.Quote = 50;
+        var legacyUnavailableJob = FixtureJob();
+        legacyUnavailableJob.Status = JobEnum.Unavailable;
+        var assignedWorker = new Workers
+        { WorkerId = Guid.NewGuid(), WorkerFirstName = "Existing", WorkerLastName = "Assigned", CompanyId = company.CompanyId, JobId = assignedJob.JobId };
+        var unassignedWorker = new Workers
+        { WorkerId = Guid.NewGuid(), WorkerFirstName = "Existing", WorkerLastName = "Unassigned", CompanyId = company.CompanyId };
+        db.AddRange(company, customer, assignedJob, emptyJob, legacyUnavailableJob, assignedWorker, unassignedWorker);
+        await db.SaveChangesAsync();
+        db.ChangeTracker.Clear();
+        var migrator = db.GetService<IMigrator>();
+        var blocked = false;
+        try { await migrator.MigrateAsync("20260929000000_FixApiPropertyNames"); }
+        catch (PostgresException error) when (error.SqlState == "P0001") { blocked = true; }
+        Require(blocked && await db.Workers.AnyAsync(w => w.WorkerId == unassignedWorker.WorkerId && w.JobId == null),
+            "Migration rollback refuses to lose unassigned workers");
+        Require(!(await db.Database.GetPendingMigrationsAsync()).Any(), "Refused rollback leaves current schema and migration history intact");
+        await db.Workers.Where(w => w.WorkerId == unassignedWorker.WorkerId).ExecuteDeleteAsync();
+        await migrator.MigrateAsync("20260929000000_FixApiPropertyNames");
+        await db.Database.MigrateAsync();
+        Require(await db.Workers.AnyAsync(w => w.WorkerId == assignedWorker.WorkerId && w.JobId == assignedJob.JobId),
+            "Worker migration preserves existing assignments");
+        Require(await db.Jobs.AnyAsync(j => j.JobId == assignedJob.JobId && j.AcceptedAt != null),
+            "Worker migration treats already staffed jobs as accepted");
+        Require(await db.Jobs.AnyAsync(j => j.JobId == emptyJob.JobId && j.AcceptedAt == null),
+            "Worker migration leaves jobs without workers awaiting acceptance");
+        Require(await db.Jobs.AnyAsync(j => j.JobId == assignedJob.JobId && j.Status == JobEnum.Accepted && j.QuoteSentAt != null && j.QuoteAcceptedAt == null),
+            "Lifecycle migration exposes existing staffed-job quotes without inventing customer consent");
+        Require(await db.Jobs.AnyAsync(j => j.JobId == emptyJob.JobId && j.Status == JobEnum.Requested && j.QuoteSentAt != null && j.QuoteAcceptedAt == null)
+            && await db.Jobs.AnyAsync(j => j.JobId == legacyUnavailableJob.JobId && j.Status == JobEnum.Cancelled),
+            "Lifecycle migration maps existing open and unavailable jobs explicitly");
+        await db.Workers.Where(w => w.CompanyId == company.CompanyId).ExecuteDeleteAsync();
+        await db.Jobs.Where(j => j.CompanyId == company.CompanyId).ExecuteDeleteAsync();
+        await db.Companies.Where(c => c.CompanyId == company.CompanyId).ExecuteDeleteAsync();
+        await db.Customers.Where(c => c.CustomerId == customer.CustomerId).ExecuteDeleteAsync();
     }
 
     private static void Require(bool condition, string message)

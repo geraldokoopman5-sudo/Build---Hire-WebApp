@@ -27,6 +27,10 @@ namespace BuildAndHire.Application.DTOs.JobDto
 
         public JobEnum Status { get; set; }
 
+        public DateTime? AcceptedAt { get; set; }
+        public DateTime? QuoteSentAt { get; set; }
+        public DateTime? QuoteAcceptedAt { get; set; }
+
         public PaymentMethod? PayingMethod { get; set; }
         public PaymentEnum? PaymentStatus { get; set; }
         public decimal AmountPaid { get; set; }

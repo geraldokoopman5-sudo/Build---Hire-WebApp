@@ -34,7 +34,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         {
             var accountExist = await _context.Customers.FindAsync(customer.CustomerId);
             if (accountExist == null)
-                return null;
+                throw new KeyNotFoundException("Customer not found.");
 
             accountExist.CustomerName = customer.CustomerName;
             accountExist.Email = customer.Email;
@@ -50,6 +50,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         public async Task<string> DeleteCustomerAccount(Guid id)
         {
             var customer = await _context.Customers.FindAsync(id);
+            if (customer == null) throw new KeyNotFoundException("Customer not found.");
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
 

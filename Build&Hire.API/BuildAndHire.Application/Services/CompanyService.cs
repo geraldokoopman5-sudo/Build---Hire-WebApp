@@ -38,7 +38,7 @@ namespace BuildAndHire.Application.Services
             });
         }
 
-        public async Task<CompanyDto> GetCompanyByIdAsync(Guid Id)
+        public async Task<CompanyDto?> GetCompanyByIdAsync(Guid Id)
         {
             var companies = await _repository.GetCompamiesById(Id);
 
@@ -72,7 +72,7 @@ namespace BuildAndHire.Application.Services
                 Status = AccountStatus.Pending,
                 RegistrationNumber = dto.RegistrationNumber,
                 TaxNumber = dto.TaxNumber,
-                address = dto.address
+                address = dto.address ?? throw new ValidationException("An address is required.")
             };
 
             var savedCompany =
@@ -94,12 +94,12 @@ namespace BuildAndHire.Application.Services
         public async Task<UpdateCompanyDto> UpdateCompanyAsync(Guid Id, UpdateCompanyDto dto)
         {
             var UpdateCompany = await _repository.GetCompamiesById(Id);
-            if (UpdateCompany == null) return null;
+            if (UpdateCompany == null) throw new KeyNotFoundException("Company not found.");
 
 
             UpdateCompany.CompanyName = dto.CompanyName;
             UpdateCompany.CompanyEmail = dto.CompanyEmail;
-            UpdateCompany.address = dto.address;
+            UpdateCompany.address = dto.address ?? throw new ValidationException("An address is required.");
             UpdateCompany.RegistrationNumber = dto.RegistrationNumber;
             UpdateCompany.TaxNumber = dto.TaxNumber;
 

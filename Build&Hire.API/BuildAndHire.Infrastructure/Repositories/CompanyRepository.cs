@@ -14,7 +14,7 @@
             return await _context.Companies.Include(w => w.Workers).ToListAsync();
         }
 
-        public async Task<Companies> GetCompamiesById(Guid id)
+        public async Task<Companies?> GetCompamiesById(Guid id)
         {
             Companies? companies = await _context.Companies.FirstOrDefaultAsync(i => i.CompanyId == id);
 
@@ -42,7 +42,7 @@
             var company = await _context.Companies.FindAsync(dto.CompanyId);
 
             if(company == null)
-                return null;
+                throw new KeyNotFoundException("Company not found.");
 
             company.CompanyName = dto.CompanyName;
             company.CompanyEmail = dto.CompanyEmail;
@@ -61,7 +61,7 @@
         {
             var company = await _context.Companies.FindAsync(id);
 
-            if (company == null) return null;
+            if (company == null) throw new KeyNotFoundException("Company not found.");
 
             _context.Companies.Remove(company);
             await _context.SaveChangesAsync();

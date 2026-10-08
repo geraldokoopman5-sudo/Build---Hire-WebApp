@@ -28,7 +28,11 @@ namespace BuildAndHire.Domain.Models
 
         public PaymentMethod? PayingMethod { get; set; }
 
-        public JobEnum Status { get; set; } = JobEnum.Working;
+        public JobEnum Status { get; set; } = JobEnum.Requested;
+
+        public DateTime? AcceptedAt { get; set; }
+        public DateTime? QuoteSentAt { get; set; }
+        public DateTime? QuoteAcceptedAt { get; set; }
 
         public ICollection<Workers> Workers { get; set; } = new List<Workers>();
 

@@ -8,7 +8,7 @@ namespace BuildAndHire.Application.Interfaces.Services
    public interface ICompanyService
     {   
         Task<IEnumerable<CompanyDto>> GetAllCompaniesAsync();
-        Task<CompanyDto> GetCompanyByIdAsync(Guid Id);
+        Task<CompanyDto?> GetCompanyByIdAsync(Guid Id);
         Task<CompanyDto> RegisterCompanyAsync(RegisterCompanyDto dto);
         Task<UpdateCompanyDto> UpdateCompanyAsync(Guid Id ,UpdateCompanyDto dto);
         Task <string>DeleteCompanyAsync(Guid Id);

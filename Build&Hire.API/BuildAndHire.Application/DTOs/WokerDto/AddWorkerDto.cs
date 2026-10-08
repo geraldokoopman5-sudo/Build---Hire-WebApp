@@ -18,7 +18,7 @@ namespace BuildAndHire.Application.DTOs.WokerDto
 
         public Guid CompanyId { get; set; }
 
-        public Guid JobId { get; set; }
+        public Guid? JobId { get; set; }
 
         
 

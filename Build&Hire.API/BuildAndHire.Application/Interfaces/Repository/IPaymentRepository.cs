@@ -10,7 +10,7 @@ namespace BuildAndHire.Application.Interfaces.Repository
     public interface IPayementRepository
     {
         Task<IEnumerable<Payment>> GetAllPaymentsAsync();
-        Task<Payment> GetPaymentsByIdAsync(Guid Id);
+        Task<Payment?> GetPaymentsByIdAsync(Guid Id);
         Task<Payment> CompletePaymentAsync(Payment dto);
         Task<Payment> PaymentResponseAsync(Payment Id);
         Task<string> DeletePaymentHistoryAsync(Guid Id);

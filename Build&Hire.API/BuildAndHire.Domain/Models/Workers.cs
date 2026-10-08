@@ -21,7 +21,7 @@ namespace BuildAndHire.Domain.Models
 
         public Companies? ResidingCompany { get; set; }
 
-        public Guid JobId { get; set; }
+        public Guid? JobId { get; set; }
 
         public Jobs? Job { get; set; }
     }

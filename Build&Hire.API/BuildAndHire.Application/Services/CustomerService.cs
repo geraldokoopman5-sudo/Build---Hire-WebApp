@@ -30,10 +30,10 @@ namespace BuildAndHire.Application.Services
             });
         }
 
-        public async Task<CustomerDto> GetCustomersByIdAsync(Guid Id)
+        public async Task<CustomerDto?> GetCustomersByIdAsync(Guid Id)
         {
             var customer = await _repo.GetCustomerById(Id);
-            if (customer == null) return null!;
+            if (customer == null) return null;
 
             return new CustomerDto
             {
@@ -53,7 +53,7 @@ namespace BuildAndHire.Application.Services
                 Email = dto.Email,
                 Status = AccountStatus.Active,
                 accountType = AccountType.Customer,
-                address = dto.address,
+                address = dto.address ?? throw new ValidationException("An address is required."),
                 PasswordHash = _passwordService.HashPassword(
                     dto.Password),
 
@@ -79,12 +79,12 @@ namespace BuildAndHire.Application.Services
         {
             var getCustomer = await _repo.GetCustomerById(Id);
 
-            if (getCustomer == null) return null;
+            if (getCustomer == null) throw new KeyNotFoundException("Customer not found.");
 
             getCustomer.CustomerName = dto.CustomerName;
             getCustomer.Email = dto.Email;
             // Account status is managed separately.
-            getCustomer.address = dto.Address;
+            getCustomer.address = dto.Address ?? throw new ValidationException("An address is required.");
 
             var update = await _repo.UpdateCustomer(getCustomer);
 

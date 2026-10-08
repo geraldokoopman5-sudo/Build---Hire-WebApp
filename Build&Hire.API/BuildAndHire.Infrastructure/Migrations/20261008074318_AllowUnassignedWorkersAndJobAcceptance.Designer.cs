@@ -3,6 +3,7 @@ using System;
 using BuildAndHire.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuildAndHire.Infrastructure.Migrations
 {
     [DbContext(typeof(BuildAndHireDbContext))]
-    partial class BuildAndHireDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261008074318_AllowUnassignedWorkersAndJobAcceptance")]
+    partial class AllowUnassignedWorkersAndJobAcceptance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,12 +160,6 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.Property<decimal>("Quote")
                         .HasPrecision(10, 2)
                         .HasColumnType("numeric(10,2)");
-
-                    b.Property<DateTime?>("QuoteAcceptedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("QuoteSentAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");

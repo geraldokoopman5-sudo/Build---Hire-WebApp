@@ -3,6 +3,7 @@ using System;
 using BuildAndHire.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuildAndHire.Infrastructure.Migrations
 {
     [DbContext(typeof(BuildAndHireDbContext))]
-    partial class BuildAndHireDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261008075836_JobAndQuoteLifecycle")]
+    partial class JobAndQuoteLifecycle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -35,7 +35,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         public async Task<Workers> UpdateWorkerDetail(Workers dto)
         {
             Workers? workers = await _context.Workers.FindAsync(dto.WorkerId);
-                if (workers == null) return null;
+                if (workers == null) throw new KeyNotFoundException("Worker not found.");
 
                 //workers.WorkerFirstName = dto.WorkerFirstName;
                 //workers.WorkerLastName = dto.WorkerLastName;
@@ -50,7 +50,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         {
             var fired = await _context.Workers.FindAsync(Id);
 
-            if (fired == null) return null;
+            if (fired == null) throw new KeyNotFoundException("Worker not found.");
 
             _context.Workers.Remove(fired);
             await _context.SaveChangesAsync();

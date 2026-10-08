@@ -32,6 +32,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 var checks = 0;
 void Check(bool condition, string name)
@@ -43,6 +44,41 @@ void Check(bool condition, string name)
 var json = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 var address = new Address { StreetAddress = "12 Main Road", Suburb = "Central", City = "Cape Town", Province = "Western Cape", PostalCode = 8001 };
 var password = "A-test-password-123";
+var releaseSettings = new Dictionary<string, string?>
+{
+    ["ConnectionStrings:DefaultConnection"] = "Host=localhost;Database=release_checks;Username=test",
+    ["JwtConfig:Issuer"] = "release-checks", ["JwtConfig:Audience"] = "release-checks",
+    ["JwtConfig:Key"] = new string('a', 64), ["JwtConfig:TokenValidityMins"] = "60",
+    ["Cors:AllowedOrigins:0"] = "https://frontend.example.test"
+};
+void ValidateRelease() => Build_Hire.API.Startup.DeploymentConfiguration.Validate(
+    new Microsoft.Extensions.Configuration.ConfigurationBuilder().AddInMemoryCollection(releaseSettings).Build(), false);
+ValidateRelease();
+Check(true, "Complete production environment configuration accepted");
+foreach (var invalid in new[]
+{
+    ("ConnectionStrings:DefaultConnection", ""), ("JwtConfig:Key", "short"),
+    ("JwtConfig:Issuer", ""), ("JwtConfig:TokenValidityMins", "0"),
+    ("Cors:AllowedOrigins:0", "http://frontend.example.test"),
+    ("Cors:AllowedOrigins:0", "https://frontend.example.test/path"),
+    ("Proxy:KnownProxies:0", "invalid-proxy")
+})
+{
+    releaseSettings.TryGetValue(invalid.Item1, out var original);
+    releaseSettings[invalid.Item1] = invalid.Item2;
+    try { ValidateRelease(); throw new Exception("Invalid production configuration accepted"); }
+    catch (InvalidOperationException) { Check(true, $"Invalid production setting rejected: {invalid.Item1}"); }
+    finally { releaseSettings[invalid.Item1] = original; }
+}
+await using (var unavailableServices = new ServiceCollection().AddDbContext<BuildAndHireDbContext>(
+    options => options.UseNpgsql("Host=127.0.0.1;Port=1;Database=unavailable;Username=test;Timeout=1"))
+    .BuildServiceProvider())
+{
+    var healthResult = await new Build_Hire.API.Startup.DatabaseReadinessCheck(unavailableServices.GetRequiredService<IServiceScopeFactory>())
+        .CheckHealthAsync(new Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext());
+    Check(healthResult.Status == Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy && healthResult.Exception is null,
+        "Unavailable database reports unhealthy without exposing exception details");
+}
 var signup = new CreateCustomerDto { CustomerName = "Test Customer", Email = "test@example.test", Password = password, address = address };
 var customerValidator = new CreateCutsomerValidator();
 Check(customerValidator.Validate(signup).IsValid, "Valid customer signup");
@@ -131,6 +167,15 @@ var context = new ActionExecutingContext(action, [], new Dictionary<string, obje
 var invoked = false;
 await new RequestValidationFilter().OnActionExecutionAsync(context, () => { invoked = true; return Task.FromResult(new ActionExecutedContext(action, [], new object())); });
 Check(!invoked && context.Result is BadRequestObjectResult, "Global filter stops invalid requests before service execution");
+var exceptionFilter = new ApiExceptionFilter(Microsoft.Extensions.Logging.Abstractions.NullLogger<ApiExceptionFilter>.Instance);
+var unexpected = new ExceptionContext(action, []) { Exception = new InvalidOperationException("private-test-detail") };
+exceptionFilter.OnException(unexpected);
+Check(unexpected.ExceptionHandled && unexpected.Result is ObjectResult { StatusCode: 500, Value: ProblemDetails unexpectedProblem }
+    && unexpectedProblem.Extensions.ContainsKey("traceId") && !JsonSerializer.Serialize(unexpectedProblem, json).Contains("private-test-detail"),
+    "Unexpected API errors return generic JSON and trace ID without leaking exception details");
+var missing = new ExceptionContext(action, []) { Exception = new KeyNotFoundException("Record not found.") };
+exceptionFilter.OnException(missing);
+Check(missing.ExceptionHandled && missing.Result is ObjectResult { StatusCode: 404 }, "Missing-record exceptions map to HTTP 404");
 
 using var db = new BuildAndHireDbContext(new DbContextOptionsBuilder<BuildAndHireDbContext>().UseNpgsql("Host=localhost;Database=unused;Username=unused;Password=unused").Options);
 Check(!db.Database.HasPendingModelChanges(), "Migration snapshot matches current EF model");
@@ -187,7 +232,10 @@ Check(new BuildAndHire.Application.Validators.Workers.WorkersValidator().Validat
       "Worker request does not need a client-supplied company ID");
 workerRequest.JobId = Guid.Empty;
 Check(!new BuildAndHire.Application.Validators.Workers.WorkersValidator().Validate(workerRequest).IsValid,
-      "Worker request requires a job ID");
+      "Worker request rejects an empty job ID");
+workerRequest.JobId = null;
+Check(new BuildAndHire.Application.Validators.Workers.WorkersValidator().Validate(workerRequest).IsValid,
+      "Worker can be created without a job");
 workerRequest.JobId = ownedJobId;
 var workerRepo = Stub<IWorkersRepository>.Create((method, values) => {
     if (method.Name != nameof(IWorkersRepository.RegisterWorker)) throw new NotSupportedException(method.Name);
@@ -198,6 +246,9 @@ var workerRepo = Stub<IWorkersRepository>.Create((method, values) => {
 var savedWorker = await new WorkerService(workerRepo).AddWorkerAsync(workerRequest);
 Check(savedWorker.WorkerId != Guid.Empty && savedWorker.JobId == ownedJobId,
       "Worker creation returns the persisted worker and job IDs");
+workerRequest.JobId = null;
+Check((await new WorkerService(workerRepo).AddWorkerAsync(workerRequest)).JobId == null,
+      "Unassigned worker stays unassigned through the service");
 
 var workerService = Stub<IWorkerService>.Create((method, values) => method.Name switch
 {
@@ -217,6 +268,10 @@ Check(((IEnumerable<WorkerDto>)ownWorkers.Value!).Single().CompanyId == companyI
 Console.WriteLine($"{checks} regression checks passed.");
 if (args.Length == 2 && args[0] == "--postgres-config")
     await PostgreSqlChecks.RunAsync(Path.GetFullPath(args[1]));
+else if (args.Length == 1 && args[0] == "--postgres")
+    await PostgreSqlChecks.RunAsync();
+else if (args.Length != 0)
+    throw new ArgumentException("Use --postgres or --postgres-config <path>.");
 
 public class Stub<T> : DispatchProxy where T : class
 {
