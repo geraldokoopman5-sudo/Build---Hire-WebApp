@@ -52,6 +52,8 @@ const EMPTY_FORM: FormValues = {
 export default function AdminManagement() {
   const {
     admins,
+    loading,
+    error: loadError,
     createAdmin,
     updateAdmin,
     deleteAdmin,
@@ -76,6 +78,7 @@ export default function AdminManagement() {
 
   const [deleteTarget, setDeleteTarget] =
     useState<string | null>(null);
+  const [requestError, setRequestError] = useState('');
 
   const filteredAdmins =
     useMemo(() => {
@@ -216,10 +219,10 @@ export default function AdminManagement() {
           nextErrors.password =
             'Password is required.';
         } else if (
-          form.password.length < 8
+          form.password.length < 12
         ) {
           nextErrors.password =
-            'Password must be at least 8 characters.';
+            'Password must be at least 12 characters.';
         }
 
         if (
@@ -233,9 +236,9 @@ export default function AdminManagement() {
         form.password ||
         form.confirmPassword
       ) {
-        if (form.password.length < 8) {
+        if (form.password.length < 12) {
           nextErrors.password =
-            'Password must be at least 8 characters.';
+            'Password must be at least 12 characters.';
         }
 
         if (
@@ -250,7 +253,7 @@ export default function AdminManagement() {
       return nextErrors;
     };
 
-  const handleSubmit = (): void => {
+  const handleSubmit = async (): Promise<void> => {
     const validationErrors =
       validate();
 
@@ -263,8 +266,9 @@ export default function AdminManagement() {
       return;
     }
 
+    try {
     if (editingAdminId) {
-      updateAdmin(
+      await updateAdmin(
         editingAdminId,
         {
           userName:
@@ -278,10 +282,11 @@ export default function AdminManagement() {
 
           adminRole:
             form.adminRole,
+          password: form.password || undefined,
         }
       );
     } else {
-      createAdmin({
+      await createAdmin({
         userName:
           form.userName.trim(),
 
@@ -293,24 +298,31 @@ export default function AdminManagement() {
 
         adminRole:
           form.adminRole,
+        password: form.password,
       });
     }
-
+    setRequestError('');
     closeModal();
+    } catch (reason) { setRequestError(reason instanceof Error ? reason.message : 'Could not save admin.'); }
   };
 
-  const handleDelete = (): void => {
+  const handleDelete = async (): Promise<void> => {
     if (!deleteTarget) {
       return;
     }
 
-    deleteAdmin(deleteTarget);
-    setDeleteTarget(null);
+    try {
+      await deleteAdmin(deleteTarget);
+      setDeleteTarget(null);
+      setRequestError('');
+    } catch (reason) { setRequestError(reason instanceof Error ? reason.message : 'Could not delete admin.'); }
   };
 
   return (
     <div className={styles.page}>
       <AdminHeader />
+      {loading && <p role="status">Loading admins…</p>}
+      {(loadError || requestError) && <p role="alert">{loadError || requestError}</p>}
 
       <main className={styles.main}>
         <Link
@@ -732,8 +744,7 @@ export default function AdminManagement() {
 
             <p className={styles.confirmText}>
               This will permanently remove the
-              administrator account from the
-              frontend account store.
+              administrator account.
             </p>
 
             <div

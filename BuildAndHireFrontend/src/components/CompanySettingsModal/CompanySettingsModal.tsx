@@ -8,20 +8,18 @@ import styles from './CompanySettingsModal.module.css';
 export interface CompanySettingsValues {
   companyName: string;
   companyEmail: string;
-  phone: string;
 }
 
 interface CompanySettingsModalProps {
   initialValues: CompanySettingsValues;
   onClose: () => void;
-  onSave: (values: CompanySettingsValues) => void;
-  onDeleteAccount: () => void;
+  onSave: (values: CompanySettingsValues) => Promise<void>;
+  onDeleteAccount: () => Promise<void>;
 }
 
 interface FormErrors {
   companyName?: string;
   companyEmail?: string;
-  phone?: string;
 }
 
 export default function CompanySettingsModal({
@@ -37,6 +35,7 @@ export default function CompanySettingsModal({
 
   const [errors, setErrors] =
     useState<FormErrors>({});
+  const [requestError, setRequestError] = useState('');
 
   const [isConfirmingDelete, setIsConfirmingDelete] =
     useState<boolean>(false);
@@ -69,8 +68,6 @@ export default function CompanySettingsModal({
     const companyEmail =
       values.companyEmail.trim();
 
-    const phone =
-      values.phone.trim();
 
     if (!companyName) {
       nextErrors.companyName =
@@ -92,22 +89,10 @@ export default function CompanySettingsModal({
         'Enter a valid email address.';
     }
 
-    if (!phone) {
-      nextErrors.phone =
-        'Phone number is required.';
-    } else if (
-      !/^[+]?[0-9\s().-]{7,20}$/.test(
-        phone
-      )
-    ) {
-      nextErrors.phone =
-        'Enter a valid phone number.';
-    }
-
     return nextErrors;
   };
 
-  const handleSave = (): void => {
+  const handleSave = async (): Promise<void> => {
     const validationErrors =
       validate();
 
@@ -119,18 +104,22 @@ export default function CompanySettingsModal({
       return;
     }
 
-    onSave({
+    try {
+    await onSave({
       companyName:
         values.companyName.trim(),
 
       companyEmail:
         values.companyEmail.trim(),
 
-      phone:
-        values.phone.trim(),
     });
-
     onClose();
+    } catch (reason) { setRequestError(reason instanceof Error ? reason.message : 'Could not save settings.'); }
+  };
+
+  const handleDelete = async (): Promise<void> => {
+    try { await onDeleteAccount(); }
+    catch (reason) { setRequestError(reason instanceof Error ? reason.message : 'Could not delete account.'); }
   };
 
   return (
@@ -141,6 +130,7 @@ export default function CompanySettingsModal({
       aria-labelledby="settings-title"
     >
       <div className={styles.modal}>
+        {requestError && <p role="alert">{requestError}</p>}
         <div className={styles.headerRow}>
           <h2
             id="settings-title"
@@ -222,37 +212,6 @@ export default function CompanySettingsModal({
           )}
         </div>
 
-        <div className={styles.field}>
-          <label
-            htmlFor="settingsPhone"
-            className={styles.label}
-          >
-            Phone
-          </label>
-
-          <input
-            id="settingsPhone"
-            name="phone"
-            type="tel"
-            value={values.phone}
-            onChange={handleChange}
-            className={`${styles.input} ${
-              errors.phone
-                ? styles.inputError
-                : ''
-            }`}
-            aria-invalid={
-              Boolean(errors.phone)
-            }
-          />
-
-          {errors.phone && (
-            <span className={styles.errorText}>
-              {errors.phone}
-            </span>
-          )}
-        </div>
-
         <button
           type="button"
           className={styles.saveButton}
@@ -267,9 +226,7 @@ export default function CompanySettingsModal({
           </h3>
 
           <p className={styles.dangerText}>
-            Deleting your account removes your
-            company profile, jobs, and workforce
-            records. This action cannot be undone.
+            You can delete this account only after its jobs and workers have been resolved.
           </p>
 
           {!isConfirmingDelete ? (
@@ -289,7 +246,7 @@ export default function CompanySettingsModal({
                 className={
                   styles.confirmDeleteButton
                 }
-                onClick={onDeleteAccount}
+                onClick={handleDelete}
               >
                 Yes, delete my account
               </button>

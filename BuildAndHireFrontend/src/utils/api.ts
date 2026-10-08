@@ -8,6 +8,10 @@ export async function apiRequest<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const headers = new Headers(options.headers);
+  const token = localStorage.getItem('buildandhire.accessToken');
+  if (token && !token.startsWith('dev-token-') && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
 
   if (options.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
@@ -28,6 +32,7 @@ export async function apiRequest<T>(
 
     throw new Error(
       messages ||
+        (typeof problem === 'string' ? problem : '') ||
         problem?.message ||
         problem?.title ||
         `Request failed (${response.status}).`
@@ -38,5 +43,7 @@ export async function apiRequest<T>(
     return undefined as T;
   }
 
-  return response.json() as Promise<T>;
+  return (response.headers.get('Content-Type')?.includes('json')
+    ? response.json()
+    : response.text()) as Promise<T>;
 }

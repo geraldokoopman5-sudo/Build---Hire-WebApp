@@ -87,6 +87,7 @@ namespace BuildAndHire.Application.Services
 
             if (!string.IsNullOrWhiteSpace(dto.Password))
                 admin.PasswordHash = _passwordService.HashPassword(dto.Password);
+            admin.UserName = dto.UserName;
             admin.Email = dto.Email;
             admin.Status = dto.Status;
             admin.AdminRole = dto.AdminRole;
@@ -98,9 +99,12 @@ namespace BuildAndHire.Application.Services
 
             return new AdminDto
             {
+                AdminId = updatedAdmin.AdminId,
+                UserName = updatedAdmin.UserName,
                 Email = updatedAdmin.Email,
                 Status = updatedAdmin.Status,
-                AdminRole = updatedAdmin.AdminRole
+                AdminRole = updatedAdmin.AdminRole,
+                accountType = updatedAdmin.accountType
             };
         }
 

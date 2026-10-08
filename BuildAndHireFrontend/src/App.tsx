@@ -2,6 +2,7 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  Navigate,
 } from 'react-router-dom';
 
 // Authentication
@@ -12,12 +13,11 @@ import SignUp from './pages/SignUp/SignUp';
 import Home from './pages/Home/Home';
 import Marketplace from './pages/Marketplace/Marketplace';
 import CompanyProfile from './pages/CompanyProfile/CompanyProfile';
-import QuoteReview from './pages/QuoteReview/QuoteReview';
-import ApplicationSent from './pages/ApplicationSent/ApplicationSent';
 
 import CustomerJobs from './pages/CustomerJobs/CustomerJob';
 import CreateJob from './pages/CreateJob/CreateJob';
 import CustomerJobDetails from './pages/CustomerJobDetail/CustomerJobDetail';
+import QuoteReview from './pages/QuoteReview/QuoteReview';
 
 // Company
 import CompanyJobs from './pages/CompanyJobs/CompanyJobs';
@@ -36,6 +36,7 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 // Context
 import { WorkforceProvider } from './context/WorkforceContext';
+import { CompanyJobsProvider } from './context/CompanyJobsContext';
 import {
   CustomerJobsProvider,
 } from './context/CustomerJobsContext';
@@ -58,6 +59,7 @@ import './theme/theme.css';
 function App() {
   return (
     <WorkforceProvider>
+      <CompanyJobsProvider>
       <CustomerJobsProvider>
         <AdminManagementProvider>
           <BrowserRouter>
@@ -117,7 +119,7 @@ function App() {
 
                 <Route
                   path="/applications/:reference/sent"
-                  element={<ApplicationSent />}
+                  element={<Navigate to="/my-jobs" replace />}
                 />
 
                 <Route
@@ -227,6 +229,7 @@ function App() {
           </BrowserRouter>
         </AdminManagementProvider>
       </CustomerJobsProvider>
+      </CompanyJobsProvider>
     </WorkforceProvider>
   );
 }

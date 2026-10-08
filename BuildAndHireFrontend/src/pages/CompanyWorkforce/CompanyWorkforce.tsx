@@ -10,6 +10,7 @@ import WorkerCard from '../../components/WorkerCard/WorkerCard';
 import AddWorkerModal from '../../components/AddWorkerModal/AddWorkerModal';
 
 import { useWorkforce } from '../../context/WorkforceContext';
+import { useCompanyJobs } from '../../context/CompanyJobsContext';
 
 import {
   WorkerStatus,
@@ -29,9 +30,13 @@ interface JobOption {
 export default function CompanyWorkforce() {
   const {
     workers,
+    loading,
+    error,
     addWorker,
     updateWorkerStatus,
   } = useWorkforce();
+  const { jobs: companyJobs, error: jobsError } = useCompanyJobs();
+  const [actionError, setActionError] = useState('');
 
   const [query, setQuery] =
     useState<string>('');
@@ -42,24 +47,8 @@ export default function CompanyWorkforce() {
   const [isAddWorkerOpen, setIsAddWorkerOpen] =
     useState<boolean>(false);
 
-  /*
-   * Temporary frontend-only company ID.
-   * This will come from authenticated user/company
-   * data once the API is connected.
-   */
-  const companyId =
-    '00000000-0000-0000-0000-000000000001';
-
-  /*
-   * Temporary local job source.
-   *
-   * This should eventually come from:
-   * GET /api/jobs/company/{companyId}
-   *
-   * For now, use your existing companyJobs mapping
-   * if that data already exists in the frontend.
-   */
-  const jobs: JobOption[] = [];
+  const companyId = localStorage.getItem('buildandhire.companyId') ?? '';
+  const jobs: JobOption[] = companyJobs.map(job => ({ id: job.id, title: job.title }));
 
   const filteredWorkers =
     useMemo(() => {
@@ -131,6 +120,8 @@ export default function CompanyWorkforce() {
 
   return (
     <div className={styles.page}>
+      {loading && <p role="status">Loading workers…</p>}
+      {(error || jobsError || actionError) && <p role="alert">{error || jobsError || actionError}</p>}
       <WorkforceHeader
         activeLink="find-talent"
       />
@@ -329,9 +320,10 @@ export default function CompanyWorkforce() {
                   <WorkerCard
                     key={worker.workerId}
                     worker={worker}
-                    onStatusChange={
-                      updateWorkerStatus
-                    }
+                    onStatusChange={(id, status) => {
+                      updateWorkerStatus(id, status).then(() => setActionError(''))
+                        .catch((reason: unknown) => setActionError(reason instanceof Error ? reason.message : 'Could not update worker.'));
+                    }}
                   />
                 )
               )}
@@ -348,8 +340,8 @@ export default function CompanyWorkforce() {
             setIsAddWorkerOpen(false)
           }
           onCreate={(input) => {
-            addWorker(input);
-            setIsAddWorkerOpen(false);
+            addWorker(input).then(() => { setActionError(''); setIsAddWorkerOpen(false); })
+              .catch((reason: unknown) => setActionError(reason instanceof Error ? reason.message : 'Could not add worker.'));
           }}
         />
       )}

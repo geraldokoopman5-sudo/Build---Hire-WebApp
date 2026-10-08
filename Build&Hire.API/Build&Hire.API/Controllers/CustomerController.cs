@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Security.Claims;
 
 namespace Build_Hire.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CustomerController(ICustomerService service, 
                                 BuildAndHireDbContext db) : ControllerBase
     {
@@ -25,7 +25,7 @@ namespace Build_Hire.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin, SuperAdmin")]
+        [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> GetAllCustomerAccounts()
         {
             return Ok(await service.GetAllCustomersAsync());
@@ -60,7 +60,20 @@ namespace Build_Hire.API.Controllers
                 return updated == null ? NotFound() : Ok(updated);
         }
 
-        [HttpDelete("id:guid")]
+        [HttpPatch("{id:guid}/status")]
+        [Authorize(Roles = "Admin,SuperAdmin")]
+        public async Task<IActionResult> UpdateCustomerStatus(Guid id, UpdateCompanyStatusDto dto)
+        {
+            if (dto.Status is not (AccountStatus.Active or AccountStatus.InActive or AccountStatus.Deleted))
+                return BadRequest("Invalid customer status.");
+            var customer = await db.Customers.FindAsync(id);
+            if (customer == null) return NotFound();
+            customer.Status = dto.Status;
+            await db.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult>DeleteCustomerAccount(Guid id)
         {
             if(!CanAccess(id)) return NotFound();

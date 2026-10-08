@@ -45,6 +45,9 @@
                 return null;
 
             company.CompanyName = dto.CompanyName;
+            company.CompanyEmail = dto.CompanyEmail;
+            company.RegistrationNumber = dto.RegistrationNumber;
+            company.TaxNumber = dto.TaxNumber;
             company.PasswordHash = dto.PasswordHash;
             company.address = dto.address;
             company.Status = dto.Status;

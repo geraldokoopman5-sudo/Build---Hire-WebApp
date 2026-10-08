@@ -52,6 +52,8 @@ public class JobsController(IJobService service, BuildAndHireDbContext db) : Con
     {
         var existing = await service.GetJobByIdAsync(id);
         if (existing == null || !CanAccess(existing)) return NotFound();
+        if (dto.Quote != existing.Quote && await db.Payment.AnyAsync(p => p.JobId == id))
+            return Conflict("The quote cannot change after a payment request exists.");
         return Ok(await service.UpdateJobDetailsAsync(id, dto));
     }
 

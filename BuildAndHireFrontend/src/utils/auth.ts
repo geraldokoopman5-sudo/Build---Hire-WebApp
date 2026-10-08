@@ -119,6 +119,7 @@ export async function login(
   }
 
   localStorage.setItem('buildandhire.customerId', typeof data.customerId === 'string' ? data.customerId : '');
+  localStorage.setItem('buildandhire.companyId', typeof data.companyId === 'string' ? data.companyId : '');
   window.dispatchEvent(new Event('buildandhire:auth'));
   return data;
 }
@@ -234,6 +235,7 @@ export function getStoredAdminRole():
  */
 export function logout(): void {
   localStorage.removeItem('buildandhire.customerId');
+  localStorage.removeItem('buildandhire.companyId');
   localStorage.removeItem(
     TOKEN_STORAGE_KEY
   );

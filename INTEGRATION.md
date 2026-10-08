@@ -53,10 +53,10 @@ npm run dev
 - Job API status: Working=1, Unavailable=2, Available=3. UI labels are mapped explicitly in `src/utils/jobStatus.ts`.
 - Job fields are `quote`, `workerLastName` (workers), and `payingMethod`. Payment and worker enums have one numeric frontend definition.
 - Calendar selections are represented as UTC midnight ISO strings. The API rejects non-UTC job timestamps. Start dates may be today; end dates may equal start dates. PostgreSQL stores UTC timestamps.
-- Payment creation assigns UTC time and Pending status on the server. Quote/card payment screens remain simulations; this change does not introduce a payment provider.
+- Payments remain simulated. `POST /api/Payment/eft` records a Pending request using the stored job quote and a server-assigned UTC timestamp. Admins review it through `PATCH /api/Payment/{id}/status`; no money is transferred or payment provider introduced.
 - All registered request validators execute through an async MVC action filter and return HTTP 400 validation errors. Duplicate records and foreign-key failures receive controlled errors.
 
-Other pre-existing dashboard/workforce mock flows are outside this integration change. This is not a full authorization/security audit of unrelated endpoints.
+Current company jobs, workforce, and administrator flows also use the API. See [BACKEND_VERIFICATION.md](BACKEND_VERIFICATION.md) for the tested scope, results, and remaining workflow limitations. This is not a full authorization/security audit of unrelated endpoints.
 
 ## Verification
 
@@ -68,6 +68,8 @@ npm --prefix './BuildAndHireFrontend' run lint
 ```
 
 Run actual PostgreSQL integration checks using a temporary schema in the configured database (the database user needs CREATE SCHEMA permission). Fixtures are removed afterward; existing application tables are not used:
+
+These checks also start a separate loopback API process against the temporary schema and exercise the workflow through real HTTP requests, login tokens, authentication middleware, and request validation. The process is stopped before schema cleanup.
 
 ```powershell
 dotnet run --project './Build&Hire.API/BuildAndHire.RegressionTests/BuildAndHire.RegressionTests.csproj' -- --postgres-config './Build&Hire.API/Build&Hire.API/appsettings.json'

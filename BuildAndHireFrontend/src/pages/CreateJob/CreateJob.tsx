@@ -9,6 +9,7 @@ import {
 import {
   Link,
   useNavigate,
+  useSearchParams,
 } from 'react-router-dom';
 
 import JobsHeader from '../../components/JobsHeader/JobsHeader';
@@ -107,14 +108,13 @@ function calculateDays(
 
 export default function CreateJob() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { createJob } =
     useCustomerJobs();
 
   const [values, setValues] =
-    useState<FormValues>(
-      INITIAL_VALUES
-    );
+    useState<FormValues>(() => ({ ...INITIAL_VALUES, companyId: searchParams.get('companyId') ?? '' }));
 
   const [errors, setErrors] =
     useState<FormErrors>({});
@@ -152,7 +152,7 @@ export default function CreateJob() {
     /*
      * Company
      */
-    if (!values.companyId) {
+    if (!values.companyId || !activeCompanies.some(company => company.companyId === values.companyId)) {
       nextErrors.companyId =
         'Please select a company.';
     }

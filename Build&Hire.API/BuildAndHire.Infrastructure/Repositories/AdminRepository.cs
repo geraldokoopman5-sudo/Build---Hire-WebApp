@@ -48,6 +48,7 @@ namespace BuildAndHire.Infrastructure.Repositories
                 return null;
 
             admin.UserName = dto.UserName;
+            admin.Email = dto.Email;
             admin.PasswordHash = dto.PasswordHash;
             admin.Status = dto.Status;
             admin.AdminRole = dto.AdminRole;

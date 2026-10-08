@@ -26,3 +26,9 @@ export interface CompanyProfile {
   certifications: string[];
   imageUrl: string;
 }
+
+export interface CompanyListing {
+  companyId: string;
+  companyName: string;
+  status: AccountStatus;
+}

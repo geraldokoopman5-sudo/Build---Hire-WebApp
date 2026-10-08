@@ -12,7 +12,7 @@ import {
 import JobWorkers from '../../components/JobWorkers/JobWorkers';
 import CompanyLayout from '../../components/CompanyLayout/CompanyLayout';
 
-import { companyJobs } from '../../data/companyJobs';
+import { useCompanyJobs } from '../../context/CompanyJobsContext';
 
 import {
   getJobStatusLabel,
@@ -20,10 +20,12 @@ import {
 } from '../../utils/jobLabels';
 
 import type { JobStatus } from '../../types/job';
+import { formatCurrency } from '../../utils/quoteMath';
 
 import styles from './CompanyJobManagement.module.css';
 
 export default function CompanyJobManagement() {
+  const { jobs: companyJobs, loading, error, updateJobStatus, updateJobQuote } = useCompanyJobs();
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
 
@@ -31,9 +33,11 @@ export default function CompanyJobManagement() {
     (entry) => entry.id === jobId
   );
 
-  const [status, setStatus] = useState<JobStatus>(
-    job?.status ?? 'working'
-  );
+  const [draftStatus, setStatus] = useState<JobStatus | null>(null);
+  const status = draftStatus ?? job?.status ?? 'working';
+  const [actionError, setActionError] = useState('');
+  const [isEditingQuote, setIsEditingQuote] = useState(false);
+  const [quoteInput, setQuoteInput] = useState('');
 
   const [isChangingStatus, setIsChangingStatus] =
     useState<boolean>(false);
@@ -41,6 +45,7 @@ export default function CompanyJobManagement() {
   const [isClosingJob, setIsClosingJob] =
     useState<boolean>(false);
 
+  if (loading) return <CompanyLayout activeSidebarLink="my-jobs"><p role="status">Loading job…</p></CompanyLayout>;
   if (!job) {
     return (
       <CompanyLayout activeSidebarLink="my-jobs">
@@ -50,7 +55,7 @@ export default function CompanyJobManagement() {
           </span>
 
           <h1 className={styles.notFoundTitle}>
-            Job Not Found
+            {error || 'Job Not Found'}
           </h1>
 
           <p className={styles.notFoundText}>
@@ -77,13 +82,28 @@ export default function CompanyJobManagement() {
     );
   };
 
- const handleSaveStatus = (): void => {
-  setIsChangingStatus(false);
+ const handleSaveStatus = async (): Promise<void> => {
+  try {
+    await updateJobStatus(job.id, status);
+    setActionError('');
+    setIsChangingStatus(false);
+  } catch (reason) { setActionError(reason instanceof Error ? reason.message : 'Could not update job.'); }
 };
- const handleCloseJob = (): void => {
-  setStatus('unavailable');
-  setIsClosingJob(false);
+ const handleCloseJob = async (): Promise<void> => {
+  try {
+    await updateJobStatus(job.id, 'unavailable');
+    setStatus('unavailable');
+    setActionError('');
+    setIsClosingJob(false);
+  } catch (reason) { setActionError(reason instanceof Error ? reason.message : 'Could not close job.'); }
 };
+ const handleSaveQuote = async (): Promise<void> => {
+  try {
+    await updateJobQuote(job.id, Number(quoteInput));
+    setActionError('');
+    setIsEditingQuote(false);
+  } catch (reason) { setActionError(reason instanceof Error ? reason.message : 'Could not save quote.'); }
+ };
 
   const handleViewApplications = (): void => {
     navigate('/company/applications');
@@ -92,6 +112,7 @@ export default function CompanyJobManagement() {
 
   return (
     <CompanyLayout activeSidebarLink="my-jobs">
+      {actionError && <p role="alert">{actionError}</p>}
       <div className={styles.pageHeader}>
         <div>
           <Link
@@ -157,7 +178,7 @@ export default function CompanyJobManagement() {
                 </span>
 
                 <span className={styles.detailValue}>
-                  ${job.quoteAmount.toLocaleString()}
+                  {formatCurrency(job.quoteAmount)}
                 </span>
               </div>
 
@@ -189,7 +210,7 @@ export default function CompanyJobManagement() {
                 </span>
 
                 <span className={styles.detailValue}>
-                  ${job.amountPaid.toLocaleString()}
+                  {formatCurrency(job.amountPaid)}
                 </span>
               </div>
 
@@ -230,6 +251,12 @@ export default function CompanyJobManagement() {
             </div>
 
             <div className={styles.actionGrid}>
+              <button type="button" className={styles.actionButton}
+                disabled={job.paymentRequested}
+                onClick={() => { setQuoteInput(String(job.quoteAmount || '')); setIsEditingQuote(true); }}>
+                <span className={styles.actionTitle}>{job.quoteAmount > 0 ? 'Edit Quote' : 'Set Quote'}</span>
+                <span className={styles.actionDescription}>Save the amount shown to the customer.</span>
+              </button>
               <button
                 type="button"
                 className={styles.actionButton}
@@ -272,7 +299,7 @@ export default function CompanyJobManagement() {
                 onClick={handleViewApplications}
               >
                 <span className={styles.actionTitle}>
-                  View Applications
+                  View Job Requests
                 </span>
 
                 <span
@@ -312,20 +339,18 @@ export default function CompanyJobManagement() {
                 </span>
 
                 <h2 className={styles.cardTitle}>
-                  Job Applications
+                  Job Requests
                 </h2>
               </div>
             </div>
 
             <div className={styles.emptyState}>
               <h3 className={styles.emptyStateTitle}>
-                Review Company Applications
+                Review Job Requests
               </h3>
 
               <p className={styles.emptyStateText}>
-                Open the applications area to review
-                jobs and requests associated with
-                your company.
+                Open the requests area to review jobs associated with your company.
               </p>
 
               <button
@@ -333,7 +358,7 @@ export default function CompanyJobManagement() {
                 className={styles.secondaryButton}
                 onClick={handleViewApplications}
               >
-                View Applications
+                View Job Requests
               </button>
             </div>
           </section>
@@ -355,7 +380,7 @@ export default function CompanyJobManagement() {
               <span>Quote</span>
 
               <strong>
-                ${job.quoteAmount.toLocaleString()}
+                {formatCurrency(job.quoteAmount)}
               </strong>
             </div>
 
@@ -363,7 +388,7 @@ export default function CompanyJobManagement() {
               <span>Paid</span>
 
               <strong>
-                ${job.amountPaid.toLocaleString()}
+                {formatCurrency(job.amountPaid)}
               </strong>
             </div>
 
@@ -419,6 +444,21 @@ export default function CompanyJobManagement() {
       </div>
 
       {/* STATUS MODAL */}
+      {isEditingQuote && <div className={styles.modalOverlay}>
+        <div className={styles.modal}>
+          <div className={styles.modalHeader}>
+            <h2 className={styles.modalTitle}>Job Quote</h2>
+            <button type="button" className={styles.closeButton} onClick={() => setIsEditingQuote(false)} aria-label="Close quote dialog">×</button>
+          </div>
+          <label htmlFor="job-quote" className={styles.detailLabel}>Quote amount</label>
+          <input id="job-quote" type="number" min="0.01" step="0.01" value={quoteInput}
+            onChange={event => setQuoteInput(event.target.value)} className={styles.select} />
+          <div className={styles.modalActions}>
+            <button type="button" className={styles.cancelButton} onClick={() => setIsEditingQuote(false)}>Cancel</button>
+            <button type="button" className={styles.confirmButton} onClick={handleSaveQuote}>Save Quote</button>
+          </div>
+        </div>
+      </div>}
       {isChangingStatus && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
@@ -527,9 +567,7 @@ export default function CompanyJobManagement() {
 
             <p className={styles.modalText}>
               This will mark "{job.title}" as
-              unavailable. The change is currently
-              local and will be persisted by the
-              backend during integration.
+              unavailable.
             </p>
 
             <div className={styles.modalActions}>

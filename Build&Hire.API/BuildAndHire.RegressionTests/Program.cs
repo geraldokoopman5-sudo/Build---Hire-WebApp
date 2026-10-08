@@ -147,6 +147,73 @@ controller.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
 ], "test"));
 var result = (OkObjectResult)await controller.GetAllJobs();
 Check(((IEnumerable<JobDto>)result.Value!).Count() == 1, "Customer listing excludes another customer's jobs");
+
+var companyId = Guid.NewGuid();
+var pendingCompanyId = Guid.NewGuid();
+var companyService = Stub<ICompanyService>.Create((method, values) => method.Name switch
+{
+    nameof(ICompanyService.GetAllCompaniesAsync) => Task.FromResult<IEnumerable<CompanyDto>>([
+        new CompanyDto { CompanyId = companyId, CompanyName = "Approved", Status = AccountStatus.Active, TaxNumber = "1234567890" },
+        new CompanyDto { CompanyId = pendingCompanyId, CompanyName = "Pending", Status = AccountStatus.Pending }
+    ]),
+    nameof(ICompanyService.GetCompanyByIdAsync) => Task.FromResult<CompanyDto>(new CompanyDto { CompanyId = companyId }),
+    _ => throw new NotSupportedException(method.Name)
+});
+var companyController = new CompaniesController(companyService, db)
+    { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
+var publicCompanies = (OkObjectResult)await companyController.GetAllCompanies();
+var publicJson = JsonSerializer.Serialize(publicCompanies.Value, json);
+Check(publicJson.Contains(companyId.ToString()) && !publicJson.Contains(pendingCompanyId.ToString()) &&
+      !publicJson.Contains("taxNumber"), "Public company list includes only active companies and limited fields");
+companyController.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
+    new Claim(ClaimTypes.NameIdentifier, otherId.ToString()), new Claim(ClaimTypes.Role, "Company")
+], "test"));
+Check(await companyController.GetCompnaiesById(companyId) is NotFoundResult &&
+      await companyController.DeletCompany(companyId) is NotFoundResult,
+      "Another company cannot read or delete the account");
+companyController.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
+    new Claim(ClaimTypes.NameIdentifier, companyId.ToString()), new Claim(ClaimTypes.Role, "Company")
+], "test"));
+Check(await companyController.GetCompnaiesById(companyId) is OkObjectResult,
+      "Company owner can read its account");
+
+var ownedJobId = Guid.NewGuid();
+var workerRequest = new AddWorkerDto
+{
+    WorkerFirstName = "Test", WorkerLastName = "Worker", JobId = ownedJobId,
+    WorkerStatus = AccountStatus.Active
+};
+Check(new BuildAndHire.Application.Validators.Workers.WorkersValidator().Validate(workerRequest).IsValid,
+      "Worker request does not need a client-supplied company ID");
+workerRequest.JobId = Guid.Empty;
+Check(!new BuildAndHire.Application.Validators.Workers.WorkersValidator().Validate(workerRequest).IsValid,
+      "Worker request requires a job ID");
+workerRequest.JobId = ownedJobId;
+var workerRepo = Stub<IWorkersRepository>.Create((method, values) => {
+    if (method.Name != nameof(IWorkersRepository.RegisterWorker)) throw new NotSupportedException(method.Name);
+    var worker = (Workers)values![0]!;
+    worker.WorkerId = Guid.NewGuid();
+    return Task.FromResult(worker);
+});
+var savedWorker = await new WorkerService(workerRepo).AddWorkerAsync(workerRequest);
+Check(savedWorker.WorkerId != Guid.Empty && savedWorker.JobId == ownedJobId,
+      "Worker creation returns the persisted worker and job IDs");
+
+var workerService = Stub<IWorkerService>.Create((method, values) => method.Name switch
+{
+    nameof(IWorkerService.GetAllWorkersAsync) => Task.FromResult<IEnumerable<WorkerDto>>([
+        new WorkerDto { CompanyId = companyId }, new WorkerDto { CompanyId = pendingCompanyId }
+    ]),
+    _ => throw new NotSupportedException(method.Name)
+});
+var workersController = new WorkersController(workerService, db)
+    { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
+workersController.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
+    new Claim(ClaimTypes.NameIdentifier, companyId.ToString()), new Claim(ClaimTypes.Role, "Company")
+], "test"));
+var ownWorkers = (OkObjectResult)await workersController.GetAllWorkers();
+Check(((IEnumerable<WorkerDto>)ownWorkers.Value!).Single().CompanyId == companyId,
+      "Company listing excludes another company's workers");
 Console.WriteLine($"{checks} regression checks passed.");
 if (args.Length == 2 && args[0] == "--postgres-config")
     await PostgreSqlChecks.RunAsync(Path.GetFullPath(args[1]));

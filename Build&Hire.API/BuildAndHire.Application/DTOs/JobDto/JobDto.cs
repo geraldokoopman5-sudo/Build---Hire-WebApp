@@ -28,6 +28,9 @@ namespace BuildAndHire.Application.DTOs.JobDto
         public JobEnum Status { get; set; }
 
         public PaymentMethod? PayingMethod { get; set; }
+        public PaymentEnum? PaymentStatus { get; set; }
+        public decimal AmountPaid { get; set; }
+        public string? PaymentReference { get; set; }
 
         public Address? address { get; set; }
     }

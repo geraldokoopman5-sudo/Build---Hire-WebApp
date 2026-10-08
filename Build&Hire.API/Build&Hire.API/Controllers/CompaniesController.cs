@@ -1,75 +1,76 @@
-﻿namespace Build_Hire.API.Controllers
+using System.Security.Claims;
+
+namespace Build_Hire.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize]
+public class CompaniesController(ICompanyService service, BuildAndHireDbContext db) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CompaniesController : ControllerBase
+    private bool IsAdmin => User.IsInRole("Admin") || User.IsInRole("SuperAdmin");
+
+    private bool CanAccess(Guid id) => IsAdmin ||
+        (User.IsInRole("Company") &&
+         Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub"), out var accountId) &&
+         accountId == id);
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAllCompanies()
     {
-        private readonly ICompanyService _cmpService;
+        var companies = await service.GetAllCompaniesAsync();
+        if (IsAdmin) return Ok(companies);
 
-        public CompaniesController(ICompanyService cmpService)
-        {
-            _cmpService = cmpService;
-        }
+        return Ok(companies
+            .Where(c => c.Status == AccountStatus.Active)
+            .Select(c => new { c.CompanyId, c.CompanyName, c.Status }));
+    }
 
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<CompanyDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllCompanies()
-        {
-            var companies = await _cmpService.GetAllCompaniesAsync();
-            return Ok(companies);
-        }
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetCompnaiesById(Guid id)
+    {
+        if (!CanAccess(id)) return NotFound();
+        var company = await service.GetCompanyByIdAsync(id);
+        return company == null ? NotFound() : Ok(company);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCompnaiesById(Guid id)
-        {
-            var companies = await _cmpService.GetCompanyByIdAsync(id);
-            if (companies == null) return NotFound("Invalid id for Companies");
+    [HttpPost]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(CompanyDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> RegisterComapny(RegisterCompanyDto dto)
+    {
+        var company = await service.RegisterCompanyAsync(dto);
+        return CreatedAtAction(nameof(GetCompnaiesById), new { id = company.CompanyId }, company);
+    }
 
-            return Ok(companies);
-        }
+    [HttpPatch("{id:guid}/Status")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    public async Task<IActionResult> UpdateCompanyStatus(Guid id, UpdateCompanyStatusDto dto)
+    {
+        var company = await db.Companies.FindAsync(id);
+        if (company == null) return NotFound();
+        company.Status = dto.Status;
+        await db.SaveChangesAsync();
+        return NoContent();
+    }
 
-        [HttpPost]
-        [ProducesResponseType(typeof(CompanyDto), StatusCodes.Status201Created)]
-        public async Task<IActionResult> RegisterComapny(RegisterCompanyDto dto)
-        {
-            var company = await _cmpService.RegisterCompanyAsync(dto);
-            return CreatedAtAction(nameof(GetCompnaiesById),
-                new { id = company.CompanyId },
-                company);
-        }
-        [HttpPatch("{id}/Status")]
-        [Authorize(Roles = "Admin,SuperAdmin")]
-        public async Task<IActionResult> UpdateCompanyStatus(UpdateCompanyStatusDto dto, Guid id, [FromServices] BuildAndHireDbContext db)  //Save for when incorparating JWT tokens
-        {
-            var company = await db.Companies.FindAsync(id);
-            if (company == null) return NotFound();
-            company.Status = dto.Status;
-            await db.SaveChangesAsync();
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateCompanyDetails(Guid id, UpdateCompanyDto dto)
+    {
+        if (!CanAccess(id)) return NotFound();
+        var updated = await service.UpdateCompanyAsync(id, dto);
+        return updated == null ? NotFound() : Ok(updated);
+    }
 
-            return NoContent();
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeletCompany(Guid id)
+    {
+        if (!CanAccess(id)) return NotFound();
+        if (!await db.Companies.AnyAsync(c => c.CompanyId == id)) return NotFound();
+        if (await db.Jobs.AnyAsync(j => j.CompanyId == id) ||
+            await db.Workers.AnyAsync(w => w.CompanyId == id))
+            return Conflict("This company has jobs or workers. Resolve them before deleting the account.");
 
-        }
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Company,Admin,SuperAdmin")]
-        public async Task<IActionResult>UpdateCompanyDetails(Guid id, UpdateCompanyDto dto)
-        {
-            var subject = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                ?? User.FindFirst("sub")?.Value;
-            if (!User.IsInRole("Admin") && !User.IsInRole("SuperAdmin") && subject != id.ToString())
-                return Forbid();
-            var update = await _cmpService.UpdateCompanyAsync(id, dto);
-            if (update == null) return NotFound();
-            return Ok(update);
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize (Roles = $"{nameof(AccountType.Admin)},{nameof(AccountType.Company)}")]
-        
-        public async Task<IActionResult>DeletCompany(Guid id)
-        {
-            var delete = await _cmpService.DeleteCompanyAsync(id);
-
-            return Ok(delete);
-        }
+        return Ok(await service.DeleteCompanyAsync(id));
     }
 }

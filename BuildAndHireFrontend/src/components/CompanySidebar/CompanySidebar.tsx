@@ -15,6 +15,8 @@ import CompanySettingsModal, {
 import {
   logout,
 } from '../../utils/auth';
+import { apiRequest } from '../../utils/api';
+import type { Address } from '../../types/company';
 
 import styles from './CompanySidebar.module.css';
 
@@ -27,51 +29,14 @@ interface CompanySidebarProps {
   activeLink?: CompanyNavLink;
 }
 
-const COMPANY_SETTINGS_KEY =
-  'buildandhire.companySettings';
-
 const DEFAULT_SETTINGS: CompanySettingsValues = {
   companyName: '',
   companyEmail: '',
-  phone: '',
 };
-
-function loadSettings():
-  CompanySettingsValues {
-  try {
-    const stored =
-      localStorage.getItem(
-        COMPANY_SETTINGS_KEY
-      );
-
-    if (!stored) {
-      return DEFAULT_SETTINGS;
-    }
-
-    const parsed: unknown =
-      JSON.parse(stored);
-
-    if (
-      typeof parsed !== 'object' ||
-      parsed === null
-    ) {
-      return DEFAULT_SETTINGS;
-    }
-
-    const settings =
-      parsed as Partial<CompanySettingsValues>;
-
-    return {
-      companyName:
-        settings.companyName ?? '',
-      companyEmail:
-        settings.companyEmail ?? '',
-      phone:
-        settings.phone ?? '',
-    };
-  } catch {
-    return DEFAULT_SETTINGS;
-  }
+interface ApiCompany extends CompanySettingsValues {
+  address: Address;
+  registrationNumber: string;
+  taxNumber: string;
 }
 
 export default function CompanySidebar({
@@ -89,28 +54,46 @@ export default function CompanySidebar({
     setSettings,
   ] =
     useState<CompanySettingsValues>(
-      loadSettings
+      DEFAULT_SETTINGS
     );
+  const [company, setCompany] = useState<ApiCompany | null>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    localStorage.setItem(
-      COMPANY_SETTINGS_KEY,
-      JSON.stringify(settings)
-    );
-  }, [settings]);
+    const id = localStorage.getItem('buildandhire.companyId');
+    if (!id) return;
+    const controller = new AbortController();
+    apiRequest<ApiCompany>(`/api/Companies/${id}`, { signal: controller.signal })
+      .then(data => {
+        if (!controller.signal.aborted) {
+          setCompany(data);
+          setSettings({ companyName: data.companyName, companyEmail: data.companyEmail });
+        }
+      })
+      .catch((reason: unknown) => { if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : 'Could not load company settings.'); });
+    return () => controller.abort();
+  }, []);
 
-  const handleSaveSettings = (
+  const handleSaveSettings = async (
     values: CompanySettingsValues
-  ): void => {
+  ): Promise<void> => {
+    const id = localStorage.getItem('buildandhire.companyId');
+    if (!id || !company) throw new Error('Company details are not available.');
+    await apiRequest(`/api/Companies/${id}`, { method: 'PUT', body: JSON.stringify({
+      ...values, address: company.address,
+      registrationNumber: company.registrationNumber, taxNumber: company.taxNumber,
+    }) });
+    setCompany({ ...company, ...values });
     setSettings(values);
     setIsSettingsOpen(false);
+    setError('');
   };
 
   const handleDeleteAccount =
-    (): void => {
-      localStorage.removeItem(
-        COMPANY_SETTINGS_KEY
-      );
+    async (): Promise<void> => {
+      const id = localStorage.getItem('buildandhire.companyId');
+      if (!id) throw new Error('Company account is not available.');
+      await apiRequest(`/api/Companies/${id}`, { method: 'DELETE' });
 
       logout();
 
@@ -123,6 +106,7 @@ export default function CompanySidebar({
     <aside
       className={styles.sidebar}
     >
+      {error && <p role="alert">{error}</p>}
       <div>
         <div
           className={
@@ -203,7 +187,7 @@ export default function CompanySidebar({
               aria-hidden="true"
             />
 
-            Applications
+            Job Requests
           </Link>
         </nav>
 

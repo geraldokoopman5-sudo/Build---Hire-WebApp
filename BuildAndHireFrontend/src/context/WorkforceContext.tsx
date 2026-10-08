@@ -1,18 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
-
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
-
-import {
-  WorkerStatus,
-  type Worker,
-} from '../types/worker';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { AccountType } from '../types/enums';
+import { WorkerStatus, type Worker } from '../types/worker';
+import { apiRequest } from '../utils/api';
+import { getStoredAccessToken, getStoredAccountType } from '../utils/auth';
 
 interface AddWorkerInput {
   workerFirstName: string;
@@ -21,194 +12,68 @@ interface AddWorkerInput {
   companyId: string;
   jobId: string;
 }
-
 interface WorkforceContextValue {
   workers: Worker[];
-
-  addWorker: (
-    input: AddWorkerInput
-  ) => Worker;
-
-  updateWorkerStatus: (
-    workerId: string,
-    status: WorkerStatus
-  ) => void;
-
-  assignWorkerToJob: (
-    workerId: string,
-    jobId: string
-  ) => void;
-
-  removeWorkerFromJob: (
-    workerId: string
-  ) => void;
-
-  deleteWorker: (
-    workerId: string
-  ) => void;
+  loading: boolean;
+  error: string;
+  addWorker: (input: AddWorkerInput) => Promise<Worker>;
+  updateWorkerStatus: (workerId: string, status: WorkerStatus) => Promise<void>;
+  removeWorkerFromJob: (workerId: string) => Promise<void>;
 }
+const WorkforceContext = createContext<WorkforceContextValue | undefined>(undefined);
 
-const WorkforceContext =
-  createContext<WorkforceContextValue | undefined>(
-    undefined
-  );
-
-const STORAGE_KEY =
-  'build-hire-workforce';
-
-const INITIAL_WORKERS: Worker[] = [];
-
-function loadWorkers(): Worker[] {
-  try {
-    const stored =
-      localStorage.getItem(STORAGE_KEY);
-
-    if (!stored) {
-      return INITIAL_WORKERS;
-    }
-
-    const parsed: unknown =
-      JSON.parse(stored);
-
-    if (!Array.isArray(parsed)) {
-      return INITIAL_WORKERS;
-    }
-
-    return parsed as Worker[];
-  } catch {
-    return INITIAL_WORKERS;
-  }
-}
-
-export function WorkforceProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  const [workers, setWorkers] =
-    useState<Worker[]>(loadWorkers);
-
+export function WorkforceProvider({ children }: { children: ReactNode }) {
+  const [workers, setWorkers] = useState<Worker[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(workers)
-    );
-  }, [workers]);
-
-  const addWorker = (
-    input: AddWorkerInput
-  ): Worker => {
-    const worker: Worker = {
-      workerId: crypto.randomUUID(),
-      workerFirstName:
-        input.workerFirstName.trim(),
-      workerLastName:
-        input.workerLastName.trim(),
-      workerStatus:
-        input.workerStatus,
-      companyId: input.companyId,
-      jobId: input.jobId,
+    let controller: AbortController | undefined;
+    const reload = () => {
+      controller?.abort();
+      controller = new AbortController();
+      setWorkers([]);
+      if (!getStoredAccessToken() || getStoredAccountType() !== AccountType.Company) {
+        setLoading(false); return;
+      }
+      setLoading(true);
+      const signal = controller.signal;
+      apiRequest<Worker[]>('/api/Workers', { signal })
+        .then(data => { if (!signal.aborted) { setWorkers(data); setError(''); } })
+        .catch((reason: unknown) => { if (!signal.aborted) setError(reason instanceof Error ? reason.message : 'Could not load workers.'); })
+        .finally(() => { if (!signal.aborted) setLoading(false); });
     };
-
-    setWorkers((current) => [
-      ...current,
-      worker,
-    ]);
-
+    reload();
+    window.addEventListener('buildandhire:auth', reload);
+    window.addEventListener('storage', reload);
+    return () => {
+      controller?.abort();
+      window.removeEventListener('buildandhire:auth', reload);
+      window.removeEventListener('storage', reload);
+    };
+  }, []);
+  const addWorker = async (input: AddWorkerInput): Promise<Worker> => {
+    const worker = await apiRequest<Worker>('/api/Workers', {
+      method: 'POST',
+      body: JSON.stringify({ workerFirstName: input.workerFirstName.trim(),
+        workerLastName: input.workerLastName.trim(), workerStatus: input.workerStatus, jobId: input.jobId }),
+    });
+    setWorkers(current => [worker, ...current]);
     return worker;
   };
-
-  const updateWorkerStatus = (
-    workerId: string,
-    status: WorkerStatus
-  ): void => {
-    setWorkers((current) =>
-      current.map((worker) =>
-        worker.workerId === workerId
-          ? {
-              ...worker,
-              workerStatus: status,
-            }
-          : worker
-      )
-    );
+  const updateWorkerStatus = async (id: string, status: WorkerStatus): Promise<void> => {
+    await apiRequest(`/api/Workers/${id}`, { method: 'PUT', body: JSON.stringify({ workerStatus: status }) });
+    setWorkers(current => current.map(worker => worker.workerId === id ? { ...worker, workerStatus: status } : worker));
   };
-
-  const assignWorkerToJob = (
-    workerId: string,
-    jobId: string
-  ): void => {
-    setWorkers((current) =>
-      current.map((worker) =>
-        worker.workerId === workerId
-          ? {
-              ...worker,
-              jobId,
-            }
-          : worker
-      )
-    );
+  const removeWorkerFromJob = async (id: string): Promise<void> => {
+    await apiRequest(`/api/Workers/${id}`, { method: 'DELETE' });
+    setWorkers(current => current.filter(worker => worker.workerId !== id));
   };
-
-  const removeWorkerFromJob = (
-    workerId: string
-  ): void => {
-    setWorkers((current) =>
-      current.map((worker) =>
-        worker.workerId === workerId
-          ? {
-              ...worker,
-              jobId: '',
-            }
-          : worker
-      )
-    );
-  };
-
-  const deleteWorker = (
-    workerId: string
-  ): void => {
-    setWorkers((current) =>
-      current.map((worker) =>
-        worker.workerId === workerId
-          ? {
-              ...worker,
-              workerStatus:
-                WorkerStatus.Deleted,
-            }
-          : worker
-      )
-    );
-  };
-
-  const value = useMemo(
-    () => ({
-      workers,
-      addWorker,
-      updateWorkerStatus,
-      assignWorkerToJob,
-      removeWorkerFromJob,
-      deleteWorker,
-    }),
-    [workers]
-  );
-
-  return (
-    <WorkforceContext.Provider value={value}>
-      {children}
-    </WorkforceContext.Provider>
-  );
+  const value = useMemo(() => ({ workers, loading, error, addWorker, updateWorkerStatus, removeWorkerFromJob }),
+    [workers, loading, error]);
+  return <WorkforceContext.Provider value={value}>{children}</WorkforceContext.Provider>;
 }
-
 export function useWorkforce(): WorkforceContextValue {
-  const context =
-    useContext(WorkforceContext);
-
-  if (!context) {
-    throw new Error(
-      'useWorkforce must be used inside WorkforceProvider'
-    );
-  }
-
-  return context;
+  const value = useContext(WorkforceContext);
+  if (!value) throw new Error('useWorkforce must be used inside WorkforceProvider');
+  return value;
 }

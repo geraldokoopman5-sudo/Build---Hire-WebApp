@@ -61,11 +61,12 @@ namespace BuildAndHire.Application.Services
 
             return new AddWorkerDto
             {
+                WorkerId = worker.WorkerId,
                 WorkerFirstName = worker.WorkerFirstName,
                 WorkerLastName = worker.WorkerLastName,
                 WorkerStatus = worker.WorkerStatus,
                 CompanyId = worker.CompanyId,
-                JobId = worker.CompanyId,
+                JobId = worker.JobId,
             };
         }
 

@@ -31,12 +31,16 @@ _, headers, _ = request('/api/Customer', 'OPTIONS', headers={
 assert headers.get('Access-Control-Allow-Origin') is None
 print('PASS: Unconfigured origin receives no CORS permission')
 
-for path, expected_field in [('/api/Customer', 'Password'), ('/api/Companies', 'Password'), ('/api/Payment', 'Amount')]:
+for path, expected_field in [('/api/Customer', 'Password'), ('/api/Companies', 'Password')]:
     status, headers, body = request(path, 'POST', {}, {'Origin': 'http://localhost:5173'})
     assert status == 400, (path, status)
     assert expected_field in json.loads(body)['errors'], (path, body)
     assert headers.get('Access-Control-Allow-Origin') == 'http://localhost:5173'
     print(f'PASS: {path} returns validation errors with CORS headers')
+
+status, _, _ = request('/api/Payment/eft', 'POST', {})
+assert status == 401
+print('PASS: Simulated EFT requests require a valid token')
 
 status, _, _ = request('/api/Jobs')
 assert status == 401

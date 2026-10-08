@@ -1,9 +1,10 @@
 import CompanyLayout from '../../components/CompanyLayout/CompanyLayout';
 import JobCard from '../../components/JobCard/JobCard';
-import { companyJobs } from '../../data/companyJobs';
+import { useCompanyJobs } from '../../context/CompanyJobsContext';
 import styles from './CompanyJobs.module.css';
 
 export default function CompanyJobs() {
+  const { jobs: companyJobs, loading, error } = useCompanyJobs();
   const activeJobs = companyJobs.filter(
     (job) => job.status !== 'unavailable'
   );
@@ -14,6 +15,8 @@ export default function CompanyJobs() {
 
   return (
     <CompanyLayout activeSidebarLink="my-jobs">
+      {loading && <p role="status">Loading jobs…</p>}
+      {error && <p role="alert">{error}</p>}
       <div className={styles.headerRow}>
         <div>
           <span className={styles.eyebrow}>
@@ -110,7 +113,7 @@ export default function CompanyJobs() {
           </h2>
 
           <p className={styles.emptyStateText}>
-            Jobs created by your company will appear here.
+            Jobs requested from your company will appear here.
           </p>
         </div>
       )}

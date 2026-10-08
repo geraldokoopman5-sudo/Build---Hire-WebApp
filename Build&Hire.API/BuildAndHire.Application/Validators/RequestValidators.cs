@@ -47,6 +47,7 @@ public class UpdateAdminValidator : AbstractValidator<UpdateAdmin>
 {
     public UpdateAdminValidator()
     {
+        RuleFor(x => x.UserName).NotEmpty().MaximumLength(100);
         RuleFor(x => x.Email).NotEmpty().EmailAddress();
         RuleFor(x => x.Password).MinimumLength(12).When(x => x.Password != null);
         RuleFor(x => x.Status).IsInEnum();

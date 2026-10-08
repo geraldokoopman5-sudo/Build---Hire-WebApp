@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useWorkforce } from '../../context/WorkforceContext';
 import {
   WorkerStatus,
@@ -21,6 +22,7 @@ export default function JobWorkers({
     workers,
     removeWorkerFromJob,
   } = useWorkforce();
+  const [error, setError] = useState('');
 
   const assignedWorkers: Worker[] =
     workers.filter(
@@ -47,6 +49,7 @@ export default function JobWorkers({
 
   return (
     <div className={styles.list}>
+      {error && <p role="alert">{error}</p>}
       {assignedWorkers.map((worker) => {
         const initials =
           `${worker.workerFirstName.charAt(0)}${worker.workerLastName.charAt(0)}`
@@ -89,13 +92,14 @@ export default function JobWorkers({
             <button
               type="button"
               className={styles.removeButton}
-              onClick={() =>
-                removeWorkerFromJob(
-                  worker.workerId
-                )
-              }
+              onClick={() => {
+                if (window.confirm('Remove this worker record?')) {
+                  removeWorkerFromJob(worker.workerId).then(() => setError(''))
+                    .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : 'Could not remove worker.'));
+                }
+              }}
             >
-              Remove
+              Remove worker
             </button>
           </article>
         );

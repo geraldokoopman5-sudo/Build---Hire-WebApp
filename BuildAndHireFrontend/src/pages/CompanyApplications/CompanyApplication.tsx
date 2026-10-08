@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import CompanyLayout from '../../components/CompanyLayout/CompanyLayout';
-import { companyJobs } from '../../data/companyJobs';
+import { useCompanyJobs } from '../../context/CompanyJobsContext';
 
 import styles from './CompanyApplication.module.css';
 
@@ -29,6 +29,7 @@ function getStatusLabel(status: string): string {
 }
 
 export default function CompanyApplications() {
+  const { jobs: companyJobs, loading, error } = useCompanyJobs();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] =
@@ -65,10 +66,12 @@ export default function CompanyApplications() {
         searchableText.includes(query)
       );
     });
-  }, [searchQuery, statusFilter]);
+  }, [companyJobs, searchQuery, statusFilter]);
 
   return (
     <CompanyLayout activeSidebarLink="applications">
+      {loading && <p role="status">Loading requests…</p>}
+      {error && <p role="alert">{error}</p>}
       <div className={styles.header}>
         <div>
           <span className={styles.eyebrow}>
@@ -76,18 +79,17 @@ export default function CompanyApplications() {
           </span>
 
           <h1 className={styles.title}>
-            Applications
+            Job Requests
           </h1>
 
           <p className={styles.subtitle}>
-            Review job requests associated with your
-            company.
+            Review jobs requested from your company.
           </p>
         </div>
 
         <div className={styles.total}>
           <span className={styles.totalLabel}>
-            Total Applications
+            Total Job Requests
           </span>
 
           <span className={styles.totalValue}>

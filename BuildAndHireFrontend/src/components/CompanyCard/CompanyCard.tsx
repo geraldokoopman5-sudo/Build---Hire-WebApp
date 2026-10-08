@@ -1,28 +1,25 @@
 import { Link } from 'react-router-dom';
-import type { CompanyProfile } from '../../types/company';
+import type { CompanyListing } from '../../types/company';
 import styles from './CompanyCard.module.css';
 
 interface CompanyCardProps {
-  company: CompanyProfile;
+  company: CompanyListing;
 }
 
 export default function CompanyCard({ company }: CompanyCardProps) {
   return (
     <div className={styles.card}>
-      <div className={styles.imageWrapper}>
-        <img src={company.imageUrl} alt={company.companyName} className={styles.image} />
-      </div>
+      <div className={styles.imageWrapper} aria-hidden="true" />
 
       <div className={styles.metaRow}>
-        <span className={styles.category}>{company.category}</span>
-        <span className={styles.rating}>★ {company.rating.toFixed(1)}</span>
+        <span className={styles.category}>Approved company</span>
       </div>
 
       <h3 className={styles.name}>{company.companyName}</h3>
-      <p className={styles.description}>{company.about}</p>
+      <p className={styles.description}>View this company and create a job request.</p>
 
-      <Link to={`/companies/${company.id}`} className={styles.button}>
-        View Portfolio
+      <Link to={`/companies/${company.companyId}`} className={styles.button}>
+        View Company
       </Link>
     </div>
   );

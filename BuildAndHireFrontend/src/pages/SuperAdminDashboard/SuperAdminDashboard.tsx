@@ -131,6 +131,13 @@ export default function SuperAdminDashboard() {
             Manage Admins
           </Link>
         </section>
+        <section className={styles.managementCard}>
+          <div>
+            <h2 className={styles.cardTitle}>Company approvals</h2>
+            <p className={styles.cardText}>Review real company registrations and account status.</p>
+          </div>
+          <Link to="/admin" className={styles.primaryButton}>Open Admin Portal</Link>
+        </section>
       </main>
     </div>
   );

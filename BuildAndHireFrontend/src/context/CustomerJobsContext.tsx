@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { CustomerJob } from '../types/job';
-import { AccountType, JobEnum, type PaymentMethod } from '../types/enums';
+import { AccountType, JobEnum, PaymentEnum, type PaymentMethod } from '../types/enums';
 import { apiRequest } from '../utils/api';
 import { getStoredAccessToken, getStoredAccountType } from '../utils/auth';
 import { dateInputToUtc } from '../utils/dates';
@@ -26,6 +26,7 @@ interface CustomerJobsContextValue {
   loading: boolean;
   error: string;
   createJob: (input: CreateCustomerJobInput) => Promise<CustomerJob>;
+  requestEftPayment: (jobId: string, transactionReference: string) => Promise<void>;
   getJobById: (jobId: string) => CustomerJob | undefined;
 }
 const CustomerJobsContext = createContext<CustomerJobsContextValue | undefined>(undefined);
@@ -59,10 +60,12 @@ export function CustomerJobsProvider({ children }: { children: ReactNode }) {
     reload();
     window.addEventListener('buildandhire:auth', reload);
     window.addEventListener('storage', reload);
+    window.addEventListener('focus', reload);
     return () => {
       controller?.abort();
       window.removeEventListener('buildandhire:auth', reload);
       window.removeEventListener('storage', reload);
+      window.removeEventListener('focus', reload);
     };
   }, []);
   const createJob = useCallback(async (input: CreateCustomerJobInput): Promise<CustomerJob> => {
@@ -87,7 +90,16 @@ export function CustomerJobsProvider({ children }: { children: ReactNode }) {
     return job;
   }, []);
   const getJobById = useCallback((id: string) => jobs.find(job => job.jobId === id), [jobs]);
-  const value = useMemo(() => ({ jobs, loading, error, createJob, getJobById }), [jobs, loading, error, createJob, getJobById]);
+  const requestEftPayment = useCallback(async (jobId: string, transactionReference: string): Promise<void> => {
+    await apiRequest('/api/Payment/eft', {
+      method: 'POST',
+      body: JSON.stringify({ jobId, transactionReference: transactionReference.trim() || null }),
+    });
+    setJobs(current => current.map(job => job.jobId === jobId
+      ? { ...job, paymentStatus: PaymentEnum.Pending, paymentReference: transactionReference.trim() || null, payingMethod: 0 }
+      : job));
+  }, []);
+  const value = useMemo(() => ({ jobs, loading, error, createJob, requestEftPayment, getJobById }), [jobs, loading, error, createJob, requestEftPayment, getJobById]);
   return <CustomerJobsContext.Provider value={value}>{children}</CustomerJobsContext.Provider>;
 }
 export function useCustomerJobs(): CustomerJobsContextValue {

@@ -50,7 +50,7 @@ namespace BuildAndHire.Infrastructure.Repositories
         {
             var fired = await _context.Workers.FindAsync(Id);
 
-            if (Id == null) return null;
+            if (fired == null) return null;
 
             _context.Workers.Remove(fired);
             await _context.SaveChangesAsync();

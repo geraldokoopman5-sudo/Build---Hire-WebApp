@@ -11,6 +11,8 @@ import {
 } from '../../context/CustomerJobsContext';
 
 import styles from './CustomerJobDetails.module.css';
+import { formatCurrency } from '../../utils/quoteMath';
+import { PaymentEnum, PaymentMethod } from '../../types/enums';
 
 function formatDate(
   value: string
@@ -194,7 +196,7 @@ export default function CustomerJobDetails() {
               <span>Quote</span>
               <strong>
                 {job.quote > 0
-                  ? `$${job.quote.toLocaleString()}`
+                  ? formatCurrency(job.quote)
                   : 'Awaiting quote'}
               </strong>
             </div>
@@ -204,11 +206,13 @@ export default function CustomerJobDetails() {
               <strong>
                 {job.payingMethod === null
                   ? 'Not selected'
-                  : String(
-                      job.payingMethod
-                    )}
+                  : job.payingMethod === PaymentMethod.EFT ? 'EFT' : 'Other'}
               </strong>
             </div>
+            {job.paymentStatus != null && <div className={styles.row}><span>Payment</span><strong>
+              {job.paymentStatus === PaymentEnum.Successful ? 'Verified' : job.paymentStatus === PaymentEnum.Pending ? 'Pending verification' : 'Not verified'}
+            </strong></div>}
+            {job.quote > 0 && <Link to={`/quotes/${job.jobId}`} className={styles.backButton}>Review quote</Link>}
           </section>
 
           <section

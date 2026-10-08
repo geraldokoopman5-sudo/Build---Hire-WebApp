@@ -17,7 +17,7 @@ namespace BuildAndHire.Infrastructure.Repositories
             return await _context.Jobs
                 .Include(cp => cp.companies)
                 .Include(c => c.customer)
-                .Include(w => w.Workers).ToListAsync();
+                .Include(w => w.Workers).Include(j => j.Payment).ToListAsync();
         }
 
         public async Task<Jobs?> GetJobById(Guid id)
@@ -25,7 +25,7 @@ namespace BuildAndHire.Infrastructure.Repositories
             return await _context.Jobs.
                    Include(cp => cp.companies)
                    .Include(c => c.customer)
-                   .Include(w => w.Workers).FirstOrDefaultAsync(i => i.JobId == id);
+                   .Include(w => w.Workers).Include(j => j.Payment).FirstOrDefaultAsync(i => i.JobId == id);
 
         }
         public async Task<Jobs> RegisterJob(Jobs job)

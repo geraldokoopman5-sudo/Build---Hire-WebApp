@@ -1,4 +1,4 @@
-import type { PaymentMethod } from './enums';
+import type { PaymentEnum, PaymentMethod } from './enums';
 import type { Address } from './company';
 
 export type JobStatus =
@@ -21,6 +21,7 @@ export interface CompanyJob {
   amountPaid: number;
   paymentState: PaymentState;
   paymentNote: string;
+  paymentRequested?: boolean;
 }
 
 export interface CustomerJob {
@@ -43,6 +44,9 @@ export interface CustomerJob {
   endDate: string;
 
   payingMethod: PaymentMethod | null;
+  paymentStatus?: PaymentEnum | null;
+  amountPaid?: number;
+  paymentReference?: string | null;
 
   status: JobStatus;
 

@@ -1,5 +1,8 @@
 using Build_Hire.API.Startup;
+using Build_Hire.API.Controllers;
+using BuildAndHire.Application.DTOs.WokerDto;
 using BuildAndHire.Application.DTOs.AuthDto;
+using BuildAndHire.Application.DTOs.AdminDto;
 using BuildAndHire.Application.DTOs.CompanyDto;
 using BuildAndHire.Application.DTOs.CustomerDto;
 using BuildAndHire.Application.DTOs.JobDto;
@@ -18,6 +21,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 internal static class PostgreSqlChecks
 {
@@ -120,9 +126,136 @@ internal static class PostgreSqlChecks
             Require(storedJob.StartDate == start && storedJob.StartDate.Kind == DateTimeKind.Utc && storedJob.EndDate.Kind == DateTimeKind.Utc, "Job dates round-trip through Npgsql as UTC");
             Require(storedPayment.PaymentDate.Kind == DateTimeKind.Utc && storedPayment.PaymentDate.Year == DateTime.UtcNow.Year, "Payment UTC timestamp persists through Npgsql");
             Require(storedJob.PayingMethod == PaymentMethod.EFT, "Job payment method persists");
-            await db.Workers.AddAsync(new Workers { WorkerFirstName = "Test", WorkerLastName = "Surname", CompanyId = company.CompanyId, JobId = job.JobId, WorkerStatus = AccountStatus.Active });
-            await db.SaveChangesAsync();
-            Require(await db.Workers.AnyAsync(w => w.WorkerLastName == "Surname"), "Renamed worker column accepts writes");
+            var workerController = new WorkersController(new WorkerService(new WorkerRepository(db)), db)
+                { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
+            workerController.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
+                new Claim(ClaimTypes.NameIdentifier, company.CompanyId.ToString()),
+                new Claim(ClaimTypes.Role, "Company")
+            ], "test"));
+            var workerResult = await workerController.AddWorker(new AddWorkerDto
+            {
+                WorkerFirstName = "Test", WorkerLastName = "Surname", WorkerStatus = AccountStatus.Active,
+                CompanyId = Guid.NewGuid(), JobId = job.JobId
+            });
+            Require(workerResult is CreatedAtActionResult { Value: AddWorkerDto created } &&
+                created.WorkerId != Guid.Empty && created.CompanyId == company.CompanyId && created.JobId == job.JobId,
+                "Worker API ignores spoofed company ID and returns saved IDs");
+            Require(await db.Workers.AnyAsync(w => w.WorkerLastName == "Surname" && w.CompanyId == company.CompanyId),
+                "Renamed worker column accepts writes");
+            Require(await workerController.AddWorker(new AddWorkerDto
+            { WorkerFirstName = "Other", WorkerLastName = "Job", JobId = Guid.NewGuid() }) is BadRequestObjectResult,
+                "Worker API rejects jobs outside the company");
+
+            var customerController = new CustomerController(new CustomerService(new CustomerRepository(db), passwords), db)
+                { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
+            customerController.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
+                new Claim(ClaimTypes.Role, "Admin")
+            ], "test"));
+            Require(await customerController.UpdateCustomerStatus(customer.CustomerId,
+                new UpdateCompanyStatusDto { Status = AccountStatus.InActive }) is NoContentResult &&
+                await db.Customers.AnyAsync(c => c.CustomerId == customer.CustomerId && c.Status == AccountStatus.InActive),
+                "Admin approval API persists customer status");
+
+            var jobsController = new JobsController(new JobService(new JobRepository(db)), db)
+                { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
+            jobsController.HttpContext.User = workerController.HttpContext.User;
+            Require(await jobsController.UpdateJobDetails(job.JobId, new UpdateJobDetailsDto
+            {
+                Quote = 0, EndDate = storedJob.EndDate, Status = JobEnum.Available,
+                PayingMethod = PaymentMethod.EFT
+            }) is OkObjectResult &&
+                await db.Jobs.AnyAsync(j => j.JobId == job.JobId && j.Status == JobEnum.Available),
+                "Company job status persists through the API");
+            Require(await jobsController.UpdateJobDetails(job.JobId, new UpdateJobDetailsDto
+            {
+                Quote = 150, EndDate = storedJob.EndDate, Status = JobEnum.Available,
+                PayingMethod = PaymentMethod.EFT
+            }) is ConflictObjectResult, "Quote cannot change after payment request");
+            var unquotedJob = await jobs.RegisterJobAsync(new RegisterJobDto
+            {
+                CompanyId = company.CompanyId, CustomerId = customer.CustomerId,
+                JobDescription = "New quote", StartDate = start, EndDate = start.AddDays(1),
+                DaysWorking = 2, Status = JobEnum.Working, PayingMethod = PaymentMethod.EFT,
+                address = address
+            });
+            Require(await jobsController.UpdateJobDetails(unquotedJob.JobId, new UpdateJobDetailsDto
+            {
+                Quote = 150, EndDate = start.AddDays(1), Status = JobEnum.Working,
+                PayingMethod = PaymentMethod.EFT
+            }) is OkObjectResult &&
+                await db.Jobs.AnyAsync(j => j.JobId == unquotedJob.JobId && j.Quote == 150),
+                "Company quote persists before payment request");
+            var paymentController = new PaymentController(new PaymentService(new PaymentRepository(db)), db)
+                { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
+            paymentController.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
+                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Role, "Customer")
+            ], "test"));
+            Require(await paymentController.RequestEftPayment(new EftPaymentRequest
+            { JobId = unquotedJob.JobId, TransactionReference = "bank-ref" }) is NotFoundResult,
+                "Another customer cannot request payment for a job");
+            paymentController.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
+                new Claim(ClaimTypes.NameIdentifier, customer.CustomerId.ToString()),
+                new Claim(ClaimTypes.Role, "Customer")
+            ], "test"));
+            var eftResult = await paymentController.RequestEftPayment(new EftPaymentRequest
+            { JobId = unquotedJob.JobId, TransactionReference = "bank-ref" });
+            Require(eftResult is CreatedAtActionResult { Value: PaymentsDto eft } &&
+                eft.Amount == 150 && eft.Status == PaymentEnum.Pending &&
+                eft.PaymentMethod == PaymentMethod.EFT &&
+                await db.Payment.AnyAsync(p => p.PaymentId == eft.PaymentId && p.TransactionReference == "bank-ref"),
+                "EFT request uses the stored quote and remains pending");
+            Require(await paymentController.RequestEftPayment(new EftPaymentRequest
+            { JobId = unquotedJob.JobId }) is ConflictObjectResult,
+                "Duplicate EFT request is rejected");
+            paymentController.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
+                new Claim(ClaimTypes.Role, "Admin")
+            ], "test"));
+            Require(await paymentController.UpdatePaymentStatus(
+                ((PaymentsDto)((CreatedAtActionResult)eftResult).Value!).PaymentId,
+                new PaymentResponseDto { Status = PaymentEnum.Successful }) is OkObjectResult &&
+                await db.Payment.AnyAsync(p => p.JobId == unquotedJob.JobId && p.Status == PaymentEnum.Successful),
+                "Admin review confirms a pending EFT");
+            Require((await jobs.GetJobByIdAsync(unquotedJob.JobId))?.AmountPaid == 150,
+                "Verified EFT is counted as paid");
+            var listedJob = (await jobs.GetAllJobsAsync()).Single(j => j.JobId == job.JobId);
+            Require(listedJob.PaymentStatus == PaymentEnum.Pending && listedJob.AmountPaid == 0,
+                "Pending payment is not counted as paid");
+
+            var updatedCompany = await new CompanyService(new CompanyRepository(db), passwords)
+                .UpdateCompanyAsync(company.CompanyId, new UpdateCompanyDto
+                {
+                    CompanyName = "Renamed Company", CompanyEmail = "renamedcompany@example.test",
+                    RegistrationNumber = "1234567890", TaxNumber = "0123456789", address = address
+                });
+            Require(updatedCompany?.CompanyName == "Renamed Company" &&
+                await db.Companies.AnyAsync(c => c.CompanyId == company.CompanyId &&
+                    c.CompanyEmail == "renamedcompany@example.test"),
+                "Company settings persist through the service and repository");
+
+            var admins = new AdminService(new AdminRepository(db), passwords);
+            var createdAdmin = await admins.RegisterAdminAsync(new AddAdmin
+            {
+                UserName = "ReviewAdmin", Email = "reviewadmin@example.test", Password = password,
+                Status = AccountStatus.Active, AdminRole = AdminEnums.Admin
+            });
+            Require(createdAdmin.AdminId != Guid.Empty, "Super-admin management creates a persisted admin");
+            var changedAdmin = await admins.UpdateAdminAsync(createdAdmin.AdminId, new UpdateAdmin
+            {
+                UserName = "RenamedAdmin", Email = "renamedadmin@example.test",
+                Status = AccountStatus.Active, AdminRole = AdminEnums.Admin
+            });
+            Require(changedAdmin.AdminId == createdAdmin.AdminId && changedAdmin.UserName == "RenamedAdmin" &&
+                await db.Admin.AnyAsync(a => a.AdminId == createdAdmin.AdminId && a.Email == "renamedadmin@example.test"),
+                "Super-admin management updates name and email");
+            await admins.DeleteAdminAsync(createdAdmin.AdminId);
+            Require(!await db.Admin.AnyAsync(a => a.AdminId == createdAdmin.AdminId),
+                "Super-admin management deletes the selected admin");
+
+            // HTTP checks use the real middleware and only this disposable schema.
+            await db.Admin.Where(a => a.Email == "superadmin@example.test")
+                .ExecuteUpdateAsync(s => s.SetProperty(a => a.Status, AccountStatus.Active));
+            await HttpWorkflowChecks.RunAsync(scopedConnection.ConnectionString, password);
         }
         finally
         {

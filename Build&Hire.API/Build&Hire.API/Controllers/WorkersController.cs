@@ -1,63 +1,66 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
-namespace Build_Hire.API.Controllers
+namespace Build_Hire.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize(Roles = "Company")]
+public class WorkersController(IWorkerService service, BuildAndHireDbContext db) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class WorkersController : ControllerBase
+    private Guid? CompanyId => Guid.TryParse(
+        User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub"), out var id) ? id : null;
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<WorkerDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllWorkers()
     {
-        private readonly IWorkerService _service;
+        if (CompanyId is not Guid companyId) return Unauthorized();
+        var workers = await service.GetAllWorkersAsync();
+        return Ok(workers.Where(w => w.CompanyId == companyId));
+    }
 
-        public WorkersController(IWorkerService service)
-        {
-            _service = service;
-        }
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetWorkersById(Guid id)
+    {
+        if (CompanyId is not Guid companyId) return Unauthorized();
+        if (!await db.Workers.AnyAsync(w => w.WorkerId == id && w.CompanyId == companyId))
+            return NotFound();
 
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<WorkerDto>), StatusCodes.Status200OK)]
-        [Authorize (Roles=nameof(AccountType.Company))]
-        public async Task<IActionResult> GetAllWorkers()
-        {
-            var worker = await _service.GetAllWorkersAsync();
+        return Ok(await service.GetWorkersByIdAsync(id));
+    }
 
-            return Ok(worker);
-        }
+    [HttpPost]
+    [ProducesResponseType(typeof(AddWorkerDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> AddWorker(AddWorkerDto dto)
+    {
+        if (CompanyId is not Guid companyId) return Unauthorized();
+        if (!await db.Companies.AnyAsync(c => c.CompanyId == companyId && c.Status == AccountStatus.Active))
+            return Forbid();
+        if (!await db.Jobs.AnyAsync(j => j.JobId == dto.JobId && j.CompanyId == companyId))
+            return BadRequest(new ProblemDetails { Title = "Select a job belonging to your company.", Status = 400 });
 
-        [HttpGet("{Id}")]
-        [Authorize(Roles = nameof(AccountType.Company))]
-        public async Task<IActionResult> GetWorkersById(Guid Id)
-        {
-            var worker = await _service.GetWorkersByIdAsync(Id);
+        dto.CompanyId = companyId;
+        var worker = await service.AddWorkerAsync(dto);
+        return CreatedAtAction(nameof(GetWorkersById), new { id = worker.WorkerId }, worker);
+    }
 
-            return Ok(worker);
-        }
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> EditWorkerDetails(Guid id, UpdateWorkerDto dto)
+    {
+        if (CompanyId is not Guid companyId) return Unauthorized();
+        if (!await db.Workers.AnyAsync(w => w.WorkerId == id && w.CompanyId == companyId))
+            return NotFound();
 
-        [HttpPost]
-        [Authorize(Roles = nameof(AccountType.Company))]
-        public async Task<IActionResult>AddWorker(AddWorkerDto dto)
-        {
-            var hire = await _service.AddWorkerAsync(dto);
+        return Ok(await service.UpdateWorkerAsync(id, dto));
+    }
 
-            return CreatedAtAction(nameof(GetWorkersById), new { id = hire.WorkerId }, hire );
-        }
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteWorkerDetails(Guid id)
+    {
+        if (CompanyId is not Guid companyId) return Unauthorized();
+        if (!await db.Workers.AnyAsync(w => w.WorkerId == id && w.CompanyId == companyId))
+            return NotFound();
 
-        [HttpPut]
-        [Authorize(Roles = nameof(AccountType.Company))]
-        public async Task<IActionResult>EditWorkerDetails(Guid id, UpdateWorkerDto dto)
-        {
-            var update = await _service.UpdateWorkerAsync(id, dto);
-
-            return Ok(update);
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize(Roles = nameof(AccountType.Company))]
-        public async Task<IActionResult>DeleteWorkerDetails(Guid id)
-        {
-            var delete = await _service.DeleteWorkerAsync(id);
-
-            return Ok(delete);
-        }
+        return Ok(await service.DeleteWorkerAsync(id));
     }
 }

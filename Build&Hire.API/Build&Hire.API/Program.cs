@@ -82,6 +82,27 @@ builder.Services
 
         options.Events = new JwtBearerEvents
         {
+            OnTokenValidated = async context =>
+            {
+                var principal = context.Principal;
+                var subject = principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                    ?? principal?.FindFirst("sub")?.Value;
+                if (!Guid.TryParse(subject, out var accountId))
+                {
+                    context.Fail("Invalid account ID.");
+                    return;
+                }
+
+                var db = context.HttpContext.RequestServices.GetRequiredService<BuildAndHireDbContext>();
+                var active = principal!.IsInRole("Customer")
+                    ? await db.Customers.AnyAsync(c => c.CustomerId == accountId && c.Status == AccountStatus.Active)
+                    : principal.IsInRole("Company")
+                    ? await db.Companies.AnyAsync(c => c.CompanyId == accountId && c.Status == AccountStatus.Active)
+                    : principal.IsInRole("Admin") || principal.IsInRole("SuperAdmin")
+                    ? await db.Admin.AnyAsync(a => a.AdminId == accountId && a.Status == AccountStatus.Active)
+                    : false;
+                if (!active) context.Fail("Account is not active.");
+            },
             OnAuthenticationFailed = context =>
             {
                 Console.WriteLine(

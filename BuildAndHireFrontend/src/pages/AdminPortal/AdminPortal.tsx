@@ -10,12 +10,8 @@ import AdminStatCard from '../../components/AdminStatCard/AdminStatcard';
 import StatusBadge from '../../components/StatusBadge/StatusBadge';
 
 import {
-  platformCompanies as initialCompanies,
-} from '../../data/PlatformCompanies';
-
-import {
-  platformCustomers as initialCustomers,
-} from '../../data/platformCustomer';
+  apiRequest,
+} from '../../utils/api';
 
 import {
   getPlatformStatusLabel,
@@ -24,7 +20,9 @@ import {
 
 import {
   AccountStatus,
+  PaymentEnum,
 } from '../../types/enums';
+import { formatCurrency } from '../../utils/quoteMath';
 
 import type {
   PlatformCompany,
@@ -37,71 +35,56 @@ type EntityTab =
   | 'companies'
   | 'customers';
 
-const COMPANY_STORAGE_KEY =
-  'buildandhire.admin.companies';
-
-const CUSTOMER_STORAGE_KEY =
-  'buildandhire.admin.customers';
-
-function loadStoredData<T>(
-  key: string,
-  fallback: T[]
-): T[] {
-  try {
-    const stored =
-      localStorage.getItem(key);
-
-    if (!stored) {
-      return fallback;
-    }
-
-    const parsed: unknown =
-      JSON.parse(stored);
-
-    return Array.isArray(parsed)
-      ? (parsed as T[])
-      : fallback;
-  } catch {
-    return fallback;
-  }
-}
+interface ApiCompany { companyId: string; companyName: string; status: AccountStatus; address?: { city?: string }; }
+interface ApiCustomer { customerId: string; customerName: string; status: AccountStatus; address?: { city?: string }; }
+interface ApiJob { companyId: string; customerId: string; }
+interface ApiPayment { paymentId: string; jobId: string; amount: number; status: number; paymentDate: string; transactionReference: string | null; }
 
 export default function AdminPortal() {
   const [activeTab, setActiveTab] =
     useState<EntityTab>('companies');
 
   const [companies, setCompanies] =
-    useState<PlatformCompany[]>(() =>
-      loadStoredData(
-        COMPANY_STORAGE_KEY,
-        initialCompanies
-      )
-    );
+    useState<PlatformCompany[]>([]);
 
   const [customers, setCustomers] =
-    useState<PlatformCustomer[]>(() =>
-      loadStoredData(
-        CUSTOMER_STORAGE_KEY,
-        initialCustomers
-      )
-    );
+    useState<PlatformCustomer[]>([]);
+  const [payments, setPayments] = useState<ApiPayment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const [query, setQuery] =
     useState<string>('');
 
   useEffect(() => {
-    localStorage.setItem(
-      COMPANY_STORAGE_KEY,
-      JSON.stringify(companies)
-    );
-  }, [companies]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      CUSTOMER_STORAGE_KEY,
-      JSON.stringify(customers)
-    );
-  }, [customers]);
+    const controller = new AbortController();
+    Promise.all([
+      apiRequest<ApiCompany[]>('/api/Companies', { signal: controller.signal }),
+      apiRequest<ApiCustomer[]>('/api/Customer', { signal: controller.signal }),
+      apiRequest<ApiJob[]>('/api/Jobs', { signal: controller.signal }),
+      apiRequest<ApiPayment[]>('/api/Payment', { signal: controller.signal }),
+    ]).then(([firms, people, jobs, paymentRecords]) => {
+      if (controller.signal.aborted) return;
+      setPayments(paymentRecords);
+      setCompanies(firms.map(company => ({
+        id: company.companyId, name: company.companyName,
+        initials: company.companyName.slice(0, 2).toUpperCase(),
+        location: company.address?.city ?? '—', status: company.status,
+        isFlagged: false, joinedDate: '—',
+        totalProjects: jobs.filter(job => job.companyId === company.companyId).length,
+      })));
+      setCustomers(people.map(customer => ({
+        id: customer.customerId, name: customer.customerName,
+        initials: customer.customerName.slice(0, 2).toUpperCase(),
+        location: customer.address?.city ?? '—', status: customer.status,
+        isFlagged: false, joinedDate: '—',
+        totalJobsPosted: jobs.filter(job => job.customerId === customer.customerId).length,
+      })));
+    }).catch((reason: unknown) => {
+      if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : 'Could not load accounts.');
+    }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, []);
 
   const handleSearchChange = (
     event: ChangeEvent<HTMLInputElement>
@@ -109,11 +92,15 @@ export default function AdminPortal() {
     setQuery(event.target.value);
   };
 
-  const updateCompanyStatus = (
+  const updateCompanyStatus = async (
     id: string,
     status: AccountStatus
-  ): void => {
-    setCompanies((current) =>
+  ): Promise<void> => {
+    try {
+      await apiRequest<void>(`/api/Companies/${id}/Status`, {
+        method: 'PATCH', body: JSON.stringify({ status }),
+      });
+      setCompanies((current) =>
       current.map((entry) =>
         entry.id === id
           ? {
@@ -123,13 +110,19 @@ export default function AdminPortal() {
           : entry
       )
     );
+      setError('');
+    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Could not update company.'); }
   };
 
-  const updateCustomerStatus = (
+  const updateCustomerStatus = async (
     id: string,
     status: AccountStatus
-  ): void => {
-    setCustomers((current) =>
+  ): Promise<void> => {
+    try {
+      await apiRequest<void>(`/api/Customer/${id}/status`, {
+        method: 'PATCH', body: JSON.stringify({ status }),
+      });
+      setCustomers((current) =>
       current.map((entry) =>
         entry.id === id
           ? {
@@ -139,6 +132,20 @@ export default function AdminPortal() {
           : entry
       )
     );
+      setError('');
+    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Could not update customer.'); }
+  };
+
+  const reviewPayment = async (id: string, status: number): Promise<void> => {
+    try {
+      await apiRequest(`/api/Payment/${id}/status`, {
+        method: 'PATCH', body: JSON.stringify({ status }),
+      });
+      setPayments(current => current.map(payment => payment.paymentId === id ? { ...payment, status } : payment));
+      setError('');
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Could not review payment.');
+    }
   };
 
   const filteredCompanies = useMemo(() => {
@@ -173,17 +180,11 @@ export default function AdminPortal() {
         AccountStatus.Pending
     ).length;
 
-  const flaggedCount =
-    companies.filter(
-      (entry) => entry.isFlagged
-    ).length +
-    customers.filter(
-      (entry) => entry.isFlagged
-    ).length;
-
   return (
     <div className={styles.page}>
       <AdminHeader />
+      {loading && <p role="status">Loading accounts…</p>}
+      {error && <p role="alert">{error}</p>}
 
       <div className={styles.headerRow}>
         <div>
@@ -244,12 +245,6 @@ export default function AdminPortal() {
           icon={<span />}
         />
 
-        <AdminStatCard
-          label="Flagged"
-          value={flaggedCount}
-          icon={<span />}
-          accent="danger"
-        />
       </div>
 
       <div className={styles.tableCard}>
@@ -641,6 +636,22 @@ export default function AdminPortal() {
           </div>
         )}
       </div>
+      <section className={styles.tableCard}>
+        <div className={styles.tableHeader}><h2 className={styles.tableTitle}>EFT requests</h2></div>
+        <p>Check your bank records independently before marking any request verified.</p>
+        {payments.length === 0 ? <p>No EFT requests yet.</p> : <table className={styles.table}>
+          <thead><tr><th>Job</th><th>Amount</th><th>Bank reference</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>{payments.map(payment => <tr key={payment.paymentId}>
+            <td>{payment.jobId}</td><td>{formatCurrency(payment.amount)}</td>
+            <td>{payment.transactionReference || '—'}</td>
+            <td>{payment.status === PaymentEnum.Pending ? 'Pending' : payment.status === PaymentEnum.Successful ? 'Verified' : 'Not verified'}</td>
+            <td>{payment.status === PaymentEnum.Pending && <div className={styles.actionButtons}>
+              <button type="button" className={styles.approveButton} onClick={() => reviewPayment(payment.paymentId, PaymentEnum.Successful)}>Mark verified</button>
+              <button type="button" className={styles.rejectButton} onClick={() => reviewPayment(payment.paymentId, PaymentEnum.Failed)}>Mark not verified</button>
+            </div>}</td>
+          </tr>)}</tbody>
+        </table>}
+      </section>
     </div>
   );
 }

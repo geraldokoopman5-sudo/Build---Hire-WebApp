@@ -12,8 +12,6 @@ namespace BuildAndHire.Application.DTOs.PaymentsDto
 
         public Guid JobId { get; set; }
 
-        public Jobs Job { get; set; } = null!;
-
         public decimal Amount { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }
