@@ -8,6 +8,7 @@ namespace BuildAndHire.Application.DTOs.WokerDto
     public class UpdateWorkerDto
     {
         public AccountStatus WorkerStatus { get; set; }
+        public string? WorkerFirstName { get; set; }
+        public string? WorkerLastName { get; set; }
     }
 }
-

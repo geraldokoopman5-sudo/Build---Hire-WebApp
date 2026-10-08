@@ -93,13 +93,13 @@ export default function JobWorkers({
               type="button"
               className={styles.removeButton}
               onClick={() => {
-                if (window.confirm('Remove this worker record?')) {
+                if (window.confirm('Unassign this worker while keeping them in your workforce?')) {
                   removeWorkerFromJob(worker.workerId).then(() => setError(''))
                     .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : 'Could not remove worker.'));
                 }
               }}
             >
-              Remove worker
+              Unassign worker
             </button>
           </article>
         );

@@ -81,12 +81,24 @@ namespace BuildAndHire.Application.Services
             if (getWorker == null) throw new KeyNotFoundException("Worker not found");
 
             getWorker.WorkerStatus = dto.WorkerStatus;
+            if (dto.WorkerFirstName != null)
+            {
+                if (string.IsNullOrWhiteSpace(dto.WorkerFirstName)) throw new ArgumentException("Worker first name is required.");
+                getWorker.WorkerFirstName = dto.WorkerFirstName.Trim();
+            }
+            if (dto.WorkerLastName != null)
+            {
+                if (string.IsNullOrWhiteSpace(dto.WorkerLastName)) throw new ArgumentException("Worker last name is required.");
+                getWorker.WorkerLastName = dto.WorkerLastName.Trim();
+            }
 
             var updated = await _repo.UpdateWorkerDetail(getWorker);
 
             return new UpdateWorkerDto
             {
                 WorkerStatus = updated.WorkerStatus,
+                WorkerFirstName = updated.WorkerFirstName,
+                WorkerLastName = updated.WorkerLastName,
             };
         }
     }

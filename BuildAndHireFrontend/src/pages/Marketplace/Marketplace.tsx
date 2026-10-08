@@ -1,63 +1,14 @@
-import { useEffect, useState, type ChangeEvent } from 'react';
-import AppHeader from '../../components/AppHeader/AppHeader';
-import CompanyCard from '../../components/CompanyCard/CompanyCard';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Workspace, { Heading, Badge, LoadState, Empty } from '../../components/Workspace/Workspace';
+import { useApiResource } from '../../hooks/useApiResource';
+import { AccountStatus } from '../../types/enums';
 import type { CompanyListing } from '../../types/company';
-import { apiRequest } from '../../utils/api';
-import styles from './Marketplace.module.css';
-
 export default function Marketplace() {
-  const [query, setQuery] = useState<string>('');
-  const [companies, setCompanies] = useState<CompanyListing[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  useEffect(() => {
-    const controller = new AbortController();
-    apiRequest<CompanyListing[]>('/api/Companies', { signal: controller.signal })
-      .then(data => { if (!controller.signal.aborted) setCompanies(data); })
-      .catch((reason: unknown) => { if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : 'Could not load companies.'); })
-      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
-    return () => controller.abort();
-  }, []);
-
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setQuery(event.target.value);
-  };
-
-  const filteredCompanies = companies.filter((company) =>
-    company.companyName.toLowerCase().includes(query.toLowerCase())
-  );
-
-  return (
-    <div className={styles.page}>
-      <AppHeader />
-
-      <main className={styles.main}>
-        {loading && <p role="status">Loading companies…</p>}
-        {error && <p role="alert">{error}</p>}
-        <div className={styles.searchWrapper}>
-          <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search construction companies..."
-            value={query}
-            onChange={handleSearchChange}
-            className={styles.searchInput}
-          />
-        </div>
-
-        <div className={styles.grid}>
-          {filteredCompanies.map((company) => (
-            <CompanyCard key={company.companyId} company={company} />
-          ))}
-        </div>
-
-        {!loading && !error && filteredCompanies.length === 0 && (
-          <p className={styles.noResults}>No approved companies match your search.</p>
-        )}
-      </main>
-    </div>
-  );
+  const resource = useApiResource<CompanyListing[]>('/api/Companies');
+  const [search, setSearch] = useState('');
+  const companies = (resource.data ?? []).filter(c => c.status === AccountStatus.Active && c.companyName.toLowerCase().includes(search.trim().toLowerCase()));
+  return <Workspace title="Marketplace"><Heading title="Find your project partner" description="Browse approved companies. Choose a company to see its profile and send a request." eyebrow="THE MARKETPLACE" action={<Link className="primary" to="/my-jobs/new">Create a project →</Link>} /><LoadState {...resource} retry={resource.refresh} />
+    {!resource.loading && !resource.error && <><div className="toolbar"><p className="subtext"><strong>{companies.length}</strong> approved company accounts</p><input className="search" type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search company name…" aria-label="Search company name" /></div><div className="panels three">{companies.map(c => <article className="panel companytile" key={c.companyId}><div className="companymark" aria-hidden="true">{c.companyName.slice(0, 2).toUpperCase()}</div><Badge tone="green">Approved account</Badge><h3>{c.companyName}</h3><p>View this company and send a project request.</p><div className="divider" /><Link className="secondary" to={'/companies/' + c.companyId}>View company →</Link></article>)}</div>{companies.length === 0 && <Empty><h2>No companies found</h2><p>Try another name, or check back after companies are approved.</p>{search && <button className="secondary" onClick={() => setSearch('')}>Clear search</button>}</Empty>}<div className="fieldnote">Approval refers to the company’s account status. Discuss your project requirements with the company before accepting a quote.</div></>}
+  </Workspace>;
 }

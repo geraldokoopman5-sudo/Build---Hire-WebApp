@@ -3,6 +3,10 @@ export const API_BASE_URL = (
   'https://localhost:7172'
 ).replace(/\/$/, '');
 
+export class ApiError extends Error {
+  readonly status: number;
+  constructor(message: string, status: number) { super(message); this.name = 'ApiError'; this.status = status; }
+}
 export async function apiRequest<T>(
   path: string,
   options: RequestInit = {}
@@ -17,10 +21,12 @@ export async function apiRequest<T>(
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try { response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers }); }
+  catch (error) {
+    if (options.signal?.aborted) throw error;
+    throw new ApiError('Could not reach the server. Check your connection and try again.', 0);
+  }
 
   if (!response.ok) {
     const problem = await response.json().catch(() => null);
@@ -30,12 +36,16 @@ export async function apiRequest<T>(
         ? Object.values(problem.errors).flat().join(' ')
         : '';
 
-    throw new Error(
+    if (response.status === 401 && token && token === localStorage.getItem('buildandhire.accessToken')) {
+      for (const key of ['accessToken', 'accountType', 'adminRole', 'customerId', 'companyId']) localStorage.removeItem(`buildandhire.${key}`);
+      window.dispatchEvent(new Event('buildandhire:auth'));
+    }
+    throw new ApiError(
       messages ||
         (typeof problem === 'string' ? problem : '') ||
         problem?.message ||
         problem?.title ||
-        `Request failed (${response.status}).`
+        (response.status === 401 ? 'Your session expired. Please sign in again.' : `Request failed (${response.status}).`), response.status
     );
   }
 

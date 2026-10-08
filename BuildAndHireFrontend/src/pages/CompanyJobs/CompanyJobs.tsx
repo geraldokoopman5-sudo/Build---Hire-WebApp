@@ -1,122 +1,18 @@
-import CompanyLayout from '../../components/CompanyLayout/CompanyLayout';
-import JobCard from '../../components/JobCard/JobCard';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Workspace, { Heading, Stats, Notice, Empty, LoadState } from '../../components/Workspace/Workspace';
+import ProjectRow from '../../components/Workspace/ProjectRow';
 import { useCompanyJobs } from '../../context/CompanyJobsContext';
-import styles from './CompanyJobs.module.css';
-
+import { getJobStatusLabel } from '../../utils/jobLabels';
+import type { JobStatus } from '../../types/job';
 export default function CompanyJobs() {
-  const { jobs: companyJobs, loading, error } = useCompanyJobs();
-  const activeJobs = companyJobs.filter(
-    (job) => job.status !== 'unavailable'
-  );
-
-  const unavailableJobs = companyJobs.filter(
-    (job) => job.status === 'unavailable'
-  );
-
-  return (
-    <CompanyLayout activeSidebarLink="my-jobs">
-      {loading && <p role="status">Loading jobs…</p>}
-      {error && <p role="alert">{error}</p>}
-      <div className={styles.headerRow}>
-        <div>
-          <span className={styles.eyebrow}>
-            Company Dashboard
-          </span>
-
-          <h1 className={styles.title}>
-            My Jobs
-          </h1>
-
-          <p className={styles.subtitle}>
-            Oversee your construction projects, job status,
-            quotes, and payment progress.
-          </p>
-        </div>
-
-        <div className={styles.summary}>
-          <div className={styles.summaryItem}>
-            <span className={styles.summaryLabel}>
-              Active Jobs
-            </span>
-
-            <span className={styles.summaryValue}>
-              {activeJobs.length}
-            </span>
-          </div>
-
-          <div className={styles.summaryItem}>
-            <span className={styles.summaryLabel}>
-              Closed Jobs
-            </span>
-
-            <span className={styles.summaryValue}>
-              {unavailableJobs.length}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {activeJobs.length > 0 && (
-        <>
-          <div className={styles.sectionHeader}>
-            <div>
-              <span className={styles.sectionEyebrow}>
-                Current Projects
-              </span>
-
-              <h2 className={styles.sectionTitle}>
-                Active Jobs
-              </h2>
-            </div>
-          </div>
-
-          <div className={styles.grid}>
-            {activeJobs.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-              />
-            ))}
-          </div>
-        </>
-      )}
-
-      {unavailableJobs.length > 0 && (
-        <>
-          <div className={styles.sectionHeader}>
-            <div>
-              <span className={styles.sectionEyebrow}>
-                Completed / Closed
-              </span>
-
-              <h2 className={styles.sectionTitle}>
-                Unavailable Jobs
-              </h2>
-            </div>
-          </div>
-
-          <div className={styles.grid}>
-            {unavailableJobs.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-              />
-            ))}
-          </div>
-        </>
-      )}
-
-      {companyJobs.length === 0 && (
-        <div className={styles.emptyState}>
-          <h2 className={styles.emptyStateTitle}>
-            No Jobs Yet
-          </h2>
-
-          <p className={styles.emptyStateText}>
-            Jobs requested from your company will appear here.
-          </p>
-        </div>
-      )}
-    </CompanyLayout>
-  );
+  const { jobs, loading, error, refreshJobs } = useCompanyJobs();
+  const [filter, setFilter] = useState<JobStatus | 'all'>('all'), [search, setSearch] = useState('');
+  const pending = jobs.filter(j => j.status === 'requested').length;
+  const visible = jobs.filter(j => (filter === 'all' || j.status === filter) && j.description.toLowerCase().includes(search.trim().toLowerCase()));
+  const states: (JobStatus | 'all')[] = ['all', 'requested', 'accepted', 'in-progress', 'completed', 'cancelled', 'rejected'];
+  return <Workspace title="Company dashboard"><Heading title="Good work starts here." description="Review requests, agree on quotes and keep accepted projects moving." eyebrow="COMPANY WORKSPACE" action={<Link className="primary" to="/company/applications">Review requests →</Link>} /><LoadState loading={loading} error={error} retry={refreshJobs} />
+  {!loading && !error && <><Stats items={[["Incoming requests", pending, "Awaiting your decision"], ["Accepted jobs", jobs.filter(j => j.status === 'accepted').length, "Ready for the next step"], ["In progress", jobs.filter(j => j.status === 'in-progress').length, "Work has started"], ["Completed", jobs.filter(j => j.status === 'completed').length, "Closed projects"]]} />{pending > 0 && <Notice title={`${pending} request${pending === 1 ? '' : 's'} need a decision`}>Accept a request before quoting or assigning workers. <Link className="textbutton" to="/company/applications">Open requests →</Link></Notice>}
+  <div className="sectionhead"><h2>Your projects</h2><small>All project states in one place</small></div><div className="toolbar"><div className="tabs" role="group" aria-label="Project status">{states.map(s => <button key={s} className={`tab ${filter === s ? 'active' : ''}`} onClick={() => setFilter(s)} aria-pressed={filter === s}>{s === 'all' ? 'All' : getJobStatusLabel(s)}</button>)}</div><input className="search" aria-label="Search projects" placeholder="Search project…" type="search" value={search} onChange={e => setSearch(e.target.value)} /></div><div className="rowlist">{visible.map(j => <ProjectRow job={j} key={j.id} />)}</div>{!visible.length && <Empty>No projects match this view.</Empty>}</>}
+  </Workspace>;
 }

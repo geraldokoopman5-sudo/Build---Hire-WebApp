@@ -18,6 +18,7 @@ import {
   getStoredAccountType,
   getStoredAdminRole,
 } from '../../utils/auth';
+import { useSession } from '../../hooks/useSession';
 
 interface ProtectedRouteProps {
   allowedAccountTypes?: AccountType[];
@@ -51,6 +52,7 @@ export default function ProtectedRoute({
   allowedAccountTypes,
   requiredAdminRole,
 }: ProtectedRouteProps) {
+  useSession();
   const location =
     useLocation();
 
@@ -145,7 +147,7 @@ export default function ProtectedRoute({
     if (adminRole === null) {
       return (
         <Navigate
-          to="/admin"
+          to="/"
           replace
         />
       );

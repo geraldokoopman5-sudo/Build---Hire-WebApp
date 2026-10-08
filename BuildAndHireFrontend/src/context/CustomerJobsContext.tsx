@@ -1,11 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { CustomerJob } from '../types/job';
-import { AccountType, JobEnum, PaymentEnum, type PaymentMethod } from '../types/enums';
+import { AccountType, JobEnum, type PaymentMethod } from '../types/enums';
 import { apiRequest } from '../utils/api';
 import { getStoredAccessToken, getStoredAccountType } from '../utils/auth';
 import { dateInputToUtc } from '../utils/dates';
-import { jobStatusFromApi } from '../utils/jobStatus';
+import { customerJobStatusFromApi } from '../utils/jobStatus';
 
 interface CreateCustomerJobInput {
   companyId: string;
@@ -19,12 +19,15 @@ interface CreateCustomerJobInput {
 }
 type ApiJob = Omit<CustomerJob, 'status' | 'createdAt'> & { status: number };
 function fromApi(job: ApiJob): CustomerJob {
-  return { ...job, status: jobStatusFromApi(job.status) };
+  return { ...job, status: customerJobStatusFromApi(job.status) };
 }
 interface CustomerJobsContextValue {
   jobs: CustomerJob[];
   loading: boolean;
   error: string;
+  refreshJobs: () => void;
+  acceptQuote: (jobId: string, quote: number) => Promise<void>;
+  cancelJob: (jobId: string) => Promise<void>;
   createJob: (input: CreateCustomerJobInput) => Promise<CustomerJob>;
   requestEftPayment: (jobId: string, transactionReference: string) => Promise<void>;
   getJobById: (jobId: string) => CustomerJob | undefined;
@@ -35,6 +38,8 @@ export function CustomerJobsProvider({ children }: { children: ReactNode }) {
   const [jobs, setJobs] = useState<CustomerJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [refreshVersion, setRefreshVersion] = useState(0);
+  const refreshJobs = useCallback(() => setRefreshVersion(version => version + 1), []);
   useEffect(() => {
     let controller: AbortController | undefined;
     const reload = () => {
@@ -67,7 +72,7 @@ export function CustomerJobsProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('storage', reload);
       window.removeEventListener('focus', reload);
     };
-  }, []);
+  }, [refreshVersion]);
   const createJob = useCallback(async (input: CreateCustomerJobInput): Promise<CustomerJob> => {
     const token = getStoredAccessToken();
     if (!token) throw new Error('Please sign in again.');
@@ -81,7 +86,7 @@ export function CustomerJobsProvider({ children }: { children: ReactNode }) {
         startDate: dateInputToUtc(input.startDate),
         endDate: dateInputToUtc(input.endDate),
         payingMethod: input.payingMethod,
-        status: JobEnum.Working,
+        status: JobEnum.Requested,
         address: input.address,
       }),
     });
@@ -90,16 +95,20 @@ export function CustomerJobsProvider({ children }: { children: ReactNode }) {
     return job;
   }, []);
   const getJobById = useCallback((id: string) => jobs.find(job => job.jobId === id), [jobs]);
-  const requestEftPayment = useCallback(async (jobId: string, transactionReference: string): Promise<void> => {
-    await apiRequest('/api/Payment/eft', {
-      method: 'POST',
-      body: JSON.stringify({ jobId, transactionReference: transactionReference.trim() || null }),
-    });
-    setJobs(current => current.map(job => job.jobId === jobId
-      ? { ...job, paymentStatus: PaymentEnum.Pending, paymentReference: transactionReference.trim() || null, payingMethod: 0 }
-      : job));
+  const saveJob = useCallback(async (id: string, path: string, body?: object) => {
+    const token = getStoredAccessToken();
+    if (!token) throw new Error('Please sign in again.');
+    await apiRequest(path, { method: 'POST', headers: { Authorization: `Bearer ${token}` },
+      body: body ? JSON.stringify(body) : undefined });
+    const saved = await apiRequest<ApiJob>(`/api/Jobs/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+    if (getStoredAccessToken() === token) setJobs(current => current.map(job => job.jobId === id ? fromApi(saved) : job));
   }, []);
-  const value = useMemo(() => ({ jobs, loading, error, createJob, requestEftPayment, getJobById }), [jobs, loading, error, createJob, requestEftPayment, getJobById]);
+  const acceptQuote = useCallback((id: string, quote: number) => saveJob(id, `/api/Jobs/${id}/quote/accept`, { quote }), [saveJob]);
+  const cancelJob = useCallback((id: string) => saveJob(id, `/api/Jobs/${id}/cancel`), [saveJob]);
+  const requestEftPayment = useCallback(async (jobId: string, transactionReference: string): Promise<void> => {
+    await saveJob(jobId, '/api/Payment/eft', { jobId, transactionReference: transactionReference.trim() || null });
+  }, [saveJob]);
+  const value = useMemo(() => ({ jobs, loading, error, refreshJobs, acceptQuote, cancelJob, createJob, requestEftPayment, getJobById }), [jobs, loading, error, refreshJobs, acceptQuote, cancelJob, createJob, requestEftPayment, getJobById]);
   return <CustomerJobsContext.Provider value={value}>{children}</CustomerJobsContext.Provider>;
 }
 export function useCustomerJobs(): CustomerJobsContextValue {

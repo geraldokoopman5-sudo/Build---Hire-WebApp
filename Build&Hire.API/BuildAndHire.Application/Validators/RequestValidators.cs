@@ -23,7 +23,12 @@ public class LoginValidator : AbstractValidator<LoginRequestDto>
 
 public class UpdateWorkerValidator : AbstractValidator<UpdateWorkerDto>
 {
-    public UpdateWorkerValidator() => RuleFor(x => x.WorkerStatus).IsInEnum();
+    public UpdateWorkerValidator()
+    {
+        RuleFor(x => x.WorkerStatus).IsInEnum();
+        RuleFor(x => x.WorkerFirstName).NotEmpty().MaximumLength(100).When(x => x.WorkerFirstName != null);
+        RuleFor(x => x.WorkerLastName).NotEmpty().MaximumLength(100).When(x => x.WorkerLastName != null);
+    }
 }
 
 public class PaymentResponseValidator : AbstractValidator<PaymentResponseDto>

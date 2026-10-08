@@ -16,5 +16,5 @@ export interface Worker {
   workerLastName: string;
   workerStatus: WorkerStatus;
   companyId: string;
-  jobId: string;
+  jobId: string | null;
 }

@@ -4,7 +4,10 @@ import type { Address } from './company';
 export type JobStatus =
   | 'working'
   | 'available'
-  | 'unavailable';
+  | 'unavailable' | 'requested' | 'accepted' | 'in-progress' | 'completed' | 'cancelled' | 'rejected';
+
+export type CustomerJobStatus = JobStatus | 'requested' | 'accepted' | 'in-progress'
+  | 'completed' | 'cancelled' | 'rejected';
 
 export type PaymentState =
   | 'successful'
@@ -22,6 +25,15 @@ export interface CompanyJob {
   paymentState: PaymentState;
   paymentNote: string;
   paymentRequested?: boolean;
+  startDate?: string;
+  endDate?: string;
+  daysWorking?: number;
+  address?: Address | null;
+  acceptedAt?: string | null;
+  quoteSentAt?: string | null;
+  quoteAcceptedAt?: string | null;
+  paymentStatus?: PaymentEnum | null;
+  payingMethod?: PaymentMethod | null;
 }
 
 export interface CustomerJob {
@@ -48,7 +60,10 @@ export interface CustomerJob {
   amountPaid?: number;
   paymentReference?: string | null;
 
-  status: JobStatus;
+  status: CustomerJobStatus;
+  acceptedAt?: string | null;
+  quoteSentAt?: string | null;
+  quoteAcceptedAt?: string | null;
 
   address: Address;
 

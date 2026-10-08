@@ -2,6 +2,12 @@ import type { JobStatus, PaymentState } from '../types/job';
 
 export function getJobStatusLabel(status: JobStatus): string {
   switch (status) {
+    case 'requested': return 'Requested';
+    case 'accepted': return 'Accepted';
+    case 'in-progress': return 'In progress';
+    case 'completed': return 'Completed';
+    case 'cancelled': return 'Cancelled';
+    case 'rejected': return 'Rejected';
     case 'working':
       return 'Working';
     case 'available':

@@ -50,7 +50,7 @@ npm run dev
 - New companies start Pending. An Admin or SuperAdmin activates them using `PATCH /api/Companies/{id}/Status` with `{ "status": 0 }` and a bearer token. Company details updates cannot change approval status.
 - Create Job loads active companies from the API. Its company ID must exist in PostgreSQL. The API derives the customer ID from the authenticated JWT. Job reads/updates/deletes enforce customer/company ownership or an administrator role.
 - Customer job lists reload from the API after login and page refresh. Old local job data and generated development customer IDs are no longer used.
-- Job API status: Requested=4, Accepted=5, InProgress=6, Completed=7, Cancelled=8, Rejected=9. Values 1–3 are reserved legacy values. The frontend still uses its legacy status mapping; updating its controls and mapping is deferred.
+- Job API status: Requested=4, Accepted=5, InProgress=6, Completed=7, Cancelled=8, Rejected=9. Values 1–3 are reserved legacy values. Customer job data and the redesigned customer dashboard support all these states and quote timestamps. Company controls still use their legacy mapping pending their page-by-page update.
 - Job fields are `quote`, `workerLastName` (workers), and `payingMethod`. Payment and worker enums have one numeric frontend definition.
 - Calendar selections are represented as UTC midnight ISO strings. The API rejects non-UTC job timestamps. Start dates may be today; end dates may equal start dates. PostgreSQL stores UTC timestamps.
 - Payments remain simulated. `POST /api/Payment/eft` records a Pending request using the stored job quote and a server-assigned UTC timestamp. Admins review it through `PATCH /api/Payment/{id}/status`; no money is transferred or payment provider introduced.
@@ -86,7 +86,7 @@ Job responses include UTC `acceptedAt`, `quoteSentAt`, and `quoteAcceptedAt`. Qu
 
 `PUT /api/Jobs/{id}` edits details only while Accepted. `status` is optional and, if supplied, must match the current status; lifecycle changes use the endpoints above. Changing the quote to a positive amount also publishes it. Only the company can change the price. `DELETE /api/Jobs/{id}` now cancels and retains the job record. Completion/cancellation release assigned workers; workers may only be assigned to Accepted or InProgress jobs.
 
-Apply `JobAndQuoteLifecycle` through the migration command above. Legacy Unavailable jobs become Cancelled; other legacy jobs become Accepted if they already have `acceptedAt`, otherwise Requested. Existing positive quotes are treated as previously sent, including jobs with payment records, but no customer agreement is inferred. Rollback is blocked if customer quote acceptance, advanced lifecycle states, or unassigned workers would lose history. Backend operations are available through the API; frontend controls/status mapping remain deferred.
+Apply `JobAndQuoteLifecycle` through the migration command above. Legacy Unavailable jobs become Cancelled; other legacy jobs become Accepted if they already have `acceptedAt`, otherwise Requested. Existing positive quotes are treated as previously sent, including jobs with payment records, but no customer agreement is inferred. Rollback is blocked if customer quote acceptance, advanced lifecycle states, or unassigned workers would lose history. Backend operations are available through the API. The customer dashboard displays these states; lifecycle action controls on other pages still need their separate updates.
 
 ## Backend validation and error handling
 
@@ -96,7 +96,7 @@ Known validation, missing-record, uniqueness, and foreign-key exceptions return 
 
 A complete backend rebuild has zero errors and two CS8981 naming warnings from the original `enumtype` migration/designer. The 25 nullability warnings have been resolved without suppressing them. Historical migrations remain unchanged; subsequent workflow migrations are separate files.
 
-Frontend updates remain deferred. Keep demo assets such as `src/components/CardPaymentModal` and `src/utils/simulatePayment.ts`; this backend cleanup does not remove or modify them.
+Frontend redesign is proceeding page by page after approval of each preview. The customer dashboard at `/my-jobs` has responsive navigation, live project summaries, pending-quote reminders, search, status filters and ZAR amounts. Quote review at `/quotes/:id` now requires agreement to the displayed amount before calling quote acceptance, then allows one simulated payment request. Project details at `/my-jobs/:jobId` shows saved quote timestamps, project progress and separate payment outcomes, with confirmed cancellation only for requested/accepted jobs without a payment record. Mutations read back the saved job; conflicts offer refresh/retry. Login and global styles are unchanged. Keep demo assets such as `src/components/CardPaymentModal` and `src/utils/simulatePayment.ts`.
 
 ## Verification
 
@@ -112,7 +112,7 @@ Companies can create workforce members without assigning a job. `jobId` is nulla
 
 Apply the `AllowUnassignedWorkersAndJobAcceptance` migration using the migration command above before running the updated API against an existing database. It preserves existing assignments and records existing jobs with workers as accepted at migration time. Existing jobs without workers require explicit acceptance. Rollback refuses to proceed while unassigned workers exist.
 
-Frontend controls for acceptance, unassigned workforce creation, and reassignment are deferred. These operations are currently available through the API.
+Customer quote acceptance is available on the redesigned quote review page. Company controls for job acceptance, unassigned workforce creation, and reassignment still await their own page updates; these operations are available through the API.
 
 ### Test commands
 
