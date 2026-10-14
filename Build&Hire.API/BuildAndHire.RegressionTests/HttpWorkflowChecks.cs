@@ -17,7 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 /// <summary>Runs the real API against a caller-owned disposable PostgreSQL schema.</summary>
 internal static class HttpWorkflowChecks
 {
-    public static async Task RunAsync(string connectionString, string password)
+    public static async Task RunAsync(string connectionString, string password, bool browserChecks = false)
     {
         var schema = new NpgsqlConnectionStringBuilder(connectionString).SearchPath;
         if (schema is null || !System.Text.RegularExpressions.Regex.IsMatch(schema, "^integration_[a-f0-9]{32}$"))
@@ -497,12 +497,47 @@ internal static class HttpWorkflowChecks
             await Send("GET", "/api/Workers", 401, token: companyToken);
             await Send("POST", "/api/Auth/login", 401, new { email = "http-company@example.test", password });
             Console.WriteLine($"{checks} HTTP workflow checks passed.");
+            if (browserChecks)
+                await RunBrowserChecksAsync(client.BaseAddress!, password);
         }
         finally
         {
             if (!process.HasExited) process.Kill(entireProcessTree: true);
             await process.WaitForExitAsync();
             await Task.WhenAll(stdout, stderr);
+        }
+    }
+
+    private static async Task RunBrowserChecksAsync(Uri api, string password)
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory != null && !Directory.Exists(Path.Combine(directory.FullName, "BuildAndHireFrontend")))
+            directory = directory.Parent;
+        if (directory == null) throw new InvalidOperationException("Browser checks need the repository checkout.");
+        var browserStart = new ProcessStartInfo("node")
+        {
+            UseShellExecute = false, CreateNoWindow = true,
+            RedirectStandardOutput = true, RedirectStandardError = true,
+            WorkingDirectory = directory.FullName
+        };
+        browserStart.ArgumentList.Add(Path.Combine(directory.FullName, "BuildAndHireFrontend", "scripts", "browser-integration.mjs"));
+        browserStart.Environment["BUILDANDHIRE_TEST_API"] = api.GetLeftPart(UriPartial.Authority);
+        browserStart.Environment["BUILDANDHIRE_TEST_PASSWORD"] = password;
+        browserStart.Environment["BUILDANDHIRE_ISOLATED_SCHEMA"] = "true";
+        using var browser = Process.Start(browserStart) ?? throw new InvalidOperationException("Cannot start browser checks.");
+        var output = Task.Run(async () => { while (await browser.StandardOutput.ReadLineAsync() is string line) Console.WriteLine(line); });
+        var errors = Task.Run(async () => { while (await browser.StandardError.ReadLineAsync() is string line) Console.Error.WriteLine(line); });
+        try
+        {
+            using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            await browser.WaitForExitAsync(timeout.Token);
+            await Task.WhenAll(output, errors);
+            if (browser.ExitCode != 0) throw new InvalidOperationException("Browser integration checks failed. See .artifacts/browser-integration.");
+        }
+        finally
+        {
+            if (!browser.HasExited) browser.Kill(entireProcessTree: true);
+            await browser.WaitForExitAsync();
         }
     }
 }

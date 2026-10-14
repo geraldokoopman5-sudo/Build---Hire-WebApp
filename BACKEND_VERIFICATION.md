@@ -1,12 +1,13 @@
 # Backend integration verification
 
-Verified on 8 October 2026 against the current working tree. Payments remain simulated; no payment provider or frontend changes were introduced.
+Initial backend verification was completed on 8 October 2026. The redesigned frontend and complete browser workflow were verified on 14 October 2026. Payments remain simulated; no payment provider or actual transfers were introduced.
 
 ## Results
 
 - 46 regression checks passed, including production configuration validation and unavailable-database readiness.
 - 40 PostgreSQL integration checks passed, including migration upgrade/rollback safeguards.
 - 267 HTTP workflow assertions passed against the actual API process, including authentication middleware, request validation, liveness, pending-migration readiness and trusted proxy HTTPS handling.
+- 86 browser integration checks passed against the built frontend and the real isolated API, including all 16 redesigned pages at desktop/mobile widths, heading contrast and horizontal overflow.
 - Release packaging passed; local/development settings are excluded and public defaults contain no database credentials or JWT signing key.
 - The generated test schema was removed after completion. Application tables were not used for fixtures.
 
@@ -32,11 +33,11 @@ The regression project and all referenced backend projects rebuild successfully 
 
 - The tested backend workflow passes; this is not a claim that every endpoint or business rule is fully verified.
 - Only one payment record is allowed per job. Even a failed simulated payment prevents another request for that job; retry/reset behavior needs a separate decision.
-- Worker creation no longer requires a job. Assignment and reassignment use a separate endpoint and require owning-company acceptance. Frontend controls remain deferred.
+- Worker creation does not require a job. The redesigned workforce screen supports creation, name/status editing, assignment, reassignment, unassignment and confirmed removal. Assignment requires owning-company acceptance; unassignment retains the worker record.
 - Job states are Requested, Accepted, InProgress, Completed, Cancelled, and Rejected. Company acceptance and customer quote agreement have separate UTC timestamps. Quotes can be replaced before agreement; a customer-driven negotiation/revision-request workflow is not included.
-- Migration tests confirm preservation of existing assignments, explicit legacy-state mapping, and exposure of old positive quotes without inventing customer consent. Apply the included migrations to an application database before using the updated API. Its frontend controls and status mapping still need the deferred update.
+- Migration tests confirm preservation of existing assignments, explicit legacy-state mapping, and exposure of old positive quotes without inventing customer consent. Apply the included migrations to an application database before using the updated API. Customer and company screens now use the current lifecycle states and action endpoints.
 - Cancellation is restricted to Requested/Accepted jobs with no payment record. In-progress cancellation and payment/refund resolution require separate business decisions.
-- HTTP checks run on an isolated loopback HTTP listener. Browser behavior, HTTPS certificate trust, deployment configuration, restart recovery, and concurrency cases beyond those listed above were not verified here.
+- HTTP and browser checks run against an isolated loopback API. The browser test forwards requests through a local test proxy without mocking responses. Production hosting, browser trust of the development HTTPS certificate, recovery after a production restart, and concurrency cases beyond those listed above remain outside this verification.
 - The older HTTPS smoke script was corrected to check authenticated `POST /api/Payment/eft` rather than the removed `POST /api/Payment` route. Its standalone HTTPS run remains separate; the new suite verifies overlapping middleware behavior over loopback HTTP.
 
 ## Repeat the checks
@@ -48,3 +49,22 @@ dotnet run --project './Build&Hire.API/BuildAndHire.RegressionTests/BuildAndHire
 ```
 
 The runner creates a random `integration_<GUID>` schema and applies migrations there. The child API receives only that schema's connection string plus test JWT settings through environment variables. Test credentials and tokens are not printed. The child process is stopped before the enclosing PostgreSQL test removes the schema, including when assertions fail. No additional NuGet packages are required.
+
+## Frontend integration verification — 14 October 2026
+
+All 16 pages other than login are implemented and connected to the existing API. Login and the shared authentication layout remain unchanged. The browser runner starts a separate headless Chromium profile and uses temporary accounts within the disposable test schema.
+
+The real browser workflow verified customer/company signup, pending-company visibility, SuperAdmin approval, login routing, project creation and persistence after reload, company job acceptance, quoting, explicit customer quote agreement, and one simulated payment request. Worker creation without a job, rejection of assignment before job acceptance, assignment/reassignment/unassignment, editing names without changing assignment, and worker release on completion were verified through the UI and fresh API reads.
+
+Administrator payment review records one final outcome. Customer and company pages subsequently show the same completed job, successful simulated payment, accepted quote amount and amount paid. The run also covered administrator creation/editing/deactivation/restoration/deletion, optional passwords on edit, cancellation with record retention, company rejection, unrelated-customer project/quote access, and central HTTP 401 session clearing.
+
+Screenshots exposed a shared-theme conflict that made new page headings too light; the fix is scoped to the redesigned pages. Heading contrast and mobile horizontal overflow checks now run with every captured page. A stale response using a different authorization token cannot clear the current account's session.
+
+To repeat the combined backend and browser checks:
+
+```powershell
+npm --prefix './BuildAndHireFrontend' run build
+dotnet run --project './Build&Hire.API/BuildAndHire.RegressionTests/BuildAndHire.RegressionTests.csproj' -- --browser-config './Build&Hire.API/Build&Hire.API/appsettings.json'
+```
+
+Node.js and a Chromium browser are required. Windows defaults to Microsoft Edge; `BUILDANDHIRE_TEST_BROWSER` can select another executable. The browser report and 32 screenshots are saved in `.artifacts/browser-integration`. The test schema is removed when the run finishes. Existing application tables and existing browser profiles are not used.

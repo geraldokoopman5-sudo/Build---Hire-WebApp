@@ -50,7 +50,7 @@ npm run dev
 - New companies start Pending. An Admin or SuperAdmin activates them using `PATCH /api/Companies/{id}/Status` with `{ "status": 0 }` and a bearer token. Company details updates cannot change approval status.
 - Create Job loads active companies from the API. Its company ID must exist in PostgreSQL. The API derives the customer ID from the authenticated JWT. Job reads/updates/deletes enforce customer/company ownership or an administrator role.
 - Customer job lists reload from the API after login and page refresh. Old local job data and generated development customer IDs are no longer used.
-- Job API status: Requested=4, Accepted=5, InProgress=6, Completed=7, Cancelled=8, Rejected=9. Values 1–3 are reserved legacy values. Customer job data and the redesigned customer dashboard support all these states and quote timestamps. Company controls still use their legacy mapping pending their page-by-page update.
+- Job API status: Requested=4, Accepted=5, InProgress=6, Completed=7, Cancelled=8, Rejected=9. Values 1–3 are reserved legacy values. Customer and company screens support the current states and quote timestamps. Lifecycle actions use their dedicated endpoints rather than sending legacy status edits.
 - Job fields are `quote`, `workerLastName` (workers), and `payingMethod`. Payment and worker enums have one numeric frontend definition.
 - Calendar selections are represented as UTC midnight ISO strings. The API rejects non-UTC job timestamps. Start dates may be today; end dates may equal start dates. PostgreSQL stores UTC timestamps.
 - Payments remain simulated. `POST /api/Payment/eft` records a Pending request using the stored job quote and a server-assigned UTC timestamp. Admins review it through `PATCH /api/Payment/{id}/status`; no money is transferred or payment provider introduced.
@@ -86,7 +86,7 @@ Job responses include UTC `acceptedAt`, `quoteSentAt`, and `quoteAcceptedAt`. Qu
 
 `PUT /api/Jobs/{id}` edits details only while Accepted. `status` is optional and, if supplied, must match the current status; lifecycle changes use the endpoints above. Changing the quote to a positive amount also publishes it. Only the company can change the price. `DELETE /api/Jobs/{id}` now cancels and retains the job record. Completion/cancellation release assigned workers; workers may only be assigned to Accepted or InProgress jobs.
 
-Apply `JobAndQuoteLifecycle` through the migration command above. Legacy Unavailable jobs become Cancelled; other legacy jobs become Accepted if they already have `acceptedAt`, otherwise Requested. Existing positive quotes are treated as previously sent, including jobs with payment records, but no customer agreement is inferred. Rollback is blocked if customer quote acceptance, advanced lifecycle states, or unassigned workers would lose history. Backend operations are available through the API. The customer dashboard displays these states; lifecycle action controls on other pages still need their separate updates.
+Apply `JobAndQuoteLifecycle` through the migration command above. Legacy Unavailable jobs become Cancelled; other legacy jobs become Accepted if they already have `acceptedAt`, otherwise Requested. Existing positive quotes are treated as previously sent, including jobs with payment records, but no customer agreement is inferred. Rollback is blocked if customer quote acceptance, advanced lifecycle states, or unassigned workers would lose history. Customer and company pages display the saved states and expose only actions appropriate to the current lifecycle stage.
 
 ## Backend validation and error handling
 
@@ -96,7 +96,14 @@ Known validation, missing-record, uniqueness, and foreign-key exceptions return 
 
 A complete backend rebuild has zero errors and two CS8981 naming warnings from the original `enumtype` migration/designer. The 25 nullability warnings have been resolved without suppressing them. Historical migrations remain unchanged; subsequent workflow migrations are separate files.
 
-Frontend redesign is proceeding page by page after approval of each preview. The customer dashboard at `/my-jobs` has responsive navigation, live project summaries, pending-quote reminders, search, status filters and ZAR amounts. Quote review at `/quotes/:id` now requires agreement to the displayed amount before calling quote acceptance, then allows one simulated payment request. Project details at `/my-jobs/:jobId` shows saved quote timestamps, project progress and separate payment outcomes, with confirmed cancellation only for requested/accepted jobs without a payment record. Mutations read back the saved job; conflicts offer refresh/retry. Login and global styles are unchanged. Keep demo assets such as `src/components/CardPaymentModal` and `src/utils/simulatePayment.ts`.
+All 16 pages other than login have their redesign implemented. New styles are scoped to those pages; the login screen and its shared authentication layout are unchanged. Keep demo assets such as `src/components/CardPaymentModal` and `src/utils/simulatePayment.ts`.
+
+- Customers can register, search approved company accounts, view profiles and send a project request through a three-step review form. The company supplies the quote; the customer never sets its amount.
+- The customer dashboard at `/my-jobs` has live project summaries, pending-quote reminders, search, status filters and ZAR amounts. Quote review at `/quotes/:id` requires agreement to the displayed amount, then permits one simulated payment request. Project details show saved quote timestamps, progress and separate payment outcomes, with confirmed cancellation only for requested/accepted jobs without a payment record.
+- Companies can accept/reject requests, send or replace quotes before customer agreement, update an accepted job's end date, start work after quote acceptance, and complete in-progress jobs. Completion releases assigned workers. Quotes remain locked after customer acceptance or payment creation.
+- Workforce creation does not require a job. Assignment, reassignment and unassignment are separate actions against accepted/in-progress jobs. Unassignment retains the worker; confirmed removal deletes the workforce record. `PUT /api/Workers/{id}` also supports optional `workerFirstName` and `workerLastName`, preserving existing names when omitted.
+- Admins can approve company accounts, change account access and review pending simulated EFT records. Only one Successful/Failed final outcome is allowed; final records have no review control. SuperAdmins also manage administrator names, emails, roles, status and optional password changes.
+- Screens include loading, error, empty and missing-record states, with refresh controls. Mutations read saved API data back into the workspace. HTTP 401 clears the matching expired session and redirects to login; a response using another account's token cannot clear the current account. Backend ownership checks remain authoritative.
 
 ## Verification
 
@@ -112,7 +119,7 @@ Companies can create workforce members without assigning a job. `jobId` is nulla
 
 Apply the `AllowUnassignedWorkersAndJobAcceptance` migration using the migration command above before running the updated API against an existing database. It preserves existing assignments and records existing jobs with workers as accepted at migration time. Existing jobs without workers require explicit acceptance. Rollback refuses to proceed while unassigned workers exist.
 
-Customer quote acceptance is available on the redesigned quote review page. Company controls for job acceptance, unassigned workforce creation, and reassignment still await their own page updates; these operations are available through the API.
+These operations are available in the redesigned company request, job-management and workforce screens. Worker account status is independent of job assignment.
 
 ### Test commands
 
@@ -130,6 +137,15 @@ These checks also start a separate loopback API process against the temporary sc
 ```powershell
 dotnet run --project './Build&Hire.API/BuildAndHire.RegressionTests/BuildAndHire.RegressionTests.csproj' -- --postgres-config './Build&Hire.API/Build&Hire.API/appsettings.json'
 ```
+
+Run the real built frontend through the complete browser workflow against that same disposable schema:
+
+```powershell
+npm --prefix './BuildAndHireFrontend' run build
+dotnet run --project './Build&Hire.API/BuildAndHire.RegressionTests/BuildAndHire.RegressionTests.csproj' -- --browser-config './Build&Hire.API/Build&Hire.API/appsettings.json'
+```
+
+This optional browser run requires Node.js and a Chromium browser. Windows defaults to Microsoft Edge; set `BUILDANDHIRE_TEST_BROWSER` to another Chromium executable if necessary. The harness starts an isolated loopback API, serves `dist` through a local test proxy, and redirects configured frontend API URLs to that proxy without mocking responses. Credentials are passed only to the child test process. It creates test accounts, checks persisted role/workflow outcomes, renders all redesigned pages at desktop/mobile widths, and saves screenshots/results under `.artifacts/browser-integration`. The child processes stop before the test schema is removed. Existing application tables and existing browser profiles are not used.
 
 With the HTTPS API running, test CORS, request validation, authentication requirements and OpenAPI contracts:
 

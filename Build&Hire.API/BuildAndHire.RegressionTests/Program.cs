@@ -268,10 +268,12 @@ Check(((IEnumerable<WorkerDto>)ownWorkers.Value!).Single().CompanyId == companyI
 Console.WriteLine($"{checks} regression checks passed.");
 if (args.Length == 2 && args[0] == "--postgres-config")
     await PostgreSqlChecks.RunAsync(Path.GetFullPath(args[1]));
+else if (args.Length == 2 && args[0] == "--browser-config")
+    await PostgreSqlChecks.RunAsync(Path.GetFullPath(args[1]), browserChecks: true);
 else if (args.Length == 1 && args[0] == "--postgres")
     await PostgreSqlChecks.RunAsync();
 else if (args.Length != 0)
-    throw new ArgumentException("Use --postgres or --postgres-config <path>.");
+    throw new ArgumentException("Use --postgres, --postgres-config <path>, or --browser-config <path>.");
 
 public class Stub<T> : DispatchProxy where T : class
 {

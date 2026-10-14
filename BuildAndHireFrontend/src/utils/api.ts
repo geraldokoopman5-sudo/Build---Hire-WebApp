@@ -36,7 +36,8 @@ export async function apiRequest<T>(
         ? Object.values(problem.errors).flat().join(' ')
         : '';
 
-    if (response.status === 401 && token && token === localStorage.getItem('buildandhire.accessToken')) {
+    if (response.status === 401 && token && headers.get('Authorization') === `Bearer ${token}`
+      && token === localStorage.getItem('buildandhire.accessToken')) {
       for (const key of ['accessToken', 'accountType', 'adminRole', 'customerId', 'companyId']) localStorage.removeItem(`buildandhire.${key}`);
       window.dispatchEvent(new Event('buildandhire:auth'));
     }

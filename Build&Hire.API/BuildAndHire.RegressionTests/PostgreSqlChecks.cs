@@ -27,7 +27,7 @@ using System.Security.Claims;
 
 internal static class PostgreSqlChecks
 {
-    public static async Task RunAsync(string? configurationPath = null)
+    public static async Task RunAsync(string? configurationPath = null, bool browserChecks = false)
     {
         // Only the connection string is read; no credentials are printed or persisted.
         var configurationBuilder = new ConfigurationBuilder();
@@ -272,7 +272,7 @@ internal static class PostgreSqlChecks
             // HTTP checks use the real middleware and only this disposable schema.
             await db.Admin.Where(a => a.Email == "superadmin@example.test")
                 .ExecuteUpdateAsync(s => s.SetProperty(a => a.Status, AccountStatus.Active));
-            await HttpWorkflowChecks.RunAsync(scopedConnection.ConnectionString, password);
+            await HttpWorkflowChecks.RunAsync(scopedConnection.ConnectionString, password, browserChecks);
         }
         finally
         {
