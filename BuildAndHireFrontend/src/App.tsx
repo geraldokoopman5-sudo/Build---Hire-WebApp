@@ -8,6 +8,7 @@ import {
 // Authentication
 import Login from './pages/Login/Login';
 import SignUp from './pages/SignUp/SignUp';
+import CompanySignupPending from './pages/SignUp/CompanySignupPending';
 
 // Customer
 import Home from './pages/Home/Home';
@@ -77,6 +78,11 @@ function App() {
               <Route
                 path="/signup"
                 element={<SignUp />}
+              />
+
+              <Route
+                path="/signup/company-pending"
+                element={<CompanySignupPending />}
               />
 
               <Route

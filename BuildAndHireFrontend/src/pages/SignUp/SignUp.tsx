@@ -1,11 +1,13 @@
 import { useRef, useState, type FormEvent, type ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ErrorMessage } from '../../components/Workspace/Workspace';
 import { AddressForm, Field } from '../../components/Workspace/Forms';
 import { emptyAddress, addressPayload } from '../../utils/workspaceForms';
 import { apiRequest } from '../../utils/api';
+import { getPostLoginRoute, login } from '../../utils/auth';
 import '../../components/Workspace/workspace.css';
 export default function SignUp() {
+  const navigate = useNavigate();
   const [role, setRole] = useState<'customer' | 'company'>('customer'), [phase, setPhase] = useState(0);
   const [values, setValues] = useState({ name: '', email: '', password: '', confirmPassword: '', registrationNumber: '', taxNumber: '', ...emptyAddress });
   const [error, setError] = useState(''), [saving, setSaving] = useState(false), [complete, setComplete] = useState(false);
@@ -19,7 +21,21 @@ export default function SignUp() {
     if (submitting.current) return;
     submitting.current = true; setSaving(true); setError('');
     const shared = { password: values.password, address: addressPayload(values) };
-    try { await apiRequest(role === 'company' ? '/api/Companies' : '/api/Customer', { method: 'POST', body: JSON.stringify(role === 'company' ? { ...shared, companyName: values.name.trim(), companyEmail: values.email.trim(), registrationNumber: values.registrationNumber, taxNumber: values.taxNumber } : { ...shared, customerName: values.name.trim(), email: values.email.trim() }) }); setComplete(true); setValues(v => ({ ...v, password: '', confirmPassword: '' })); }
+    try {
+      await apiRequest(role === 'company' ? '/api/Companies' : '/api/Customer', { method: 'POST', body: JSON.stringify(role === 'company' ? { ...shared, companyName: values.name.trim(), companyEmail: values.email.trim(), registrationNumber: values.registrationNumber, taxNumber: values.taxNumber } : { ...shared, customerName: values.name.trim(), email: values.email.trim() }) });
+      setValues(v => ({ ...v, password: '', confirmPassword: '' }));
+      if (role === 'company') {
+        navigate('/signup/company-pending', { replace: true });
+        return;
+      }
+      try {
+        const account = await login(values.email.trim(), values.password);
+        navigate(getPostLoginRoute(account.accountType, account.adminRole), { replace: true });
+      } catch {
+        setComplete(true);
+        setError('Your account was created, but automatic sign-in failed. Sign in with your new account.');
+      }
+    }
     catch (reason) { setError(reason instanceof Error ? reason.message : 'Could not create your account.'); }
     finally { submitting.current = false; setSaving(false); }
   };
