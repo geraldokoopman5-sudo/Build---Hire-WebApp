@@ -1,4 +1,6 @@
 :root {
+  --workspace-scale: 1.08;
+  --workspace-height: calc(100vh / var(--workspace-scale));
   --color-primary: #C36F43;
   --color-primary-dark: #A85A34;
   --color-secondary: #543A32;

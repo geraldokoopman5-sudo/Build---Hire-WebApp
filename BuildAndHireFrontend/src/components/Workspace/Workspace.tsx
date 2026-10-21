@@ -3,9 +3,11 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AccountType } from '../../types/enums';
 import { AdminRole } from '../../types/admin';
 import { getStoredAccountType, getStoredAdminRole, logout } from '../../utils/auth';
+import CustomerNavIcon from '../CustomerPageLayout/CustomerNavIcon';
 import './workspace.css';
+import './customerOverview.css';
 
-export default function Workspace({ title, children }: { title: string; children: ReactNode }) {
+export default function Workspace({ title, children, className = '' }: { title: string; children: ReactNode; className?: string }) {
   const navigate = useNavigate();
   const type = getStoredAccountType();
   const superAdmin = getStoredAdminRole() === AdminRole.SuperAdmin;
@@ -14,12 +16,12 @@ export default function Workspace({ title, children }: { title: string; children
   const nav = company ? [['Dashboard', '/company/jobs'], ['Requests', '/company/applications'], ['Workforce', '/company/workforce']]
     : admin ? [...(superAdmin ? [['Overview', '/super-admin'], ['Administrators', '/super-admin/admins']] : []), ['Admin portal', '/admin']]
       : [['Home', '/home'], ['Marketplace', '/marketplace'], ['My projects', '/my-jobs']];
-  return <div className="bh-workspace">
+  return <div className={`bh-workspace ${className}`}>
     <a className="skip-link" href="#workspace-main">Skip to content</a>
     <div className="layout"><aside className="sidebar">
       <Link className="brand" to={nav[0][1]}>Build<span>&amp;</span>Hire</Link><p className="workspace">{name}</p>
-      <nav className="nav" aria-label={name}>{nav.map(([label, route]) => <NavLink key={route} to={route} end className={({ isActive }) => `navlink ${isActive ? 'active' : ''}`}>{label}</NavLink>)}
-        <button className="navlink signout" onClick={() => { logout(); navigate('/', { replace: true }); }}>Sign out</button>
+      <nav className={`nav ${!company && !admin ? 'customer-navigation' : ''}`} aria-label={name}>{nav.map(([label, route]) => <NavLink key={route} to={route} end className={({ isActive }) => `navlink ${isActive ? 'active' : ''}`}>{!company && !admin && <CustomerNavIcon kind={route === '/home' ? 'home' : route === '/marketplace' ? 'companies' : 'projects'} />}{label}</NavLink>)}
+        <button className="navlink signout" onClick={() => { logout(); navigate('/', { replace: true }); }}>{!company && !admin && <CustomerNavIcon kind="signout" />}Sign out</button>
       </nav>
       <div className="sidenote"><strong>Built around your next step.</strong>Clear decisions, shared project updates, and simulated payments.</div>
       <div className="account"><span className="avatar" aria-hidden="true">○</span><div>Your workspace<small>{name}</small></div></div>

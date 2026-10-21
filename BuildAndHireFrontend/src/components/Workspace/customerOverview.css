@@ -1,0 +1,104 @@
+/* Home and Marketplace use the same sizing as the customer project workspace. */
+.bh-workspace.customer-overview {
+  letter-spacing: normal;
+}
+.customer-overview .sidebar {
+  width: 226px;
+  padding: 34px 22px;
+}
+.customer-overview .workspace {
+  font-size: 10px;
+  margin: 9px 0 43px;
+}
+.customer-overview .navlink {
+  gap: 13px;
+  padding: 13px 15px;
+  font-size: 13px;
+}
+.customer-overview .navlink.active {
+  padding-left: 12px;
+}
+.customer-overview .sidenote {
+  padding: 18px 15px;
+  font-size: 12px;
+}
+.customer-overview .sidenote strong {
+  font-size: 13px;
+}
+.customer-overview .account {
+  margin-top: 27px;
+  font-size: 12px;
+}
+.customer-overview .account small {
+  font-size: 11px;
+}
+.customer-overview .avatar {
+  width: 36px;
+  height: 36px;
+}
+.customer-overview .topbar {
+  height: 78px;
+  padding: 0 40px;
+  font-size: 12px;
+}
+.customer-overview .chip {
+  font-size: 11px;
+}
+.customer-overview .main {
+  max-width: 1240px;
+  padding: 38px 40px 45px;
+}
+.customer-overview .eyebrow,
+.customer-overview .blueprint-label {
+  font-size: 10px;
+}
+.customer-overview .heading p,
+.customer-overview .subtext,
+.customer-overview .panel p,
+.customer-overview .flowcards p {
+  font-size: 13px;
+}
+.customer-overview .primary,
+.customer-overview .secondary {
+  padding: 12px 18px;
+  border-radius: 7px;
+  font-size: 12px;
+}
+.customer-overview .hint,
+.customer-overview .textbutton,
+.customer-overview .sectionhead small,
+.customer-overview .badge,
+.customer-overview .fieldnote,
+.customer-overview .footer {
+  font-size: 11px;
+}
+.customer-overview .hint {
+  font-size: 11px !important;
+}
+.customer-overview .search {
+  padding: 11px 13px;
+  font-size: 12px;
+}
+@media (min-width: 1500px) {
+  .customer-overview .main { padding-top: 50px; }
+}
+@media (max-width: 1050px) {
+  .customer-overview .sidebar { width: 185px; padding: 30px 15px; }
+  .customer-overview .main { padding: 28px 24px; }
+  .customer-overview .topbar { padding: 0 24px; }
+}
+@media (max-width: 720px) {
+  .customer-overview .sidebar { width: 100%; padding: 18px 20px; }
+  .customer-overview .brand { font-size: 24px; }
+  .customer-overview .nav { gap: 6px; margin-top: 12px; }
+  .customer-overview .navlink { padding: 8px 10px; font-size: 11px; }
+  .customer-overview .navlink.active { padding-left: 10px; }
+  .customer-overview .topbar { height: 55px; padding: 0 20px; }
+  .customer-overview .chip { font-size: 10px; padding: 5px 11px; }
+  .customer-overview .main { padding: 25px 20px; }
+}
+@media (max-width: 380px) {
+  .customer-overview .navlink { font-size: 10px; }
+  .customer-overview .topbar { padding: 0 14px; font-size: 10px; }
+  .customer-overview .main { padding: 24px 14px; }
+}

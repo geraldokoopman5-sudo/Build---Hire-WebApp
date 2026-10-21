@@ -26,11 +26,11 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         {children}
       </main>
 
-      <footer className={styles.siteFooter}>
-        <span>👑 Made by Crown 2026 👑</span>
+      {/* <footer className={styles.siteFooter}>
+        <span></span>
         <nav className={styles.footerNav}>
         </nav>
-      </footer>
+      </footer> */}
     </div>
   );
 }

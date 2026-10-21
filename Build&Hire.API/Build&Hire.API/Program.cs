@@ -154,6 +154,18 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+// Local maintenance only: reset using database access without starting an HTTP listener.
+if (args.Contains("--reset-admin-password"))
+{
+    try { await AdminPasswordReset.RunInteractiveAsync(app.Services); }
+    catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or KeyNotFoundException)
+    {
+        Console.Error.WriteLine(exception.Message);
+        Environment.ExitCode = 1;
+    }
+    finally { await app.DisposeAsync(); }
+    return;
+}
 // Explicit maintenance command; normal startup never changes the schema.
 if (args.Contains("--migrate"))
 {

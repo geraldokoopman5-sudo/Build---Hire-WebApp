@@ -83,6 +83,44 @@ internal static class PostgreSqlChecks
             var login = await jwt.AuthenticateUser(new LoginRequestDto { Email = "superadmin@example.test", Password = password });
             Require(login is AdminLoginResponseDto { AdminRole: AdminEnums.SuperAdmin, AccountType: AccountType.Admin }, "Seeded SuperAdmin can log in");
 
+            var recoveryAdmin = await db.Admin.AsNoTracking().SingleAsync(a => a.Email == "superadmin@example.test");
+            var otherAdminHash = await db.Admin.AsNoTracking().Where(a => a.Email == "existing@example.test").Select(a => a.PasswordHash).SingleAsync();
+            await using (var recoveryDb = new BuildAndHireDbContext(options))
+            {
+                try
+                {
+                    await AdminPasswordReset.ResetAsync(recoveryDb, passwords, recoveryAdmin.AdminId, "short");
+                    throw new Exception("Short recovery password accepted");
+                }
+                catch (ArgumentException)
+                {
+                    Require(await recoveryDb.Admin.AsNoTracking().Where(a => a.AdminId == recoveryAdmin.AdminId).Select(a => a.PasswordHash).SingleAsync() == recoveryAdmin.PasswordHash,
+                        "Rejected recovery password leaves the saved hash unchanged");
+                }
+                try
+                {
+                    await AdminPasswordReset.ResetAsync(recoveryDb, passwords, Guid.NewGuid(), password);
+                    throw new Exception("Missing recovery administrator accepted");
+                }
+                catch (KeyNotFoundException) { Require(true, "Password recovery rejects a missing administrator"); }
+
+                var recoveredPassword = "Recovery-" + Guid.NewGuid().ToString("N");
+                await AdminPasswordReset.ResetAsync(recoveryDb, passwords, recoveryAdmin.AdminId, recoveredPassword);
+                var recoveredAdmin = await recoveryDb.Admin.AsNoTracking().SingleAsync(a => a.AdminId == recoveryAdmin.AdminId);
+                Require(recoveredAdmin.PasswordHash != recoveredPassword && passwords.VerifyPassword(recoveredPassword, recoveredAdmin.PasswordHash),
+                    "Password recovery persists the application's verifiable password hash");
+                Require(recoveredAdmin.Email == recoveryAdmin.Email && recoveredAdmin.UserName == recoveryAdmin.UserName
+                    && recoveredAdmin.Status == recoveryAdmin.Status && recoveredAdmin.AdminRole == recoveryAdmin.AdminRole
+                    && recoveredAdmin.accountType == recoveryAdmin.accountType
+                    && await recoveryDb.Admin.AsNoTracking().Where(a => a.Email == "existing@example.test").Select(a => a.PasswordHash).SingleAsync() == otherAdminHash,
+                    "Password recovery preserves account details and other administrators");
+                var recoveredJwt = new JwtService(recoveryDb, settings, passwords);
+                Require(await recoveredJwt.AuthenticateUser(new LoginRequestDto { Email = recoveryAdmin.Email, Password = password }) == null
+                    && await recoveredJwt.AuthenticateUser(new LoginRequestDto { Email = recoveryAdmin.Email, Password = recoveredPassword }) is AdminLoginResponseDto,
+                    "Recovered administrator can sign in only with the new password");
+                await AdminPasswordReset.ResetAsync(recoveryDb, passwords, recoveryAdmin.AdminId, password);
+            }
+
             var address = new Address { StreetAddress = "12 Main Road", Suburb = "Central", City = "Cape Town", Province = "Western Cape", PostalCode = 8001 };
             var customer = await new CustomerService(new CustomerRepository(db), passwords).AddCustomerAsync(new CreateCustomerDto
             {

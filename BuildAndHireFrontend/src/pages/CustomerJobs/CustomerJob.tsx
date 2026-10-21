@@ -1,3 +1,4 @@
+import CustomerSidebar from '../../components/CustomerPageLayout/CustomerSidebar';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getCurrentCustomerId, useCustomerJobs } from '../../context/CustomerJobsContext';
@@ -11,13 +12,6 @@ function formatDate(value: string): string {
   return Number.isNaN(date.getTime()) ? 'Date unavailable' : new Intl.DateTimeFormat('en-ZA', {
     timeZone: 'UTC', day: '2-digit', month: 'short', year: 'numeric',
   }).format(date);
-}
-function NavIcon({ kind }: { kind: 'home' | 'companies' | 'projects' }) {
-  return <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-    {kind === 'home' ? <><path d="m3 10 9-7 9 7v10H3Z" /><path d="M9 20v-7h6v7" /></>
-      : kind === 'companies' ? <><rect x="4" y="3" width="16" height="18" rx="1" /><path d="M8 7h2m4 0h2M8 11h2m4 0h2M8 15h2m4 0h2M10 21v-3h4v3" /></>
-      : <><rect x="4" y="3" width="16" height="18" rx="1" /><path d="M8 8h8M8 12h8M8 16h5" /></>}
-  </svg>;
 }
 export default function CustomerJobs() {
   const { jobs, loading, error, refreshJobs } = useCustomerJobs();
@@ -43,17 +37,7 @@ export default function CustomerJobs() {
   return <div className={styles.page}>
     <a className={styles.skipLink} href="#customer-projects">Skip to projects</a>
     <div className={styles.layout}>
-      <aside className={styles.sidebar}>
-        <Link className={styles.brand} to="/home">Build <span>&amp;</span> Hire<span>.</span></Link>
-        <div className={styles.workspace}>Your project space</div>
-        <nav className={styles.nav} aria-label="Customer navigation">
-          <Link className={styles.navlink} to="/home"><NavIcon kind="home" />Home</Link>
-          <Link className={styles.navlink} to="/marketplace"><NavIcon kind="companies" />Browse companies</Link>
-          <Link className={`${styles.navlink} ${styles.active}`} to="/my-jobs" aria-current="page"><NavIcon kind="projects" />My projects</Link>
-        </nav>
-        <div className={styles.support}><strong>A little clarity goes a long way.</strong>Review your quote and agree on the scope before work starts.</div>
-        <div className={styles.account}><div className={styles.avatar} aria-hidden="true"><NavIcon kind="projects" /></div><div>Your workspace<small>Customer account</small></div></div>
-      </aside>
+      <CustomerSidebar />
       <div className={styles.content}>
         <header className={styles.topbar}><div>Your workspace <span className={styles.separator}>/</span><strong>My projects</strong></div><span className={styles.demo}>Simulated payments</span></header>
         <main className={styles.main} id="customer-projects" tabIndex={-1} aria-busy={loading}>

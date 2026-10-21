@@ -34,6 +34,14 @@ Remove-Variable bootstrapPassword
 dotnet run --project './Build&Hire.API/Build&Hire.API/BuildAndHire.API.csproj' --launch-profile https
 ```
 
+To recover an existing administrator password without a working API login, run this from the repository root in an interactive PowerShell terminal:
+
+```powershell
+dotnet run --project './Build&Hire.API/Build&Hire.API/BuildAndHire.API.csproj' --configuration Release --launch-profile https -- --reset-admin-password
+```
+
+The command uses the configured database directly, lists administrator emails, and asks for the target email and a new password twice. Password entry is hidden and requires at least 12 characters. It updates only that administrator's password hash, preserves email/role/status, and exits without starting an HTTP listener or running bootstrap. An inactive account remains inactive. Use the exact saved email capitalization when signing in. Blank email cancels; redirected password input is rejected. Bootstrap settings create the first SuperAdmin and do not reset existing passwords.
+
 If the browser does not trust the local HTTPS certificate, run `dotnet dev-certs https --trust` once. Never point the browser at the HTTP API port and rely on redirection for CORS preflights.
 
 Start the frontend in another terminal:

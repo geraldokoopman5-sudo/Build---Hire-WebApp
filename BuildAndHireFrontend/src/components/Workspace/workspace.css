@@ -1,5 +1,5 @@
 .bh-workspace *{box-sizing:border-box}
-.bh-workspace{margin:0;background:#f8f6f1;color:#362c28;font:14px/1.55 'Segoe UI',Arial,sans-serif}
+.bh-workspace{margin:0;background:#f8f6f1;color:#362c28;font:14px/1.55 'Segoe UI',Arial,sans-serif;zoom:var(--workspace-scale)}
 .bh-workspace button,.bh-workspace input,.bh-workspace select,.bh-workspace textarea{font:inherit}
 .bh-workspace button,.bh-workspace a{cursor:pointer}
 .bh-workspace a{color:inherit;text-decoration:none}
@@ -23,6 +23,7 @@
 .bh-workspace .workspace{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin:10px 0 41px;color:#b5a79b}
 .bh-workspace .navlink{display:flex;align-items:center;gap:12px;padding:13px 13px;margin:5px 0;border-radius:7px;font-size:12px}
 .bh-workspace .navlink svg{width:18px;height:18px;flex:none}
+.bh-workspace .customer-navigation .navlink svg{width:19px;height:19px}
 .bh-workspace .navlink.active{background:#5a4235;color:#fff2e4;border-left:3px solid #dfac83;padding-left:10px}
 .bh-workspace .navlink:hover{background:#503d31}
 .bh-workspace .sidenote{border:1px solid #67564a;border-radius:8px;padding:17px 15px;font-size:11px;color:#c1b2a4;margin-top:auto}
@@ -318,8 +319,8 @@
 .bh-workspace .titleline{flex-wrap:wrap}
 }
 
-.bh-workspace{min-height:100vh}
-.bh-workspace .layout,.bh-workspace .authpage,.bh-workspace .errorpage{min-height:100vh}
+.bh-workspace{min-height:var(--workspace-height)}
+.bh-workspace .layout,.bh-workspace .authpage,.bh-workspace .errorpage{min-height:var(--workspace-height)}
 .bh-workspace .signout{background:transparent;color:inherit;width:100%;text-align:left}
 .bh-workspace .skip-link{position:absolute;left:-10000px}.bh-workspace .skip-link:focus{left:20px;top:10px;z-index:100;background:white;padding:10px}
 .bh-workspace label.field{margin:0;font-size:11px}.bh-workspace label.field>span{display:block;margin-bottom:7px}
