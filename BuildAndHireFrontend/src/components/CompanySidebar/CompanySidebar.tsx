@@ -19,6 +19,7 @@ import { apiRequest } from '../../utils/api';
 import type { Address } from '../../types/company';
 
 import styles from './CompanySidebar.module.css';
+import SignOutButton from '../SignOutButton/SignOutButton';
 
 type CompanyNavLink =
   | 'my-jobs'
@@ -208,6 +209,8 @@ export default function CompanySidebar({
           Settings
         </button>
       </div>
+
+      <SignOutButton className={styles.signout} />
 
       {isSettingsOpen && (
         <CompanySettingsModal

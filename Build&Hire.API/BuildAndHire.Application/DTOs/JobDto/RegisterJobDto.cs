@@ -16,6 +16,7 @@ namespace BuildAndHire.Application.DTOs.JobDto
 
         public string JobDescription { get; set; } = string.Empty;
 
+        // Retained for older clients; the server calculates the count and ignores this value.
         public int DaysWorking { get; set; }
 
         public DateTime StartDate { get; set; }

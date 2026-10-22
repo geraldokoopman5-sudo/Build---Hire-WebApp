@@ -1,3 +1,4 @@
+import { useConfirmation } from '../../hooks/useConfirmation';
 import { useRef, useState } from 'react';
 import Workspace, { Heading, Stats, Notice, Badge, LoadState, ErrorMessage, Empty, Review } from '../../components/Workspace/Workspace';
 import Modal from '../../components/Workspace/Modal';
@@ -13,11 +14,12 @@ interface Job { jobId: string; jobDescription: string; }
 const statusName = (status: AccountStatus) => status === AccountStatus.Active ? 'Active' : status === AccountStatus.InActive ? 'Inactive' : status === AccountStatus.Pending ? 'Pending' : status === AccountStatus.Deleted ? 'Deleted' : status === AccountStatus.Available ? 'Available' : 'Unavailable';
 const paymentName = (status: PaymentEnum) => status === PaymentEnum.Pending ? 'Pending review' : status === PaymentEnum.Successful ? 'Successful' : status === PaymentEnum.Failed ? 'Failed' : 'Refunded';
 export default function AdminPortal() {
+  const confirm = useConfirmation();
   const companies = useApiResource<Company[]>('/api/Companies'), customers = useApiResource<Customer[]>('/api/Customer'), payments = useApiResource<Payment[]>('/api/Payment'), jobs = useApiResource<Job[]>('/api/Jobs');
   const [tab, setTab] = useState<'companies' | 'customers' | 'payments'>('companies'), [search, setSearch] = useState(''), [selected, setSelected] = useState<Payment | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState('');
   const saving = useRef(false);
   const refresh = () => { companies.refresh(); customers.refresh(); payments.refresh(); jobs.refresh(); };
-  const perform = async (action: () => Promise<unknown>, question: string) => { if (saving.current || !window.confirm(question)) return; saving.current = true; setBusy(true); setError(''); try { await action(); setSelected(null); dataChanged(); } catch (reason) { setError(reason instanceof Error ? reason.message : 'Could not save this decision.'); if (reason instanceof ApiError && reason.status === 409) { setSelected(null); refresh(); } } finally { saving.current = false; setBusy(false); } };
+  const perform = async (action: () => Promise<unknown>, question: string) => { if (saving.current || !(await confirm(question))) return; saving.current = true; setBusy(true); setError(''); try { await action(); setSelected(null); dataChanged(); } catch (reason) { setError(reason instanceof Error ? reason.message : 'Could not save this decision.'); if (reason instanceof ApiError && reason.status === 409) { setSelected(null); refresh(); } } finally { saving.current = false; setBusy(false); } };
   const update = (id: string, status: AccountStatus, company: boolean, name: string) => void perform(() => apiRequest(`/api/${company ? 'Companies' : 'Customer'}/${id}/${company ? 'Status' : 'status'}`, { method: 'PATCH', body: JSON.stringify({ status }) }), `Set ${name} to ${statusName(status).toLowerCase()}?`);
   const resource = tab === 'companies' ? companies : tab === 'customers' ? customers : payments;
   const accounts = tab === 'companies' ? (companies.data ?? []).map(c => ({ id: c.companyId, name: c.companyName, status: c.status, city: c.address?.city })) : (customers.data ?? []).map(c => ({ id: c.customerId, name: c.customerName, status: c.status, city: c.address?.city }));

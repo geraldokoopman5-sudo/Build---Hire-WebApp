@@ -1,0 +1,72 @@
+.dialog {
+  box-sizing: border-box;
+  width: min(420px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 28px;
+  overflow: auto;
+  border: 1px solid #dec6a7;
+  border-radius: 12px;
+  background: #fffdfa;
+  color: #362c28;
+  color-scheme: light;
+  box-shadow: 0 20px 70px #35231340;
+  font: 14px/1.55 'Segoe UI', Arial, sans-serif;
+}
+
+.dialog::backdrop {
+  background: #33251c80;
+}
+
+.dialog h2 {
+  margin: 0 0 12px;
+  color: inherit;
+  font: 26px/1.25 Georgia, serif;
+}
+
+.dialog p {
+  margin: 0;
+  color: #756352;
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.actions button {
+  min-width: 80px;
+  padding: 11px 20px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+
+.actions .cancel {
+  border-color: #d9c9b5;
+  background: #fffdfa;
+  color: #7e5d3f;
+}
+
+.actions .cancel:hover {
+  background: #eee4d7;
+}
+
+.actions .confirm {
+  background: #a85a34;
+  color: #fff;
+}
+
+.actions .confirm:hover {
+  background: #904a28;
+}
+
+.actions button:focus-visible {
+  outline: 3px solid #c36f43;
+  outline-offset: 3px;
+}

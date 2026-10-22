@@ -1,5 +1,6 @@
 ﻿using BuildAndHire.Application.DTOs.JobDto;
 using System;
+using BuildAndHire.Domain.Scheduling;
 using System.Collections.Generic;
 using System.Text;
 
@@ -23,7 +24,7 @@ namespace BuildAndHire.Application.Services
                 JobDescription = j.JobDescription,
                 CompanyId = j.CompanyId,
                 CompanyName = j.companies?.CompanyName ?? string.Empty,
-                DaysWorking = j.DaysWorking,
+                DaysWorking = JobCalendar.DaysWorking(j, DateTime.UtcNow),
                 PayingMethod = j.PayingMethod,
                 PaymentStatus = j.Payment?.Status,
                 AmountPaid = j.Payment?.Status == PaymentEnum.Successful ? j.Payment.Amount : 0,
@@ -100,7 +101,7 @@ namespace BuildAndHire.Application.Services
                 PaymentReference = job.Payment?.TransactionReference,
         CustomerId = job.CustomerId,
         StartDate = job.StartDate,
-        DaysWorking = job.DaysWorking,
+        DaysWorking = JobCalendar.DaysWorking(job, DateTime.UtcNow),
         Quote = job.Quote,
         EndDate = job.EndDate,
         Status = job.Status,
@@ -120,7 +121,7 @@ namespace BuildAndHire.Application.Services
                 CustomerId = dto.CustomerId,
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
-                DaysWorking = dto.DaysWorking,
+                DaysWorking = 0,
                 PayingMethod = dto.PayingMethod,
                 Status = JobEnum.Requested,
                 address = dto.address ?? throw new ValidationException("An address is required.")
@@ -138,7 +139,7 @@ namespace BuildAndHire.Application.Services
                 CustomerId = job.CustomerId,
                 StartDate = job.StartDate,
                 EndDate = job.EndDate,
-                DaysWorking = job.DaysWorking,
+                DaysWorking = JobCalendar.DaysWorking(job, DateTime.UtcNow),
                 Status = job.Status,
                 AcceptedAt = job.AcceptedAt,
                 QuoteSentAt = job.QuoteSentAt,

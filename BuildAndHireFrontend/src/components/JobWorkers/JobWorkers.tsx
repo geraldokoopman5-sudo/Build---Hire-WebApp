@@ -1,3 +1,4 @@
+import { useConfirmation } from '../../hooks/useConfirmation';
 import { useState } from 'react';
 import { useWorkforce } from '../../context/WorkforceContext';
 import {
@@ -18,6 +19,7 @@ interface JobWorkersProps {
 export default function JobWorkers({
   jobId,
 }: JobWorkersProps) {
+  const confirm = useConfirmation();
   const {
     workers,
     removeWorkerFromJob,
@@ -92,8 +94,8 @@ export default function JobWorkers({
             <button
               type="button"
               className={styles.removeButton}
-              onClick={() => {
-                if (window.confirm('Unassign this worker while keeping them in your workforce?')) {
+              onClick={async () => {
+                if (await confirm('Unassign this worker while keeping them in your workforce?', { title: 'Unassign worker?', confirmLabel: 'Unassign worker' })) {
                   removeWorkerFromJob(worker.workerId).then(() => setError(''))
                     .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : 'Could not remove worker.'));
                 }

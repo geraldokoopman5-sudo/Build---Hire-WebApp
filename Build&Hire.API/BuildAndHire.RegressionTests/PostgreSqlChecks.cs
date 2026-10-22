@@ -308,6 +308,7 @@ internal static class PostgreSqlChecks
                 "Super-admin management deletes the selected admin");
 
             // HTTP checks use the real middleware and only this disposable schema.
+            await JobCalendarChecks.RunAsync(db, company.CompanyId, customer.CustomerId);
             await db.Admin.Where(a => a.Email == "superadmin@example.test")
                 .ExecuteUpdateAsync(s => s.SetProperty(a => a.Status, AccountStatus.Active));
             await HttpWorkflowChecks.RunAsync(scopedConnection.ConnectionString, password, browserChecks);

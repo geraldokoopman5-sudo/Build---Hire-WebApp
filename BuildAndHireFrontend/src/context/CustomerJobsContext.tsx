@@ -4,14 +4,14 @@ import type { CustomerJob } from '../types/job';
 import { AccountType, JobEnum, type PaymentMethod } from '../types/enums';
 import { apiRequest } from '../utils/api';
 import { getStoredAccessToken, getStoredAccountType } from '../utils/auth';
-import { dateInputToUtc } from '../utils/dates';
+import { dateInputToUtc, daysWorking } from '../utils/dates';
 import { customerJobStatusFromApi } from '../utils/jobStatus';
+import { useJobCalendarDate } from '../hooks/useJobCalendarDate';
 
 interface CreateCustomerJobInput {
   companyId: string;
   companyName: string;
   jobDescription: string;
-  daysWorking: number;
   startDate: string;
   endDate: string;
   payingMethod: PaymentMethod | null;
@@ -35,7 +35,9 @@ interface CustomerJobsContextValue {
 const CustomerJobsContext = createContext<CustomerJobsContextValue | undefined>(undefined);
 
 export function CustomerJobsProvider({ children }: { children: ReactNode }) {
+  const today = useJobCalendarDate();
   const [jobs, setJobs] = useState<CustomerJob[]>([]);
+  const currentJobs = useMemo(() => jobs.map(job => ({ ...job, daysWorking: daysWorking(job, today) })), [jobs, today]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [refreshVersion, setRefreshVersion] = useState(0);
@@ -82,7 +84,6 @@ export function CustomerJobsProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({
         companyId: input.companyId,
         jobDescription: input.jobDescription.trim(),
-        daysWorking: input.daysWorking,
         startDate: dateInputToUtc(input.startDate),
         endDate: dateInputToUtc(input.endDate),
         payingMethod: input.payingMethod,
@@ -94,7 +95,7 @@ export function CustomerJobsProvider({ children }: { children: ReactNode }) {
     if (getStoredAccessToken() === token) setJobs(current => [job, ...current.filter(x => x.jobId !== job.jobId)]);
     return job;
   }, []);
-  const getJobById = useCallback((id: string) => jobs.find(job => job.jobId === id), [jobs]);
+  const getJobById = useCallback((id: string) => currentJobs.find(job => job.jobId === id), [currentJobs]);
   const saveJob = useCallback(async (id: string, path: string, body?: object) => {
     const token = getStoredAccessToken();
     if (!token) throw new Error('Please sign in again.');
@@ -108,7 +109,7 @@ export function CustomerJobsProvider({ children }: { children: ReactNode }) {
   const requestEftPayment = useCallback(async (jobId: string, transactionReference: string): Promise<void> => {
     await saveJob(jobId, '/api/Payment/eft', { jobId, transactionReference: transactionReference.trim() || null });
   }, [saveJob]);
-  const value = useMemo(() => ({ jobs, loading, error, refreshJobs, acceptQuote, cancelJob, createJob, requestEftPayment, getJobById }), [jobs, loading, error, refreshJobs, acceptQuote, cancelJob, createJob, requestEftPayment, getJobById]);
+  const value = useMemo(() => ({ jobs: currentJobs, loading, error, refreshJobs, acceptQuote, cancelJob, createJob, requestEftPayment, getJobById }), [currentJobs, loading, error, refreshJobs, acceptQuote, cancelJob, createJob, requestEftPayment, getJobById]);
   return <CustomerJobsContext.Provider value={value}>{children}</CustomerJobsContext.Provider>;
 }
 export function useCustomerJobs(): CustomerJobsContextValue {

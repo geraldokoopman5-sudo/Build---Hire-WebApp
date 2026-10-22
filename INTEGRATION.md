@@ -53,6 +53,8 @@ npm run dev
 
 ## Contracts and behaviour
 
+Confirmations use a shared styled site dialog across account types, including approvals, project decisions, workforce removal, administrator changes and sign-out. Cancel/Escape preserves the current data; the action runs only after confirmation. Sign-out retains its Yes/No choices. Confirmation dialogs can open over edit/payment forms without dismissing those forms, and focus returns to the triggering control when cancelled. There are no `window.confirm`, `window.alert` or `window.prompt` calls in frontend application code.
+
 - Signup: `POST /api/Customer` or `POST /api/Companies`, with `password` (minimum 12 characters). Account types and initial status are set by the server. Responses contain real IDs and no password/hash.
 - Login: `POST /api/Auth/login`. UI uses the returned token, account type, admin role and customer ID. Legacy development tokens are rejected by the UI.
 - New companies start Pending. An Admin or SuperAdmin activates them using `PATCH /api/Companies/{id}/Status` with `{ "status": 0 }` and a bearer token. Company details updates cannot change approval status.
@@ -77,6 +79,12 @@ No payment provider, bank instructions, or actual transfers are involved. The EF
 - Payment creation records EFT on the associated job. Once a payment exists, job edits cannot change its quote or payment method.
 
 ## Job and quote lifecycle
+
+Job date fields open the native calendar when clicked or activated with Enter, Space or Alt+Down. The request form calculates the planned duration from the selected start/end dates (inclusive), rather than asking for a manual working-day count. Impossible dates and an end before the start are rejected.
+
+`daysWorking` is an elapsed calendar-day count for Accepted/InProgress jobs: zero before the scheduled start, one on the start date, then one per calendar day including weekends. South African midnight advances the count. Requested/rejected jobs show zero; acceptance and submission timestamps do not determine the count. Active jobs continue counting beyond a planned end date until completed or cancelled. The API calculates active counts on reads; customer and company screens also advance at midnight without requiring a page reload.
+
+Completion/cancellation saves the final count in the existing `DaysWorking` column within the lifecycle transaction. No schema migration or scheduled database update is needed. Existing closed jobs retain their stored count because historical closure dates were not recorded. Client-supplied `daysWorking` values are ignored when creating requests.
 
 New jobs always start Requested; the server ignores a client-supplied creation status. Company acceptance and customer quote acceptance are separate decisions.
 

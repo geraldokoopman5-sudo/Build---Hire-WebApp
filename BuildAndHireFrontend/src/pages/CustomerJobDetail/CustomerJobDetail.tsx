@@ -1,3 +1,4 @@
+import { useConfirmation } from '../../hooks/useConfirmation';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import CustomerPageLayout from '../../components/CustomerPageLayout/CustomerPageLayout';
@@ -9,6 +10,7 @@ import { formatCurrency } from '../../utils/quoteMath';
 import styles from '../../components/CustomerPageLayout/CustomerProject.module.css';
 
 function Details({ job }: { job: CustomerJob }) {
+  const confirm = useConfirmation();
   const { cancelJob, refreshJobs } = useCustomerJobs();
   const [cancelling, setCancelling] = useState(false);
   const [cancelError, setCancelError] = useState('');
@@ -29,7 +31,7 @@ function Details({ job }: { job: CustomerJob }) {
   else if (job.status === 'accepted') { nextTitle = 'The company accepted your project.'; nextText = 'Your company will send a quote for your review.'; }
 
   async function cancel() {
-    if (cancelling || !canCancelProject(job) || !window.confirm('Cancel this project? Its saved details will remain available.')) return;
+    if (cancelling || !canCancelProject(job) || !(await confirm('Cancel this project? Its saved details will remain available.', { title: 'Cancel project?', confirmLabel: 'Cancel project', cancelLabel: 'Keep project' }))) return;
     setCancelling(true); setCancelError('');
     try { await cancelJob(job.jobId); }
     catch (reason) { setCancelError(reason instanceof Error ? reason.message : 'Could not cancel the project.'); }

@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { AccountType } from '../../types/enums';
 import { AdminRole } from '../../types/admin';
-import { getStoredAccountType, getStoredAdminRole, logout } from '../../utils/auth';
+import { getStoredAccountType, getStoredAdminRole } from '../../utils/auth';
 import CustomerNavIcon from '../CustomerPageLayout/CustomerNavIcon';
+import SignOutButton from '../SignOutButton/SignOutButton';
 import './workspace.css';
 import './customerOverview.css';
 
 export default function Workspace({ title, children, className = '' }: { title: string; children: ReactNode; className?: string }) {
-  const navigate = useNavigate();
   const type = getStoredAccountType();
   const superAdmin = getStoredAdminRole() === AdminRole.SuperAdmin;
   const company = type === AccountType.Company, admin = type === AccountType.Admin;
@@ -21,10 +21,10 @@ export default function Workspace({ title, children, className = '' }: { title: 
     <div className="layout"><aside className="sidebar">
       <Link className="brand" to={nav[0][1]}>Build<span>&amp;</span>Hire</Link><p className="workspace">{name}</p>
       <nav className={`nav ${!company && !admin ? 'customer-navigation' : ''}`} aria-label={name}>{nav.map(([label, route]) => <NavLink key={route} to={route} end className={({ isActive }) => `navlink ${isActive ? 'active' : ''}`}>{!company && !admin && <CustomerNavIcon kind={route === '/home' ? 'home' : route === '/marketplace' ? 'companies' : 'projects'} />}{label}</NavLink>)}
-        <button className="navlink signout" onClick={() => { logout(); navigate('/', { replace: true }); }}>{!company && !admin && <CustomerNavIcon kind="signout" />}Sign out</button>
       </nav>
       <div className="sidenote"><strong>Built around your next step.</strong>Clear decisions, shared project updates, and simulated payments.</div>
       <div className="account"><span className="avatar" aria-hidden="true">○</span><div>Your workspace<small>{name}</small></div></div>
+      <SignOutButton className="navlink signout"><CustomerNavIcon kind="signout" />Sign out</SignOutButton>
     </aside><div className="content"><header className="topbar"><span>Workspace<span className="breadcrumb-sep">/</span><strong>{title}</strong></span><span className="chip">Simulated payments</span></header>
       <main className="main" id="workspace-main" tabIndex={-1}>{children}<footer className="footer"><span>Build &amp; Hire · Your project, connected.</span><span>Payments are simulated. No money moves.</span></footer></main>
     </div></div>

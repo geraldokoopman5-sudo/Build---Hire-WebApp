@@ -1,0 +1,9 @@
+.input {
+  color-scheme: light;
+  cursor: pointer;
+}
+
+.input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 1;
+}

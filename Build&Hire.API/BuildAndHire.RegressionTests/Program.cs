@@ -19,6 +19,7 @@ using BuildAndHire.Application.Validators.Payments;
 using BuildAndHire.Domain.Enums;
 using BuildAndHire.Domain.Models;
 using BuildAndHire.Domain.ValueObjects;
+using BuildAndHire.Domain.Scheduling;
 using BuildAndHire.Infrastructure.Authentication;
 using BuildAndHire.Infrastructure.Data;
 using FluentValidation;
@@ -142,6 +143,52 @@ var jobRepo = Stub<IJobRepository>.Create((method, values) => {
 });
 var savedJob = await new JobService(jobRepo).RegisterJobAsync(jobRequest);
 Check(savedJob.PayingMethod == PaymentMethod.EFT && savedJob.JobId != Guid.Empty, "Job creation preserves payment method and saved ID");
+Check(savedJob.DaysWorking == 0, "Creating a request does not start the working-day counter");
+jobRequest.DaysWorking = 999;
+Check((await new JobService(jobRepo).RegisterJobAsync(jobRequest)).DaysWorking == 0,
+    "Client-supplied working days are ignored");
+jobRequest.DaysWorking = 0;
+Check(jobValidator.Validate(jobRequest).IsValid, "Job dates do not require a manually entered working-day count");
+
+var calendarNow = new DateTime(2026, 10, 26, 10, 0, 0, DateTimeKind.Utc);
+var calendarJob = new Jobs { StartDate = calendarNow.Date.AddDays(1), Status = JobEnum.Accepted, DaysWorking = 999 };
+Check(JobCalendar.DaysWorking(calendarJob, calendarNow) == 0, "Accepted future job stays at zero days before its start date");
+calendarJob.StartDate = calendarNow.Date;
+Check(JobCalendar.DaysWorking(calendarJob, calendarNow) == 1, "The scheduled start date is working day one");
+calendarJob.StartDate = calendarNow.Date.AddDays(-3);
+calendarJob.EndDate = calendarNow.Date.AddDays(-1);
+calendarJob.AcceptedAt = calendarNow;
+Check(JobCalendar.DaysWorking(calendarJob, calendarNow) == 4,
+    "Calendar-day counter includes weekends, starts from the schedule rather than acceptance and continues beyond the planned end");
+calendarJob.Status = JobEnum.Requested;
+Check(JobCalendar.DaysWorking(calendarJob, calendarNow) == 0, "Pending requests do not accrue working days");
+calendarJob.Status = JobEnum.Rejected;
+Check(JobCalendar.DaysWorking(calendarJob, calendarNow) == 0, "Rejected requests do not accrue working days");
+calendarJob.Status = JobEnum.InProgress;
+calendarJob.StartDate = new DateTime(2028, 2, 28, 0, 0, 0, DateTimeKind.Utc);
+Check(JobCalendar.DaysWorking(calendarJob, new DateTime(2028, 3, 1, 10, 0, 0, DateTimeKind.Utc)) == 3,
+    "Calendar-day counter includes leap day");
+calendarJob.StartDate = calendarNow.Date;
+Check(JobCalendar.DaysWorking(calendarJob, calendarNow.Date.AddDays(-1).AddHours(21).AddMinutes(59)) == 0
+    && JobCalendar.DaysWorking(calendarJob, calendarNow.Date.AddDays(-1).AddHours(22)) == 1,
+    "Working days advance at South African midnight");
+calendarJob.Status = JobEnum.Completed;
+calendarJob.DaysWorking = 4;
+Check(JobCalendar.DaysWorking(calendarJob, calendarNow.AddYears(1)) == 4, "Completed jobs retain their final day count");
+calendarJob.Status = JobEnum.Cancelled;
+Check(JobCalendar.DaysWorking(calendarJob, calendarNow.AddYears(1)) == 4, "Cancelled jobs retain their final day count");
+calendarJob.Status = JobEnum.Accepted;
+calendarJob.StartDate = JobCalendar.Today(DateTime.UtcNow).AddDays(-2);
+var calendarRepo = Stub<IJobRepository>.Create((method, _) => method.Name switch
+{
+    nameof(IJobRepository.GetAllJobs) => Task.FromResult<IEnumerable<Jobs>>([calendarJob]),
+    nameof(IJobRepository.GetJobById) => Task.FromResult<Jobs?>(calendarJob),
+    _ => throw new NotSupportedException(method.Name)
+});
+var calendarService = new JobService(calendarRepo);
+Check((await calendarService.GetAllJobsAsync()).Single().DaysWorking == 3
+    && (await calendarService.GetJobByIdAsync(calendarJob.JobId))?.DaysWorking == 3,
+    "List and detail APIs return the calculated elapsed working days");
 Check(JsonSerializer.Serialize(new WorkerDto { WorkerLastName = "Smith" }, json).Contains("workerLastName"), "Correct worker JSON name");
 Check(JsonSerializer.Serialize(savedJob, json).Contains("\"quote\"") && JsonSerializer.Serialize(savedJob, json).Contains("\"payingMethod\""), "Correct job JSON names");
 

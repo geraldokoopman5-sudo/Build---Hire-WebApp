@@ -36,7 +36,12 @@
   color:#e8dfd5;
   padding:34px 22px;
   display:flex;
-  flex-direction:column
+  flex-direction:column;
+  position:sticky;
+  top:0;
+  align-self:flex-start;
+  height:var(--workspace-height);
+  overflow-y:auto
 }
 .brand{
   font:26px Georgia,serif;
@@ -73,7 +78,9 @@
   width:100%;
   background:transparent;
   color:#cbbdb1;
-  text-align:left
+  text-align:left;
+  margin:20px 0 0;
+  flex-shrink:0
 }
 .navicon{
   font-size:19px;
@@ -453,7 +460,10 @@
   .sidebar{
     width:100%;
     padding:18px 20px;
-    display:block
+    display:block;
+    position:static;
+    height:auto;
+    overflow:visible
   }
   .brand{
     font-size:24px
@@ -473,7 +483,7 @@
     font-size:11px
   }
   .signout{
-    width:auto
+    margin-top:12px
   }
   .navicon{
     display:none

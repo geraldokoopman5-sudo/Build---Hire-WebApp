@@ -231,8 +231,10 @@ internal static class HttpWorkflowChecks
             await Send("POST", "/api/Jobs", 400, new
                 { companyId, jobDescription = "No Address", daysWorking = 2, startDate = date, endDate = date.AddDays(1) }, customerToken);
             var noStatusJob = await Send("POST", "/api/Jobs", 201, new
-                { companyId, jobDescription = "Default Status", daysWorking = 2, startDate = date, endDate = date.AddDays(1), address }, customerToken);
+                { companyId, jobDescription = "Default Status", startDate = date, endDate = date.AddDays(1), address }, customerToken);
             Check(noStatusJob.GetProperty("status").GetInt32() == 4, "Job creation without client status defaults to server-controlled Requested");
+            Check(noStatusJob.GetProperty("daysWorking").GetInt32() == 0,
+                "The frontend request without daysWorking is accepted and starts at zero elapsed days");
             await Send("GET", $"/api/Workers/{missingId}", 404, token: companyToken);
             await Send("PUT", $"/api/Workers/{missingId}", 404, new { workerStatus = 0 }, companyToken);
             await Send("DELETE", $"/api/Workers/{missingId}", 404, token: companyToken);

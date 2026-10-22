@@ -34,6 +34,7 @@ import NotFound from './pages/NotFound/NotFound';
 
 // Route protection
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import ConfirmationProvider from './components/ConfirmationDialog/ConfirmationProvider';
 
 // Context
 import { WorkforceProvider } from './context/WorkforceContext';
@@ -64,6 +65,7 @@ function App() {
       <CustomerJobsProvider>
         <AdminManagementProvider>
           <BrowserRouter>
+            <ConfirmationProvider>
             <Routes>
 
               {/* =========================
@@ -232,6 +234,7 @@ function App() {
               </Route>
 
             </Routes>
+            </ConfirmationProvider>
           </BrowserRouter>
         </AdminManagementProvider>
       </CustomerJobsProvider>

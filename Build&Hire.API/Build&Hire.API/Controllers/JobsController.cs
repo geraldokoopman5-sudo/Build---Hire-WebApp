@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
 
+using BuildAndHire.Domain.Scheduling;
+
 namespace Build_Hire.API.Controllers;
 
 [Route("api/[controller]")]
@@ -137,6 +139,9 @@ public class JobsController(IJobService service, BuildAndHireDbContext db) : Con
         else if (job.Status != from) return Conflict("This transition is not allowed from the current job status.");
         if (to == JobEnum.InProgress && job.QuoteAcceptedAt == null)
             return Conflict("The customer must accept the quote before work starts.");
+        // Freeze the elapsed count before leaving an active status, within the row lock.
+        if (to is JobEnum.Completed or JobEnum.Cancelled or JobEnum.Rejected)
+            job.DaysWorking = JobCalendar.DaysWorking(job, DateTime.UtcNow);
         job.Status = to;
         if (to == JobEnum.Accepted) job.AcceptedAt ??= UtcTimestamp();
         if (to is JobEnum.Completed or JobEnum.Cancelled)

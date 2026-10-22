@@ -44,7 +44,7 @@ class CDP {
   constructor(socket) { this.socket = socket; this.id = 0; this.pending = new Map(); socket.addEventListener('message', event => {
     const value = JSON.parse(String(event.data));
     if (value.id) { const item = this.pending.get(value.id); if (!item) return; this.pending.delete(value.id); value.error ? item.reject(new Error(value.error.message)) : item.resolve(value.result); }
-    if (value.method === 'Page.javascriptDialogOpening') void this.call('Page.handleJavaScriptDialog', { accept: true });
+    if (value.method === 'Page.javascriptDialogOpening') { errors.push('Unexpected browser confirmation'); void this.call('Page.handleJavaScriptDialog', { accept: false }); }
     if (value.method === 'Runtime.exceptionThrown') errors.push(value.params.exceptionDetails.text + ': ' + (value.params.exceptionDetails.exception?.description ?? ''));
   }); }
   call(method, params = {}) { return new Promise((resolve, reject) => { const id = ++this.id; this.pending.set(id, { resolve, reject }); this.socket.send(JSON.stringify({ id, method, params })); }); }
@@ -55,6 +55,12 @@ async function navigate(path) { await cdp.call('Page.navigate', { url: origin + 
 async function text(value) { await wait(`document.body.textContent.toLowerCase().includes(${JSON.stringify(value.toLowerCase())})`, value); }
 async function input(selector, value) { await wait(`!!document.querySelector(${JSON.stringify(selector)})`, selector); await cdp.evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});const prototype=el.tagName==='SELECT'?HTMLSelectElement.prototype:el.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype;Object.getOwnPropertyDescriptor(prototype,'value').set.call(el,${JSON.stringify(String(value))});el.dispatchEvent(new Event(el.tagName==='SELECT'?'change':'input',{bubbles:true}));})()`); await delay(35); }
 async function click(label, scope = 'document') { await wait(`!![...${scope}.querySelectorAll('button,a')].find(el=>el.textContent.trim().includes(${JSON.stringify(label)})&&!el.disabled)`, 'click ' + label); await cdp.evaluate(`[...${scope}.querySelectorAll('button,a')].find(el=>el.textContent.trim().includes(${JSON.stringify(label)})&&!el.disabled).click()`); await delay(80); }
+async function acceptConfirmation(label = 'Confirm') {
+  await wait(`!!document.querySelector('[data-confirmation-dialog]')?.open`, 'site confirmation opens');
+  await click(label, `document.querySelector('[data-confirmation-dialog]')`);
+  await wait(`!document.querySelector('[data-confirmation-dialog]')`, 'site confirmation closes');
+}
+async function confirmAction(label, confirmLabel = 'Confirm') { await click(label); await acceptConfirmation(confirmLabel); }
 async function submit() { await cdp.evaluate(`document.querySelector('[role="dialog"] form, form').requestSubmit()`); await delay(100); }
 async function check(expression, label) { if (!await cdp.evaluate(expression)) throw new Error('FAILED BROWSER: ' + label); reports.push(label); console.log('PASS BROWSER: ' + label); }
 async function snapshot(name, mobile = false) {
@@ -77,7 +83,7 @@ async function snapshot(name, mobile = false) {
 async function apiRead(path, method = 'GET', body) { return cdp.evaluate(`(async()=>{const r=await fetch(${JSON.stringify('/api' + path)},{method:${JSON.stringify(method)},headers:{Authorization:'Bearer '+localStorage.getItem('buildandhire.accessToken'),'Content-Type':'application/json'},${body === undefined ? '' : 'body:JSON.stringify(' + JSON.stringify(body) + '),'}});return {status:r.status,data:r.headers.get('Content-Type')?.includes('json')?await r.json():null}})()`); }
 async function login(email, route) { await cdp.evaluate('localStorage.clear()'); await navigate('/'); await input('input[name="email"]', email); await input('input[name="password"]', password); await submit(); await wait(`location.pathname===${JSON.stringify(route)}`, 'login route ' + route); await wait(`!document.body.textContent.includes('Loading your workspace')`, 'workspace loaded'); }
 async function signup(role, name, email) { await cdp.evaluate('localStorage.clear()'); await navigate('/signup'); await text('Create your account'); if (role === 'company') await click('I’m a company'); for (const [key, value] of Object.entries({ name, email, password, confirmPassword: password, ...(role === 'company' ? { registrationNumber: '1234567890', taxNumber: '0987654321' } : {}) })) await input(`[name="${key}"]`, value); await click('Continue'); await text('Your address'); for (const [key, value] of Object.entries({ streetAddress: '20 Browser Road', suburb: 'Gardens', city: 'Cape Town', province: 'Western Cape', postalCode: '8001' })) await input(`[name="${key}"]`, value); await click('Create account'); await text('Your account is registered.'); }
-async function createProject(companyId, description) { await navigate('/my-jobs/new?companyId=' + companyId); await text('Your project brief'); await input('[name="jobDescription"]', description); await click('Continue'); await text('Dates & location'); const start = new Date(Date.now() + 86400000).toISOString().slice(0, 10), end = new Date(Date.now() + 86400000 * 4).toISOString().slice(0, 10); for (const [key, value] of Object.entries({ startDate: start, endDate: end, daysWorking: '3', streetAddress: '22 Browser Road', suburb: 'Gardens', city: 'Cape Town', province: 'Western Cape', postalCode: '8001' })) await input(`[name="${key}"]`, value); await click('Continue'); await text('One last look'); await click('Send project request'); await wait(`location.pathname.startsWith('/my-jobs/')&&!location.pathname.endsWith('/new')`, 'saved project route'); await text(description); return cdp.evaluate('location.pathname.split("/").at(-1)'); }
+async function createProject(companyId, description) { await navigate('/my-jobs/new?companyId=' + companyId); await text('Your project brief'); await input('[name="jobDescription"]', description); await click('Continue'); await text('Dates & location'); const start = new Date(Date.now() + 86400000).toISOString().slice(0, 10), end = new Date(Date.now() + 86400000 * 4).toISOString().slice(0, 10); for (const [key, value] of Object.entries({ startDate: start, endDate: end, streetAddress: '22 Browser Road', suburb: 'Gardens', city: 'Cape Town', province: 'Western Cape', postalCode: '8001' })) await input(`[name="${key}"]`, value); await text('4 calendar days'); await click('Continue'); await text('One last look'); await click('Send project request'); await wait(`location.pathname.startsWith('/my-jobs/')&&!location.pathname.endsWith('/new')`, 'saved project route'); await text(description); return cdp.evaluate('location.pathname.split("/").at(-1)'); }
 
 try {
   const profile = resolve(artifacts, 'profile-' + Date.now());
@@ -123,6 +129,12 @@ async function runWorkflow() {
   await click('Open admin portal'); await wait(`location.pathname==='/admin'&&!!document.querySelector('tbody')`, 'super admin accesses admin portal');
   await check(`location.pathname==='/admin'`, 'super admin can open normal admin routes');
   await input('input.search', companyName); await text(companyName); await click('Approve');
+  await wait(`!!document.querySelector('[data-confirmation-dialog]')?.open`, 'approval confirmation opens');
+  await snapshot('confirmation-approval'); await snapshot('confirmation-approval-mobile', true);
+  await click('Cancel', `document.querySelector('[data-confirmation-dialog]')`);
+  await wait(`!document.querySelector('[data-confirmation-dialog]')`, 'approval cancelled');
+  await check(`document.querySelector('tbody tr').textContent.includes('Pending')`, 'cancelling confirmation leaves company pending');
+  await confirmAction('Approve');
   await wait(`!!document.querySelector('tbody tr')&&document.querySelector('tbody tr').textContent.includes('Active')`, 'company approval saved');
   const firms = await apiRead('/Companies');
   const companyId = firms.data.find(c => c.companyName === companyName).companyId;
@@ -156,8 +168,8 @@ async function runWorkflow() {
 
   await navigate('/company/applications'); await text('Browser kitchen renovation');
   await snapshot('company-applications'); await snapshot('company-applications-mobile', true);
-  await navigate('/company/jobs/' + jobId); await text('Review this request'); await click('Accept request'); await text('Send a quote');
-  await input('[name="quote"]', '24800'); await click('Send quote'); await text('Await customer acceptance');
+  await navigate('/company/jobs/' + jobId); await text('Review this request'); await confirmAction('Accept request'); await text('Send a quote');
+  await input('[name="quote"]', '24800'); await confirmAction('Send quote'); await text('Await customer acceptance');
   await check(`!document.querySelector('button')||![...document.querySelectorAll('button')].some(b=>b.textContent.includes('Start work'))`, 'work cannot start before customer quote consent');
   await snapshot('company-job-management'); await snapshot('company-job-management-mobile', true);
   await navigate('/company/workforce'); await text('Neo Molefe'); await click('Assign'); await input('[name="jobId"]', jobId); await submit();
@@ -167,7 +179,7 @@ async function runWorkflow() {
   await click('Edit'); await input('[name="workerFirstName"]', 'Neo Edited'); await submit(); await text('Neo Edited Molefe');
   worker = (await apiRead('/Workers')).data.find(w => w.workerId === worker.workerId);
   await assert(worker.workerFirstName === 'Neo Edited' && worker.jobId === jobId, 'worker names can be edited without changing assignment');
-  await navigate('/company/jobs/' + secondId); await text('Review this request'); await click('Accept request'); await text('Send a quote');
+  await navigate('/company/jobs/' + secondId); await text('Review this request'); await confirmAction('Accept request'); await text('Send a quote');
   await navigate('/company/workforce'); await text('Neo Edited Molefe'); await click('Change job'); await input('[name="jobId"]', secondId); await submit();
   await wait(`!document.querySelector('[role="dialog"]')&&document.body.textContent.includes('Browser patio paving')`, 'reassignment saved');
   await assert((await apiRead('/Workers')).data.find(w => w.workerId === worker.workerId).jobId === secondId, 'worker can be reassigned to another accepted job');
@@ -189,31 +201,31 @@ async function runWorkflow() {
   await snapshot('quote-review');
 
   await login(companyEmail, '/company/jobs'); await navigate('/company/jobs/' + jobId); await text('Ready to start work');
-  await click('Start work'); await text('Keep the work moving');
+  await confirmAction('Start work'); await text('Keep the work moving');
   await assert((await apiRead('/Jobs/' + jobId)).data.status === 6, 'company starts work only after customer agreement');
-  await click('Complete project'); await text('Project closed');
+  await confirmAction('Complete project'); await text('Project closed');
   const completedJob = (await apiRead('/Jobs/' + jobId)).data;
   await assert(completedJob.status === 7 && completedJob.paymentStatus === 1 && completedJob.amountPaid === 0, 'completion does not mark the simulated payment successful');
   await assert((await apiRead('/Workers')).data.find(w => w.workerId === worker.workerId).jobId === null, 'completion releases assigned workers in the database');
 
   await login('superadmin@example.test', '/super-admin'); await navigate('/admin'); await text('Company account review');
   await click('Simulated payments'); await wait(`document.body.textContent.includes('BROWSER-DEMO')`, 'payment records loaded');
-  await input('input.search', 'BROWSER-DEMO'); await click('Review'); await text('Record a demo outcome'); await click('Mark successful');
+  await input('input.search', 'BROWSER-DEMO'); await click('Review'); await text('Record a demo outcome'); await confirmAction('Mark successful');
   await wait(`!document.querySelector('[role="dialog"]')&&document.body.textContent.includes('Successful')`, 'final simulated outcome saved');
   await check(`![...document.querySelectorAll('button')].some(b=>b.textContent.trim()==='Review')`, 'final simulated outcome cannot be reviewed again');
   await assert((await apiRead('/Payment')).data.filter(p => p.jobId === jobId).length === 1, 'only one payment record exists for the job');
 
   await navigate('/super-admin/admins'); await text('Administrator accounts'); await click('Add administrator');
   const adminEmail = 'browser-admin-' + suffix + '@example.test';
-  await input('[name="userName"]', 'Browser Review Admin'); await input('[name="email"]', adminEmail); await input('[name="password"]', password); await submit();
+  await input('[name="userName"]', 'Browser Review Admin'); await input('[name="email"]', adminEmail); await input('[name="password"]', password); await submit(); await acceptConfirmation();
   await wait(`!document.querySelector('[role="dialog"]')&&document.body.textContent.includes('Browser Review Admin')`, 'admin created');
   await input('input.search', adminEmail); await click('Edit'); await check(`!document.querySelector('[name="password"]').required`, 'administrator password change is optional on edit');
-  await input('[name="userName"]', 'Browser Renamed Admin'); await submit(); await text('Browser Renamed Admin');
+  await input('[name="userName"]', 'Browser Renamed Admin'); await submit(); await acceptConfirmation(); await text('Browser Renamed Admin');
   await snapshot('admin-management'); await snapshot('admin-management-mobile', true);
-  await click('Deactivate'); await wait(`document.querySelector('tbody tr')?.textContent.includes('Inactive')`, 'admin deactivated');
-  await click('Restore'); await wait(`document.querySelector('tbody tr')?.textContent.includes('Active')`, 'admin restored');
+  await confirmAction('Deactivate'); await wait(`document.querySelector('tbody tr')?.textContent.includes('Inactive')`, 'admin deactivated');
+  await confirmAction('Restore'); await wait(`document.querySelector('tbody tr')?.textContent.includes('Active')`, 'admin restored');
   await assert((await apiRead('/Admin')).data.some(a => a.email === adminEmail && a.userName === 'Browser Renamed Admin' && a.status === 0), 'administrator create/edit/status changes persist');
-  await click('Delete'); await wait(`!document.body.textContent.includes('Browser Renamed Admin')`, 'admin removed');
+  await confirmAction('Delete'); await wait(`!document.body.textContent.includes('Browser Renamed Admin')`, 'admin removed');
   await assert(!(await apiRead('/Admin')).data.some(a => a.email === adminEmail), 'administrator deletion persists');
 
   for (const [email, route, owner] of [[customerEmail, '/home', 'customer'], [companyEmail, '/company/jobs', 'company']]) {
@@ -230,12 +242,12 @@ async function runWorkflow() {
   await navigate('/quotes/' + jobId); await text('Quote not found');
   await check(`!document.querySelector('input[type="checkbox"]')`, 'unrelated customer cannot accept the quote or simulate payment');
 
-  await login(companyEmail, '/company/jobs'); await navigate('/company/jobs/' + secondId); await text('Send a quote'); await input('[name="quote"]', '1000'); await click('Send quote'); await text('Await customer acceptance');
+  await login(companyEmail, '/company/jobs'); await navigate('/company/jobs/' + secondId); await text('Send a quote'); await input('[name="quote"]', '1000'); await confirmAction('Send quote'); await text('Await customer acceptance');
   await login(customerEmail, '/home'); await navigate('/quotes/' + secondId); await text('Accept quote');
-  await navigate('/my-jobs/' + secondId); await text('Cancel project'); await click('Cancel project'); await text('Cancelled');
+  await navigate('/my-jobs/' + secondId); await text('Cancel project'); await confirmAction('Cancel project', 'Cancel project'); await text('Cancelled');
   await assert((await apiRead('/Jobs/' + secondId)).data.status === 8, 'customer cancellation retains the job with Cancelled status');
   const rejectedId = await createProject(companyId, 'Browser rejected project');
-  await login(companyEmail, '/company/jobs'); await navigate('/company/jobs/' + rejectedId); await text('Review this request'); await click('Reject'); await text('Project closed');
+  await login(companyEmail, '/company/jobs'); await navigate('/company/jobs/' + rejectedId); await text('Review this request'); await confirmAction('Reject'); await text('Project closed');
   await assert((await apiRead('/Jobs/' + rejectedId)).data.status === 9, 'company rejection persists separately from cancellation');
   await cdp.evaluate(`localStorage.setItem('buildandhire.accessToken','expired-integration-session')`); await navigate('/company/jobs');
   await wait(`location.pathname==='/'&&localStorage.getItem('buildandhire.accessToken')===null`, 'expired session redirected');

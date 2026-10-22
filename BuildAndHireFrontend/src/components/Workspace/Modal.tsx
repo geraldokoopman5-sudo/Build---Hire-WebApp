@@ -8,6 +8,8 @@ export default function Modal({ title, children, onClose }: { title: string; chi
     const controls = () => [...(ref.current?.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href]') ?? [])];
     controls()[0]?.focus();
     const key = (event: KeyboardEvent) => {
+      // A confirmation in the top layer owns its keyboard input until it closes.
+      if (!ref.current?.contains(event.target as Node)) return;
       if (event.key === 'Escape') { event.preventDefault(); close(); }
       if (event.key === 'Tab') {
         const list = controls(), first = list[0], last = list[list.length - 1];

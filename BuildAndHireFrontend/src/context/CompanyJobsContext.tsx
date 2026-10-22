@@ -7,6 +7,8 @@ import { getStoredAccountType } from '../utils/auth';
 import { customerJobStatusFromApi } from '../utils/jobStatus';
 import { useApiResource, dataChanged } from '../hooks/useApiResource';
 import { useSession } from '../hooks/useSession';
+import { useJobCalendarDate } from '../hooks/useJobCalendarDate';
+import { daysWorking } from '../utils/dates';
 
 type ApiJob = Omit<CustomerJob, 'status'> & { status: number };
 export type CompanyTransition = 'accept' | 'reject' | 'start' | 'complete';
@@ -18,17 +20,19 @@ interface CompanyJobsValue {
   updateJobEndDate: (id: string, endDate: string) => Promise<void>;
 }
 const CompanyJobsContext = createContext<CompanyJobsValue | undefined>(undefined);
-function fromApi(job: ApiJob): CompanyJob {
+function fromApi(job: ApiJob, today: string): CompanyJob {
   const date = (value: string) => new Date(value).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
   return { ...job, id: job.jobId, status: customerJobStatusFromApi(job.status), title: job.jobDescription.length > 60 ? job.jobDescription.slice(0, 57) + '…' : job.jobDescription,
     description: job.jobDescription, dateRange: date(job.startDate) + ' – ' + date(job.endDate), quoteAmount: job.quote, amountPaid: job.amountPaid ?? 0,
     paymentState: job.paymentStatus === PaymentEnum.Successful ? 'successful' : job.paymentStatus === PaymentEnum.Failed || job.paymentStatus === PaymentEnum.Refunded ? 'on-hold' : 'pending',
-    paymentNote: job.paymentReference ?? 'No reference', paymentRequested: job.paymentStatus != null };
+    paymentNote: job.paymentReference ?? 'No reference', paymentRequested: job.paymentStatus != null,
+    daysWorking: daysWorking({ ...job, status: customerJobStatusFromApi(job.status) }, today) };
 }
 export function CompanyJobsProvider({ children }: { children: ReactNode }) {
   useSession();
+  const today = useJobCalendarDate();
   const resource = useApiResource<ApiJob[]>('/api/Jobs', getStoredAccountType() === AccountType.Company);
-  const jobs = (resource.data ?? []).map(fromApi);
+  const jobs = (resource.data ?? []).map(job => fromApi(job, today));
   const mutate = async (id: string, action: string, body?: object) => {
     await apiRequest(`/api/Jobs/${id}/${action}`, { method: 'POST', body: body ? JSON.stringify(body) : undefined });
     dataChanged();

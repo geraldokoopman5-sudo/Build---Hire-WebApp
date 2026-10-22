@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 
 import AuthLayout from '../AuthLayout/AuthLayout';
+import PasswordInput from '../../components/PasswordInput/PasswordInput';
 import styles from './Login.module.css';
 
 import type {
@@ -206,10 +207,9 @@ export default function Login() {
               Password
             </label>
 
-            <input
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
               placeholder="••••••••"
               value={values.password}
               onChange={handleChange}

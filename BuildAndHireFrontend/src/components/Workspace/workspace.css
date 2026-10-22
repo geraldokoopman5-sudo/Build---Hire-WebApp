@@ -17,7 +17,7 @@
 .bh-workspace small{font-size:10px;color:#9b8571}
 .bh-workspace .preview-strip{padding:9px 20px;background:#ede5da;color:#836b56;text-align:center;font-size:10px;letter-spacing:.5px}
 .bh-workspace .layout{display:flex;min-height:calc(100vh - 33px)}
-.bh-workspace .sidebar{width:226px;flex:none;background:#392e29;color:#cbbdb1;padding:34px 22px;display:flex;flex-direction:column}
+.bh-workspace .sidebar{width:226px;flex:none;background:#392e29;color:#cbbdb1;padding:34px 22px;display:flex;flex-direction:column;position:sticky;top:0;align-self:flex-start;height:var(--workspace-height);overflow-y:auto}
 .bh-workspace .brand{font:26px Georgia,serif;color:#fff3e4;letter-spacing:-1px}
 .bh-workspace .brand span{color:#dfac83}
 .bh-workspace .workspace{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin:10px 0 41px;color:#b5a79b}
@@ -93,6 +93,7 @@
 .bh-workspace .divider{height:1px;background:#e9e0d4;margin:20px 0}
 .bh-workspace .formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .bh-workspace .field.full{grid-column:1/-1}
+.bh-workspace .calculated-value{display:block;border:1px solid #e0d4c5;background:#f5f0e8;border-radius:6px;padding:11px 12px;font-size:12px;color:#62513f}
 .bh-workspace .field small{display:block;margin-top:6px;line-height:1.6}
 .bh-workspace .formtitle{margin-bottom:21px}
 .bh-workspace .formsection{margin-top:26px;padding-top:22px;border-top:1px solid #e6ddcf}
@@ -321,7 +322,7 @@
 
 .bh-workspace{min-height:var(--workspace-height)}
 .bh-workspace .layout,.bh-workspace .authpage,.bh-workspace .errorpage{min-height:var(--workspace-height)}
-.bh-workspace .signout{background:transparent;color:inherit;width:100%;text-align:left}
+.bh-workspace .signout{background:transparent;color:inherit;width:100%;text-align:left;margin:20px 0 0;flex-shrink:0}
 .bh-workspace .skip-link{position:absolute;left:-10000px}.bh-workspace .skip-link:focus{left:20px;top:10px;z-index:100;background:white;padding:10px}
 .bh-workspace label.field{margin:0;font-size:11px}.bh-workspace label.field>span{display:block;margin-bottom:7px}
 .bh-workspace .error-message{padding:18px;border:1px solid #ddbbab;background:#f5e6dd;border-radius:8px;margin-bottom:20px;color:#834f38;font-size:12px}
@@ -334,4 +335,4 @@
 .bh-workspace .rowlist .buttonrow{justify-content:flex-end}
 .bh-workspace .status-line{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px}
 .bh-workspace .payment-label{display:block;font-size:10px;color:#89715c;margin-top:8px}
-@media(max-width:720px){.bh-workspace .signout{width:auto}.bh-workspace .modal-overlay{padding:15px}.bh-workspace .modal-card{padding:22px}.bh-workspace .projectrow .buttonrow{justify-content:stretch}.bh-workspace .projectrow .buttonrow>*{flex:1}}
+@media(max-width:720px){.bh-workspace .sidebar{position:static;height:auto;overflow:visible}.bh-workspace .signout{margin-top:12px}.bh-workspace .modal-overlay{padding:15px}.bh-workspace .modal-card{padding:22px}.bh-workspace .projectrow .buttonrow{justify-content:stretch}.bh-workspace .projectrow .buttonrow>*{flex:1}}
