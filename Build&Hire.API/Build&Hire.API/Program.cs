@@ -112,14 +112,17 @@ builder.Services
                 }
 
                 var db = context.HttpContext.RequestServices.GetRequiredService<BuildAndHireDbContext>();
-                var active = principal!.IsInRole("Customer")
+                var adminRole = principal!.IsInRole(nameof(AdminEnums.SuperAdmin))
+                    ? AdminEnums.SuperAdmin : AdminEnums.Admin;
+                var validAccount = principal.IsInRole("Customer")
                     ? await db.Customers.AnyAsync(c => c.CustomerId == accountId && c.Status == AccountStatus.Active)
                     : principal.IsInRole("Company")
                     ? await db.Companies.AnyAsync(c => c.CompanyId == accountId && c.Status == AccountStatus.Active)
                     : principal.IsInRole("Admin") || principal.IsInRole("SuperAdmin")
-                    ? await db.Admin.AnyAsync(a => a.AdminId == accountId && a.Status == AccountStatus.Active)
+                    ? await db.Admin.AnyAsync(a => a.AdminId == accountId && a.Status == AccountStatus.Active
+                        && a.AdminRole == adminRole)
                     : false;
-                if (!active) context.Fail("Account is not active.");
+                if (!validAccount) context.Fail("Account is inactive or its role has changed.");
             },
             OnAuthenticationFailed = context =>
             {

@@ -57,6 +57,7 @@ Confirmations use a shared styled site dialog across account types, including ap
 
 - Signup: `POST /api/Customer` or `POST /api/Companies`, with `password` (minimum 12 characters). Account types and initial status are set by the server. Responses contain real IDs and no password/hash.
 - Login: `POST /api/Auth/login`. UI uses the returned token, account type, admin role and customer ID. Legacy development tokens are rejected by the UI.
+- Each authenticated request checks that the account is still active. Administrator tokens must also match the account's current saved Admin/SuperAdmin role. A role mismatch returns HTTP 401; the frontend clears the session and requires sign-in again. A fresh login receives the current role. Editing a profile without changing its role preserves the existing session.
 - New companies start Pending. An Admin or SuperAdmin activates them using `PATCH /api/Companies/{id}/Status` with `{ "status": 0 }` and a bearer token. Company details updates cannot change approval status.
 - Create Job loads active companies from the API. Its company ID must exist in PostgreSQL. The API derives the customer ID from the authenticated JWT. Job reads/updates/deletes enforce customer/company ownership or an administrator role.
 - Customer job lists reload from the API after login and page refresh. Old local job data and generated development customer IDs are no longer used.

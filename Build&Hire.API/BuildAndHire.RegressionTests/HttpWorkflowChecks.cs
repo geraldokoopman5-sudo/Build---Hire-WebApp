@@ -167,6 +167,36 @@ internal static class HttpWorkflowChecks
             { userName = "HttpAdmin", email = "http-admin@example.test", password, status = 0, adminRole = 1 }, superAdmin);
             var admin = await Login("http-admin@example.test");
             await Send("GET", "/api/Admin", 403, token: admin);
+
+            // Role changes must invalidate previously issued privileges on the next request.
+            var roleAccount = await Send("POST", "/api/Admin", 201, new
+            { userName = "Role change admin", email = "http-role-change@example.test", password, status = 0, adminRole = 2 }, superAdmin);
+            var roleAccountId = roleAccount.GetProperty("adminId").GetGuid();
+            var originalSuperAdminToken = await Login("http-role-change@example.test");
+            await Send("GET", "/api/Admin", 200, token: originalSuperAdminToken);
+            object RoleUpdate(int role, int status = 0) => new
+            { userName = "Renamed role change admin", email = "http-role-change@example.test", status, adminRole = role };
+            await Send("PUT", $"/api/Admin/{roleAccountId}", 200, RoleUpdate(2), superAdmin);
+            await Send("GET", "/api/Admin", 200, token: originalSuperAdminToken);
+            Check(true, "An administrator profile edit without a role change preserves the session");
+
+            await Send("PUT", $"/api/Admin/{roleAccountId}", 200, RoleUpdate(1), superAdmin);
+            await Send("GET", "/api/Admin", 401, token: originalSuperAdminToken);
+            await Send("GET", "/api/Jobs", 401, token: originalSuperAdminToken);
+            var demotedAdminToken = await Login("http-role-change@example.test");
+            await Send("GET", "/api/Admin", 403, token: demotedAdminToken);
+            await Send("GET", "/api/Jobs", 200, token: demotedAdminToken);
+            Check(true, "Demotion rejects the old SuperAdmin token; fresh login has only Admin access");
+
+            await Send("PUT", $"/api/Admin/{roleAccountId}", 200, RoleUpdate(2), superAdmin);
+            await Send("GET", "/api/Admin", 401, token: demotedAdminToken);
+            var promotedSuperAdminToken = await Login("http-role-change@example.test");
+            await Send("GET", "/api/Admin", 200, token: promotedSuperAdminToken);
+            Check(true, "Promotion requires a fresh login before new SuperAdmin permissions apply");
+            await Send("PUT", $"/api/Admin/{roleAccountId}", 200, RoleUpdate(2, status: 1), superAdmin);
+            await Send("GET", "/api/Admin", 401, token: promotedSuperAdminToken);
+            await Send("POST", "/api/Auth/login", 401, new { email = "http-role-change@example.test", password });
+
             var missingId = Guid.NewGuid();
             await Send("GET", $"/api/Customer/{missingId}", 404, token: admin);
             await Send("PUT", $"/api/Customer/{missingId}", 404,
