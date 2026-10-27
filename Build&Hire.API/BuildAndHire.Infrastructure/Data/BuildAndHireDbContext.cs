@@ -15,10 +15,21 @@ namespace BuildAndHire.Infrastructure.Data
         public DbSet<Jobs> Jobs { get; set; }
         public DbSet<Payment> Payment { get; set; }
         public DbSet<Admin> Admin { get; set; }
+        public DbSet<CompletedWorkPost> CompletedWorkPosts { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CompletedWorkPost>(post =>
+            {
+                post.HasKey(p => p.Id);
+                post.Property(p => p.Title).HasMaxLength(120);
+                post.Property(p => p.Description).HasMaxLength(2000);
+                post.Property(p => p.Location).HasMaxLength(120);
+                post.HasIndex(p => new { p.CompanyId, p.CreatedAt });
+                post.HasOne<Companies>().WithMany().HasForeignKey(p => p.CompanyId).OnDelete(DeleteBehavior.Cascade);
+                post.HasOne<Jobs>().WithMany().HasForeignKey(p => p.JobId).OnDelete(DeleteBehavior.NoAction);
+            });
             //Inintailising Primary Keys
             modelBuilder.Entity<Customer>()
             .HasKey(c => c.CustomerId);

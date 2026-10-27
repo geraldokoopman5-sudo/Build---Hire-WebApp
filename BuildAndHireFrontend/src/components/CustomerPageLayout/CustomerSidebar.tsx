@@ -1,6 +1,7 @@
 import CustomerNavIcon from './CustomerNavIcon';
 import { Link } from 'react-router-dom';
 import SignOutButton from '../SignOutButton/SignOutButton';
+import ProfileAccount from '../ProfilePhoto/ProfileAccount';
 import styles from '../../pages/CustomerJobs/CustomerJobS.module.css';
 
 
@@ -14,7 +15,7 @@ export default function CustomerSidebar() {
       <Link className={`${styles.navlink} ${styles.active}`} to="/my-jobs" aria-current="page"><CustomerNavIcon kind="projects" />My projects</Link>
     </nav>
     <div className={styles.support}><strong>Every step, in one place.</strong>Review your quote and agree on the scope before work starts.</div>
-    <div className={styles.account}><div className={styles.avatar} aria-hidden="true"><CustomerNavIcon kind="projects" /></div><div>Your workspace<small>Customer account</small></div></div>
+    <ProfileAccount />
     <SignOutButton className={`${styles.navlink} ${styles.signout}`}><CustomerNavIcon kind="signout" />Sign out</SignOutButton>
   </aside>;
 }

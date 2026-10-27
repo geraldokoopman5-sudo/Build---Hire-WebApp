@@ -167,6 +167,7 @@ internal static class HttpWorkflowChecks
             { userName = "HttpAdmin", email = "http-admin@example.test", password, status = 0, adminRole = 1 }, superAdmin);
             var admin = await Login("http-admin@example.test");
             await Send("GET", "/api/Admin", 403, token: admin);
+            await MediaChecks.HttpAsync(client, connectionString, password, superAdmin, admin, Check);
 
             // Role changes must invalidate previously issued privileges on the next request.
             var roleAccount = await Send("POST", "/api/Admin", 201, new
@@ -561,7 +562,7 @@ internal static class HttpWorkflowChecks
         var errors = Task.Run(async () => { while (await browser.StandardError.ReadLineAsync() is string line) Console.Error.WriteLine(line); });
         try
         {
-            using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(8));
             await browser.WaitForExitAsync(timeout.Token);
             await Task.WhenAll(output, errors);
             if (browser.ExitCode != 0) throw new InvalidOperationException("Browser integration checks failed. See .artifacts/browser-integration.");

@@ -2,6 +2,8 @@
 
 Assessment date: 26 October 2026 (Africa/Johannesburg). Base revision: `a3d5d6c`.
 
+Photo/portfolio feature follow-up verified on 27 October 2026. The result table includes that follow-up where applicable.
+
 **Decision: hold public production deployment.** The administrator role issue and the four vulnerable frontend tooling dependencies have been fixed and verified. The remaining release configuration and hosting findings below still need attention. A successful local build does not validate the eventual hosting environment.
 
 ## Verification results
@@ -11,11 +13,11 @@ Assessment date: 26 October 2026 (Africa/Johannesburg). Base revision: `a3d5d6c`
 | Frontend unit tests (`npm.cmd test`) | 4 passed |
 | Frontend lint (`npm.cmd run lint`) | Passed |
 | Frontend production build (`npm.cmd run build`) | Passed; TypeScript and Vite |
-| Backend Release build | Passed; follow-up fix build has 0 warnings and 0 errors |
-| Standalone backend regression checks | 59 passed |
+| Backend Release build | Passed; 0 errors (2 existing migration naming warnings on clean rebuild) |
+| Standalone backend regression checks | 68 passed, including image decoding/orientation/validation |
 | PostgreSQL service/migration checks | 53 passed in a disposable schema |
-| Real HTTP workflow checks | 289 passed after the administrator role fix |
-| Browser workflow against isolated published Production API | Initial assessment: 90 passed; 34 screenshots; 0 runtime errors |
+| Real HTTP workflow checks | 363 passed after the photo/portfolio additions |
+| Browser workflow against isolated published Production API | Post-login welcome follow-up: 188 passed; 0 runtime errors |
 | Published API in Production mode | 6 smoke checks passed |
 | Administrator role-revocation security check | Fixed and verified: old SuperAdmin token returns 401 after demotion; fresh Admin token returns 403 for admin management |
 | Backend publish/package inspection | Passed; local/development settings excluded, signing key and database defaults empty |
@@ -27,7 +29,7 @@ The Production smoke checks exercised `/health/live`, `/health/ready`, HTTP-to-H
 
 Database workflow tests create and remove randomly named `integration_*` schemas. Existing application tables are not their test fixtures. HTTP checks cover registration, company approval, role/account isolation, invalid requests, expired tokens, inactive accounts, job/quote transitions, worker assignment, concurrent updates, and simulated payment review. Payment success here does not mean money was transferred.
 
-After correcting stale signup expectations, the final browser run completed successfully against a separately published Production API and fresh disposable schema. It rendered all sixteen redesigned pages, exercised desktop/mobile layouts, checked heading contrast and horizontal overflow, and verified customer/company/admin workflows through the real API. The final report was generated on 26 October 2026 at 08:31 (Africa/Johannesburg); older browser reports were not counted. The API and test schema were cleaned up. A sample desktop project screen and mobile administrator screen were also visually inspected.
+After correcting stale signup expectations, the initial 90-check browser run completed on 26 October. The expanded photo/portfolio browser run completed on 27 October against a separately published Production API and fresh disposable schema. It exercised the existing pages and new profile/business information flows at desktop/mobile widths, checked heading contrast and horizontal overflow, and verified customer/company/admin workflows through the real API. The API and test schema were cleaned up. New desktop/mobile profile and business information screenshots were visually inspected.
 
 ## Resolved security finding: administrator role changes
 
@@ -53,6 +55,22 @@ Updated the affected development/build dependencies using compatible npm securit
 | `zod` | 4.4.3 | 4.6.7 |
 
 After the update, all 4 frontend tests, ESLint, and the TypeScript/Vite production build passed. A fresh full `npm audit --json` reports **zero known vulnerabilities**, including development dependencies. Evidence: `.artifacts/dependency-fix-audit.json`. The 90-check browser run above belongs to the initial assessment and was not rerun for this tooling update.
+
+## Profile photo and completed-work additions — 27 October 2026
+
+Added profile photo upload/replacement/removal for Customer, Company, Admin and SuperAdmin accounts, available from the sidebar account control. Companies can publish, edit and remove posts about past projects or their own completed platform jobs on business information pages. Other pages do not display these posts, and visitors have no publishing controls. Uploads are validated, resized, oriented and re-encoded as JPEG with metadata removed. Images live in PostgreSQL. See `INTEGRATION.md` for the API contracts and limits.
+
+The additive `20261027062725_ProfilePhotosAndCompletedWork` migration was tested in disposable schemas and then applied successfully to the configured development database. It adds nullable account photo fields and a completed-work table without modifying existing account/job data. Rollback refuses to discard saved photos/posts. No public deployment was performed.
+
+Validation passed: **484 backend checks** (68 standalone, 53 PostgreSQL, 363 HTTP), **116 real-browser checks**, 4 frontend tests, lint, and frontend/backend Release builds. The HTTP tests cover all account types, owner isolation, non-company rejection, invalid/incomplete/unrelated job links, photo removal, post editing/removal, inactive-company visibility, and rollback protection. Fresh npm and NuGet audits report no known vulnerabilities, including the new SkiaSharp image-processing dependencies. Evidence is saved under `.artifacts/profile-portfolio-*` and `.artifacts/browser-integration/report.json`.
+
+## Split-flap post-login welcome — 27 October 2026
+
+Added the official React Bits `SplitFlapText-TS-CSS` source, with the required type-only import adjustment, scoped application styling, and preserved upstream license. The registry lists no extra dependencies. The license is also copied into the published static site's `licenses/react-bits.txt`.
+
+After a successful login or automatic customer signup login, the authenticated `/welcome` page animates “Build and Hire” using the existing brown/cream/terracotta palette. The complete 14-character phrase fits desktop and mobile widths. The page continues after 3.4 seconds to the account's existing dashboard; Continue and Escape skip it. Reduced-motion users see static text and continue after 600 ms. The welcome entry is replaced in browser history, and keyboard focus moves to dashboard content. Failed or anonymous sign-ins never show the welcome page.
+
+The frontend build, lint and existing 4 unit tests passed. **188 real-browser assertions passed**, including customer/company/Admin/SuperAdmin routing, animation settling, brand colors, mobile overflow, keyboard focus/skip, automatic navigation, reduced motion, and the existing full application workflow. No browser runtime errors were reported. Desktop/mobile welcome screenshots were visually inspected. Evidence: `.artifacts/split-flap-browser.log` and `.artifacts/browser-integration/report.json`. No backend or database changes were required for this addition.
 
 ## Remaining findings to resolve before public launch
 
@@ -88,11 +106,14 @@ The follow-up administrator role fix changes authentication behavior and adds HT
 
 - `.artifacts/deployment-readiness-tests.log`: passing database/backend checks and the superseded customer-signup assertion failure.
 - `.artifacts/deployment-readiness-first-run.log`: initial run, including the stale browser expectation.
-- `.artifacts/browser-integration/report.json`: final passing 90-check browser report and screenshot inventory; PNGs are in the same directory.
+- `.artifacts/browser-integration/report.json`: current passing 188-check browser report and screenshot inventory; PNGs are in the same directory.
 - `.artifacts/deployment-readiness-browser.log`: final browser harness exit/cleanup output (the child browser's results are in `report.json`).
 - `.artifacts/deployment-readiness-production-smoke.json`: six published Production checks.
 - `.artifacts/deployment-readiness-package.json`: inspected publish directory.
 - `.artifacts/deployment-readiness-npm-production-audit.json`, `.artifacts/deployment-readiness-npm-audit.json`, `.artifacts/deployment-readiness-dotnet-audit.json`: dependency scan results.
 - `.artifacts/dependency-fix-audit.json`: full npm audit after the dependency fixes, with zero known vulnerabilities.
+- `.artifacts/profile-portfolio-backend.log`, `.artifacts/profile-portfolio-browser.log`, `.artifacts/profile-portfolio-migration.log`: current feature tests and development migration results.
+- `.artifacts/profile-portfolio-npm-audit.json`, `.artifacts/profile-portfolio-dotnet-audit.json`: dependency scans after the feature additions.
+- `.artifacts/split-flap-browser.log`: post-login welcome and full application browser checks, including all account types and reduced-motion behavior.
 
 Artifacts are local and ignored by Git. Dependency scans reflect the advisory feeds queried during this assessment; passing scans do not establish that all security issues are absent. This assessment did not include a load/stress test, full accessibility audit, penetration test, or checks against a publicly deployed host.

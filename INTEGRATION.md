@@ -57,6 +57,7 @@ Confirmations use a shared styled site dialog across account types, including ap
 
 - Signup: `POST /api/Customer` or `POST /api/Companies`, with `password` (minimum 12 characters). Account types and initial status are set by the server. Responses contain real IDs and no password/hash.
 - Login: `POST /api/Auth/login`. UI uses the returned token, account type, admin role and customer ID. Legacy development tokens are rejected by the UI.
+- Successful sign-in now routes through `/welcome`, a brief authenticated React Bits `SplitFlapText` screen displaying “Build and Hire” in the application's colors. It continues automatically after 3.4 seconds to the existing account-specific dashboard. Continue/Escape skips it; reduced-motion users get a static result and a 600 ms transition. Customer automatic sign-in after signup uses the same screen. Failed login and unauthenticated visits never display it. Navigation replaces the welcome history entry and moves keyboard focus to dashboard content.
 - Each authenticated request checks that the account is still active. Administrator tokens must also match the account's current saved Admin/SuperAdmin role. A role mismatch returns HTTP 401; the frontend clears the session and requires sign-in again. A fresh login receives the current role. Editing a profile without changing its role preserves the existing session.
 - New companies start Pending. An Admin or SuperAdmin activates them using `PATCH /api/Companies/{id}/Status` with `{ "status": 0 }` and a bearer token. Company details updates cannot change approval status.
 - Create Job loads active companies from the API. Its company ID must exist in PostgreSQL. The API derives the customer ID from the authenticated JWT. Job reads/updates/deletes enforce customer/company ownership or an administrator role.
@@ -68,6 +69,29 @@ Confirmations use a shared styled site dialog across account types, including ap
 - All registered request validators execute through an async MVC action filter and return HTTP 400 validation errors. Duplicate records and foreign-key failures receive controlled errors.
 
 Current company jobs, workforce, and administrator flows also use the API. See [BACKEND_VERIFICATION.md](BACKEND_VERIFICATION.md) for the tested scope, results, and remaining workflow limitations. This is not a full authorization/security audit of unrelated endpoints.
+
+## Profile photos and company completed work
+
+Every authenticated account (Customer, Company, Admin and SuperAdmin) can open **My profile** through the account/photo control in the sidebar. `/profile` supports uploading, replacing and removing a photo. The shared account control displays the saved photo; a company's photo also appears on its business information page. Personal profile photos are returned only to their owner through the authenticated profile API, and are not added to public account listings.
+
+Companies have a **Business information** navigation item at `/company/business-information`. They can publish, edit and remove completed-work posts there. Posts require a title, description, completion date and one photo; area/city is optional. A company can either describe a past project from outside the app or link one of its own jobs already marked Completed. The server checks job ownership and state, so other companies' jobs and unfinished jobs cannot be linked. Completion dates cannot be in the future. The UI displays these posts only on business information pages (`/companies/:id` for visitors), with no post controls for visitors or administrators. The marketplace and job dashboards do not display the posts.
+
+| Endpoint | Access / behavior |
+| --- | --- |
+| `GET /api/Profile` | Current account's name, email and photo; identity comes from the JWT |
+| `PUT /api/Profile/photo` | Owner only; multipart form field `photo` |
+| `DELETE /api/Profile/photo` | Owner only; removes the current photo |
+| `GET /api/Companies/{id}/business-information` | Public limited information and completed work for an active company; owner/admin may preview an inactive account |
+| `GET /api/Companies/{id}/completed-work/{postId}/photo` | Normalized JPEG; follows the same company visibility rules |
+| `POST /api/Companies/me/completed-work` | Company only; multipart `title`, `description`, `completedOn`, optional `location`/`jobId`, and required `photo` |
+| `PUT /api/Companies/me/completed-work/{postId}` | Owning company only; same fields, with optional replacement `photo` |
+| `DELETE /api/Companies/me/completed-work/{postId}` | Owning company only; removes the post and its photo, not the underlying job |
+
+Uploads accept still JPEG, PNG and WebP images up to 5 MB and 20 megapixels. The server decodes the actual content, applies camera orientation, strips metadata and re-encodes JPEGs. Profile photos fit within 512×512; completed-work photos fit within 1600×1600. SVG, animated images and invalid/truncated images are rejected. File names are not used as storage paths. Private profile responses and public business information have separate projections so customer/admin photos, company email, tax details and customer addresses are not published with posts.
+
+Apply migration `20261027062725_ProfilePhotosAndCompletedWork` using the migration command above before starting the new API. It adds nullable photo columns to the three account tables and creates `CompletedWorkPosts`; existing accounts need not upload a photo. Images are stored in PostgreSQL, so no host filesystem or object storage configuration is required, and database backups must include this image data. The migration refuses rollback while photos or posts would be lost. At most 50 posts per company are accepted by the publishing endpoint.
+
+Image processing uses SkiaSharp, with Windows/macOS native dependencies and Linux native assets included in the API package. Deployment must retain the native runtime assets during publishing. New standalone, HTTP/database and browser regression checks cover image validation/orientation, all account types, persistence/removal, company-only publishing, linked-job validation, owner isolation, active-company visibility, post editing/removal, mobile layouts, and posts appearing only on business information pages.
 
 ## Simulated payments
 

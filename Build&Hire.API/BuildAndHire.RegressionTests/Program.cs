@@ -312,6 +312,7 @@ workersController.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity([
 var ownWorkers = (OkObjectResult)await workersController.GetAllWorkers();
 Check(((IEnumerable<WorkerDto>)ownWorkers.Value!).Single().CompanyId == companyId,
       "Company listing excludes another company's workers");
+await MediaChecks.StandaloneAsync(Check);
 Console.WriteLine($"{checks} regression checks passed.");
 if (args.Length == 2 && args[0] == "--postgres-config")
     await PostgreSqlChecks.RunAsync(Path.GetFullPath(args[1]));

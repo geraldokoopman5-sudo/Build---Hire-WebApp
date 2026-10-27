@@ -39,6 +39,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<byte[]>("ProfilePhoto")
+                        .HasColumnType("bytea");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -72,6 +75,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<byte[]>("ProfilePhoto")
+                        .HasColumnType("bytea");
+
                     b.Property<string>("RegistrationNumber")
                         .IsRequired()
                         .HasColumnType("text");
@@ -94,6 +100,55 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("BuildAndHire.Domain.Models.CompletedWorkPost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("CompletedOn")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<Guid?>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<byte[]>("Photo")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("CompanyId", "CreatedAt");
+
+                    b.ToTable("CompletedWorkPosts");
+                });
+
             modelBuilder.Entity("BuildAndHire.Domain.Models.Customer", b =>
                 {
                     b.Property<Guid>("CustomerId")
@@ -111,6 +166,9 @@ namespace BuildAndHire.Infrastructure.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<byte[]>("ProfilePhoto")
+                        .HasColumnType("bytea");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -288,6 +346,20 @@ namespace BuildAndHire.Infrastructure.Migrations
 
                     b.Navigation("address")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BuildAndHire.Domain.Models.CompletedWorkPost", b =>
+                {
+                    b.HasOne("BuildAndHire.Domain.Models.Companies", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BuildAndHire.Domain.Models.Jobs", null)
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("BuildAndHire.Domain.Models.Customer", b =>

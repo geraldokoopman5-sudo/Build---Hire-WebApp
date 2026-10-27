@@ -24,7 +24,6 @@ import type {
 
 import {
   login,
-  getPostLoginRoute,
 } from '../../utils/auth';
 
 const INITIAL_VALUES: LoginFormValues = {
@@ -123,15 +122,9 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const account = await login(values.email.trim(), values.password);
+      await login(values.email.trim(), values.password);
 
-      const destination =
-        getPostLoginRoute(
-          account.accountType,
-          account.adminRole
-        );
-
-      navigate(destination, {
+      navigate('/welcome', {
         replace: true,
       });
     } catch (error) {

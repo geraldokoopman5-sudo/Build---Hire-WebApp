@@ -17,7 +17,7 @@ export async function apiRequest<T>(
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  if (options.body && !headers.has('Content-Type')) {
+  if (options.body && !(options.body instanceof FormData) && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
 
@@ -53,6 +53,8 @@ export async function apiRequest<T>(
   if (response.status === 204) {
     return undefined as T;
   }
+
+  if (response.headers.get('Content-Type')?.startsWith('image/')) return response.blob() as Promise<T>;
 
   return (response.headers.get('Content-Type')?.includes('json')
     ? response.json()

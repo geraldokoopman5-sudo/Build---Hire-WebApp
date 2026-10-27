@@ -8,6 +8,7 @@ import { dirname, resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const project = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const testPhoto = (await readFile(resolve(project, 'public/refined_build_hire_logo_earthy_theme.png'))).toString('base64');
 const artifacts = resolve(project, '../.artifacts/browser-integration');
 const api = process.env.BUILDANDHIRE_TEST_API;
 const password = process.env.BUILDANDHIRE_TEST_PASSWORD;
@@ -17,6 +18,7 @@ if (!existsSync(browserPath)) throw new Error('Set BUILDANDHIRE_TEST_BROWSER to 
 await mkdir(artifacts, { recursive: true });
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const reports = [], errors = [], screenshots = [];
+const welcomeScreens = new Set();
 let browser, cdp;
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml' };
 const dist = resolve(project, 'dist');
@@ -81,7 +83,48 @@ async function snapshot(name, mobile = false) {
   if (mobile) { await check('document.documentElement.scrollWidth<=innerWidth', name + ' has no horizontal overflow'); await cdp.call('Emulation.clearDeviceMetricsOverride'); }
 }
 async function apiRead(path, method = 'GET', body) { return cdp.evaluate(`(async()=>{const r=await fetch(${JSON.stringify('/api' + path)},{method:${JSON.stringify(method)},headers:{Authorization:'Bearer '+localStorage.getItem('buildandhire.accessToken'),'Content-Type':'application/json'},${body === undefined ? '' : 'body:JSON.stringify(' + JSON.stringify(body) + '),'}});return {status:r.status,data:r.headers.get('Content-Type')?.includes('json')?await r.json():null}})()`); }
-async function login(email, route) { await cdp.evaluate('localStorage.clear()'); await navigate('/'); await input('input[name="email"]', email); await input('input[name="password"]', password); await submit(); await wait(`location.pathname===${JSON.stringify(route)}`, 'login route ' + route); await wait(`!document.body.textContent.includes('Loading your workspace')`, 'workspace loaded'); }
+async function selectPhoto() {
+  await wait(`!!document.querySelector('input[type="file"]')`, 'photo input');
+  await cdp.evaluate(`(()=>{const bytes=Uint8Array.from(atob(${JSON.stringify(testPhoto)}),c=>c.charCodeAt(0));const transfer=new DataTransfer();transfer.items.add(new File([bytes],'test-photo.png',{type:'image/png'}));const input=document.querySelector('input[type="file"]');input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+}
+async function profilePhoto(route, name) {
+  await navigate('/profile'); await text('Profile photo'); await selectPhoto(); await click('Save profile photo'); await text('Your profile photo has been saved.');
+  await check(`!!document.querySelector('.profile-account img')`, name + ' profile photo appears in the shared account control');
+  const profile = (await apiRead('/Profile')).data;
+  await check(JSON.stringify(profile.photoDataUrl?.startsWith('data:image/jpeg;base64,') === true), name + ' profile photo is saved by the real API');
+  await snapshot(name + '-profile'); await snapshot(name + '-profile-mobile', true);
+  await navigate('/profile'); await wait(`!!document.querySelector('.profile-photo-panel img')`, 'saved photo after reload');
+  if (name === 'customer') {
+    await confirmAction('Remove photo', 'Remove photo'); await text('Your profile photo has been removed.');
+    await check(JSON.stringify((await apiRead('/Profile')).data.photoDataUrl === null), 'customer can remove the saved profile photo');
+  }
+  await navigate(route);
+}
+async function login(email, route) {
+  await cdp.evaluate('localStorage.clear()'); await navigate('/'); await input('input[name="email"]', email); await input('input[name="password"]', password); await submit();
+  await wait(`location.pathname==='/welcome'`, 'successful login enters branded welcome screen');
+  await check(`document.querySelector('[data-post-login-welcome]')&&document.querySelector('.split-flap-text__sr')?.textContent==='Build and Hire'`, 'post-login welcome uses the Build and Hire split-flap brand');
+  const reduced = await cdp.evaluate(`matchMedia('(prefers-reduced-motion: reduce)').matches`);
+  if (reduced) {
+    await check(`!document.querySelector('.split-flap-text .is-flipping')`, 'reduced-motion welcome has no flipping tiles');
+  } else if (!welcomeScreens.has(route)) {
+    welcomeScreens.add(route);
+    await wait(`!document.querySelector('.split-flap-text .is-flipping')&&[...document.querySelectorAll('.split-flap-text__half--top .split-flap-text__char')].map(el=>el.textContent).join('').replace(/\u00a0/g,' ')==='Build and Hire'`, 'split-flap animation settles to the complete brand');
+    await check(`getComputedStyle(document.querySelector('.split-flap-text')).color==='rgb(249, 243, 229)'`, 'split-flap lettering uses the project cream color');
+    const name = ({'/home':'welcome-customer','/company/jobs':'welcome-company','/admin':'welcome-admin','/super-admin':'welcome-super-admin'})[route];
+    await snapshot(name);
+    if (route === '/home') await snapshot(name + '-mobile', true);
+    else if (route === '/super-admin') {
+      await check(`document.activeElement===document.querySelector('[data-post-login-welcome]')`, 'welcome screen receives keyboard focus');
+      await cdp.call('Input.dispatchKeyEvent', { type:'keyDown', key:'Escape', code:'Escape', windowsVirtualKeyCode:27 });
+      await cdp.call('Input.dispatchKeyEvent', { type:'keyUp', key:'Escape', code:'Escape', windowsVirtualKeyCode:27 });
+    } else await cdp.call('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  } else await cdp.call('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  await wait(`location.pathname===${JSON.stringify(route)}`, 'welcome continues to the correct account dashboard ' + route);
+  await check(`!document.querySelector('[data-post-login-welcome]')`, 'welcome is removed after entering the dashboard');
+  await check(`document.activeElement===document.querySelector('#workspace-main')`, 'keyboard focus moves to the dashboard after the welcome screen');
+  await wait(`!document.body.textContent.includes('Loading your workspace')`, 'workspace loaded');
+}
 async function signup(role, name, email) { await cdp.evaluate('localStorage.clear()'); await navigate('/signup'); await text('Create your account'); if (role === 'company') await click('I’m a company'); for (const [key, value] of Object.entries({ name, email, password, confirmPassword: password, ...(role === 'company' ? { registrationNumber: '1234567890', taxNumber: '0987654321' } : {}) })) await input(`[name="${key}"]`, value); await click('Continue'); await text('Your address'); for (const [key, value] of Object.entries({ streetAddress: '20 Browser Road', suburb: 'Gardens', city: 'Cape Town', province: 'Western Cape', postalCode: '8001' })) await input(`[name="${key}"]`, value); await click('Create account'); if (role === 'company') await text('Your company account is registered.'); else await wait("location.pathname === '/home' && !!localStorage.getItem('buildandhire.accessToken')", 'new customer automatic sign-in'); }
 async function createProject(companyId, description) { await navigate('/my-jobs/new?companyId=' + companyId); await text('Your project brief'); await input('[name="jobDescription"]', description); await click('Continue'); await text('Dates & location'); const start = new Date(Date.now() + 86400000).toISOString().slice(0, 10), end = new Date(Date.now() + 86400000 * 4).toISOString().slice(0, 10); for (const [key, value] of Object.entries({ startDate: start, endDate: end, streetAddress: '22 Browser Road', suburb: 'Gardens', city: 'Cape Town', province: 'Western Cape', postalCode: '8001' })) await input(`[name="${key}"]`, value); await text('4 calendar days'); await click('Continue'); await text('One last look'); await click('Send project request'); await wait(`location.pathname.startsWith('/my-jobs/')&&!location.pathname.endsWith('/new')`, 'saved project route'); await text(description); return cdp.evaluate('location.pathname.split("/").at(-1)'); }
 
@@ -93,6 +136,7 @@ try {
   const page = await (await fetch(`http://127.0.0.1:${port}/json/new?about:blank`, { method: 'PUT' })).json();
   const socket = new WebSocket(page.webSocketDebuggerUrl); await new Promise((r, reject) => { socket.addEventListener('open', r, { once: true }); socket.addEventListener('error', reject, { once: true }); });
   cdp = new CDP(socket); await cdp.call('Page.enable'); await cdp.call('Runtime.enable');
+  await cdp.call('Emulation.setEmulatedMedia', { features: [{ name:'prefers-reduced-motion', value:'no-preference' }] });
   // Redirect configured API URLs to the test proxy; no response mocking or fixture data in the browser.
   await cdp.call('Page.addScriptToEvaluateOnNewDocument', { source: `const originalFetch=window.fetch.bind(window);window.fetch=(input,options)=>{const url=new URL(String(input),location.href);return originalFetch(url.pathname.startsWith('/api/')?url.pathname+url.search:input,options)};` });
   await navigate('/');
@@ -115,16 +159,24 @@ async function runWorkflow() {
   const assert = async (value, label) => check(JSON.stringify(Boolean(value)), label);
   const ready = () => wait(`!document.body.textContent.includes('Loading your workspace')&&!document.body.textContent.includes('Loading your project')`, 'data loaded');
 
+  await navigate('/welcome'); await wait(`location.pathname==='/'`, 'anonymous welcome route returns to login');
+  await check(`!document.querySelector('[data-post-login-welcome]')`, 'welcome screen requires an authenticated session');
+  await input('[name="email"]', 'missing-browser-' + suffix + '@example.test'); await input('[name="password"]', password); await submit();
+  await text('Invalid email or password');
+  await check(`location.pathname==='/'&&!document.querySelector('[data-post-login-welcome]')`, 'failed login never displays the welcome screen');
+
   await signup('company', companyName, companyEmail);
   await check(`document.body.textContent.includes('awaiting administrator approval')`, 'company signup shows approval pending');
   await signup('customer', 'Browser Customer', customerEmail);
   await check(`location.pathname === '/home' && !!localStorage.getItem('buildandhire.accessToken')`, 'customer signup creates an active account and signs in automatically');
   await login(customerEmail, '/home');
+  await profilePhoto('/home', 'customer');
   await snapshot('home');
   await navigate('/marketplace'); await wait(`!!document.querySelector('input.search')`, 'company list loaded');
   await check(`!document.body.textContent.includes(${JSON.stringify(companyName)})`, 'pending companies are absent from the marketplace');
 
   await login('superadmin@example.test', '/super-admin');
+  await profilePhoto('/super-admin', 'super-admin');
   await snapshot('super-admin-dashboard'); await snapshot('super-admin-dashboard-mobile', true);
   await click('Open admin portal'); await wait(`location.pathname==='/admin'&&!!document.querySelector('tbody')`, 'super admin accesses admin portal');
   await check(`location.pathname==='/admin'`, 'super admin can open normal admin routes');
@@ -157,6 +209,7 @@ async function runWorkflow() {
   await navigate('/my-jobs'); await text('Browser kitchen renovation'); await snapshot('customer-dashboard');
 
   await login(companyEmail, '/company/jobs'); await text('Browser kitchen renovation');
+  await profilePhoto('/company/jobs', 'company');
   await snapshot('company-jobs'); await snapshot('company-jobs-mobile', true);
   await navigate('/company/workforce'); await ready(); await click('Add worker');
   await input('[name="workerFirstName"]', 'Neo'); await input('[name="workerLastName"]', 'Molefe'); await submit();
@@ -208,6 +261,32 @@ async function runWorkflow() {
   await assert(completedJob.status === 7 && completedJob.paymentStatus === 1 && completedJob.amountPaid === 0, 'completion does not mark the simulated payment successful');
   await assert((await apiRead('/Workers')).data.find(w => w.workerId === worker.workerId).jobId === null, 'completion releases assigned workers in the database');
 
+  await navigate('/company/business-information'); await text('Completed work'); await click('Add completed work');
+  await input('[name="title"]', 'Published courtyard project'); await input('[name="description"]', 'A finished courtyard built by our company.');
+  await input('[name="location"]', 'Cape Town'); await selectPhoto(); await click('Publish completed work');
+  await wait(`!document.querySelector('[role="dialog"]')&&document.body.textContent.includes('Published courtyard project')`, 'past project published');
+  await click('Add completed work'); await input('[name="jobId"]', jobId); await input('[name="title"]', 'Finished kitchen showcase');
+  await selectPhoto(); await click('Publish completed work');
+  await wait(`!document.querySelector('[role="dialog"]')&&document.body.textContent.includes('Finished kitchen showcase')`, 'completed platform job published');
+  let business = (await apiRead('/Companies/' + companyId + '/business-information')).data;
+  await assert(business.completedWork.length === 2 && business.completedWork.some(p => p.jobId === jobId), 'company publishes past projects and its own completed platform jobs');
+  const courtyard = `[...document.querySelectorAll('.portfolio-card')].find(el=>el.textContent.includes('Published courtyard project'))`;
+  await click('Edit post', courtyard); await input('[name="title"]', 'Published courtyard refreshed'); await click('Save changes');
+  await wait(`!document.querySelector('[role="dialog"]')&&document.body.textContent.includes('Published courtyard refreshed')`, 'completed work edited');
+  await wait(`[...document.querySelectorAll('.portfolio-cover img')].length===2&&[...document.querySelectorAll('.portfolio-cover img')].every(img=>img.complete&&img.naturalWidth>0)`, 'portfolio photos render');
+  await snapshot('business-information'); await snapshot('business-information-mobile', true);
+  await login(customerEmail, '/home'); await navigate('/companies/' + companyId); await text('Published courtyard refreshed');
+  await check(`!document.querySelector('[data-completed-work] button')`, 'business information visitors have no publishing or editing controls');
+  await snapshot('business-information-visitor'); await snapshot('business-information-visitor-mobile', true);
+  await navigate('/marketplace'); await wait(`!!document.querySelector('input.search')`, 'marketplace loaded');
+  await check(`!document.body.textContent.includes('Published courtyard refreshed')&&!document.querySelector('[data-completed-work]')`, 'completed-work posts appear only on the business information page');
+  await login(companyEmail, '/company/jobs'); await navigate('/company/business-information'); await text('Published courtyard refreshed');
+  const editedCourtyard = `[...document.querySelectorAll('.portfolio-card')].find(el=>el.textContent.includes('Published courtyard refreshed'))`;
+  await click('Remove post', editedCourtyard); await acceptConfirmation('Remove post');
+  await wait(`!document.body.textContent.includes('Published courtyard refreshed')`, 'portfolio post removed');
+  business = (await apiRead('/Companies/' + companyId + '/business-information')).data;
+  await assert(business.completedWork.length === 1 && business.completedWork[0].jobId === jobId, 'company removes only the selected post and retains its completed job showcase');
+
   await login('superadmin@example.test', '/super-admin'); await navigate('/admin'); await text('Company account review');
   await click('Simulated payments'); await wait(`document.body.textContent.includes('BROWSER-DEMO')`, 'payment records loaded');
   await input('input.search', 'BROWSER-DEMO'); await click('Review'); await text('Record a demo outcome'); await confirmAction('Mark successful');
@@ -222,6 +301,8 @@ async function runWorkflow() {
   await input('input.search', adminEmail); await click('Edit'); await check(`!document.querySelector('[name="password"]').required`, 'administrator password change is optional on edit');
   await input('[name="userName"]', 'Browser Renamed Admin'); await submit(); await acceptConfirmation(); await text('Browser Renamed Admin');
   await snapshot('admin-management'); await snapshot('admin-management-mobile', true);
+  await login(adminEmail, '/admin');
+  await login('superadmin@example.test', '/super-admin'); await navigate('/super-admin/admins'); await input('input.search', adminEmail); await text('Browser Renamed Admin');
   await confirmAction('Deactivate'); await wait(`document.querySelector('tbody tr')?.textContent.includes('Inactive')`, 'admin deactivated');
   await confirmAction('Restore'); await wait(`document.querySelector('tbody tr')?.textContent.includes('Active')`, 'admin restored');
   await assert((await apiRead('/Admin')).data.some(a => a.email === adminEmail && a.userName === 'Browser Renamed Admin' && a.status === 0), 'administrator create/edit/status changes persist');
@@ -257,5 +338,8 @@ async function runWorkflow() {
   for (const [path, name, expected] of [['/home', 'home-mobile', 'A better space.'], ['/my-jobs', 'customer-dashboard-mobile', 'Browser kitchen renovation'], ['/quotes/' + jobId, 'quote-review-mobile', 'Successful'], ['/my-jobs/' + jobId, 'customer-project-details-mobile', 'Completed'], ['/missing-page', 'not-found', 'This page isn’t on the plan.'], ['/signup', 'signup', 'Create your account']]) {
     await navigate(path); await text(expected); await snapshot(name, name.endsWith('-mobile')); if (!name.endsWith('-mobile')) await snapshot(name + '-mobile', true);
   }
+  await cdp.call('Emulation.setEmulatedMedia', { features: [{ name:'prefers-reduced-motion', value:'reduce' }] });
+  await login(customerEmail, '/home');
+  await check(`location.pathname==='/home'`, 'reduced-motion sign-in automatically reaches the dashboard');
   await assert(screenshots.filter(name => !name.endsWith('-mobile')).length >= 16, 'all sixteen redesigned pages were rendered in the real application');
 }

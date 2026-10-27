@@ -4,7 +4,7 @@ import { ErrorMessage } from '../../components/Workspace/Workspace';
 import { AddressForm, Field } from '../../components/Workspace/Forms';
 import { emptyAddress, addressPayload } from '../../utils/workspaceForms';
 import { apiRequest } from '../../utils/api';
-import { getPostLoginRoute, login } from '../../utils/auth';
+import { login } from '../../utils/auth';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
 import '../../components/Workspace/workspace.css';
 export default function SignUp() {
@@ -30,8 +30,8 @@ export default function SignUp() {
         return;
       }
       try {
-        const account = await login(values.email.trim(), values.password);
-        navigate(getPostLoginRoute(account.accountType, account.adminRole), { replace: true });
+        await login(values.email.trim(), values.password);
+        navigate('/welcome', { replace: true });
       } catch {
         setComplete(true);
         setError('Your account was created, but automatic sign-in failed. Sign in with your new account.');

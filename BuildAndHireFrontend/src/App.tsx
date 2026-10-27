@@ -31,6 +31,9 @@ import AdminPortal from './pages/AdminPortal/AdminPortal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard/SuperAdminDashboard';
 import AdminManagement from './pages/AdminManagement/AdminManagement';
 import NotFound from './pages/NotFound/NotFound';
+import Profile from './pages/Profile/Profile';
+import PostLoginWelcome from './pages/PostLoginWelcome/PostLoginWelcome';
+import { ProfileProvider } from './context/ProfileContext';
 
 // Route protection
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
@@ -60,7 +63,7 @@ import './theme/theme.css';
 
 function App() {
   return (
-    <WorkforceProvider>
+    <ProfileProvider><WorkforceProvider>
       <CompanyJobsProvider>
       <CustomerJobsProvider>
         <AdminManagementProvider>
@@ -92,6 +95,12 @@ function App() {
                 element={<NotFound />}
               />
 
+              <Route element={<ProtectedRoute allowedAccountTypes={[AccountType.Customer, AccountType.Company, AccountType.Admin]} />}>
+                <Route path="/welcome" element={<PostLoginWelcome />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/companies/:id" element={<CompanyProfile />} />
+              </Route>
+
               {/* =========================
                   CUSTOMER ROUTES
               ========================== */}
@@ -115,10 +124,6 @@ function App() {
                   element={<Marketplace />}
                 />
 
-                <Route
-                  path="/companies/:id"
-                  element={<CompanyProfile />}
-                />
 
                 <Route
                   path="/quotes/:id"
@@ -178,6 +183,7 @@ function App() {
                   path="/company/workforce"
                   element={<CompanyWorkforce />}
                 />
+                <Route path="/company/business-information" element={<CompanyProfile />} />
               </Route>
 
               {/* =========================
@@ -239,7 +245,7 @@ function App() {
         </AdminManagementProvider>
       </CustomerJobsProvider>
       </CompanyJobsProvider>
-    </WorkforceProvider>
+    </WorkforceProvider></ProfileProvider>
   );
 }
 

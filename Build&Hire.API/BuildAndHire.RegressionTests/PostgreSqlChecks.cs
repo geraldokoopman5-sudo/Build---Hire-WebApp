@@ -359,7 +359,10 @@ internal static class PostgreSqlChecks
         catch (PostgresException error) when (error.SqlState == "P0001") { blocked = true; }
         Require(blocked && await db.Workers.AnyAsync(w => w.WorkerId == unassignedWorker.WorkerId && w.JobId == null),
             "Migration rollback refuses to lose unassigned workers");
-        Require(!(await db.Database.GetPendingMigrationsAsync()).Any(), "Refused rollback leaves current schema and migration history intact");
+        // Newer empty migrations may roll back before a historical guard is reached.
+        // Reapply those before querying with the current model; protected worker data must survive.
+        await db.Database.MigrateAsync();
+        Require(!(await db.Database.GetPendingMigrationsAsync()).Any(), "Latest schema is restored after a refused historical rollback without losing protected data");
         await db.Workers.Where(w => w.WorkerId == unassignedWorker.WorkerId).ExecuteDeleteAsync();
         await migrator.MigrateAsync("20260929000000_FixApiPropertyNames");
         await db.Database.MigrateAsync();

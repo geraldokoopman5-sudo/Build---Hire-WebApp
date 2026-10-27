@@ -7,6 +7,7 @@ namespace BuildAndHire.Domain.Models
 {
     public class Admin
     {
+        public byte[]? ProfilePhoto { get; set; }
         public Guid AdminId { get; set; }
 
         public string UserName { get; set; } = string.Empty;

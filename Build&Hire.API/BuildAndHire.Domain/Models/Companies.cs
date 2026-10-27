@@ -9,6 +9,7 @@ namespace BuildAndHire.Domain.Models
 {
     public class Companies
     {
+        public byte[]? ProfilePhoto { get; set; }
         public Guid CompanyId { get; set; }
 
         public string CompanyName { get; set; } = string.Empty;
