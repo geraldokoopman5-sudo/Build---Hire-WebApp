@@ -1,49 +1,136 @@
-.page {
-  display: grid;
-  min-height: 100vh;
-  place-items: center;
-  padding: 24px;
-  background: #f7f5f2;
+﻿.page {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #08090c;
+  color: #f9f3e5;
+  color-scheme: dark;
+  font-family: var(--font-body, 'Inter', sans-serif);
 }
 
-.card {
-  width: min(100%, 480px);
-  padding: 48px;
+.scrim {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 10%, #08090c99 42%, #08090cdb 65%, transparent 100%);
+}
+
+.header, .footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px clamp(24px, 5vw, 76px);
+}
+
+.brand {
+  color: #f9f3e5;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  text-decoration: none;
+}
+
+.brand span { color: #eaa171; }
+.brandDot { padding-left: 2px; }
+
+.motionToggle {
+  padding: 9px 13px;
+  border: 1px solid #f9f3e52e;
+  border-radius: 999px;
+  background: #08090cbf;
+  color: #e4d7c9;
+  cursor: pointer;
+  font: 500 11px/1.5 var(--font-body, sans-serif);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 24px 90px;
   text-align: center;
-  background: #ffffff;
-  border: 1px solid #e5e0da;
-  border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(32, 24, 16, 0.1);
+}
+
+.eyebrow {
+  margin: 0 0 20px;
+  color: #eaa171;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  line-height: 1.6;
 }
 
 .code {
-  margin-bottom: 8px;
-  color: #8a6040;
-  font-size: 14px;
+  color: #f9f3e5;
+  font-size: clamp(116px, 19vw, 244px);
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: -0.075em;
+  line-height: 0.95;
+  padding-right: 0.075em;
+  text-shadow: 0 10px 75px #ff651222;
 }
 
 .title {
-  margin: 0 0 12px;
+  max-width: 640px;
+  margin: 24px 0 16px;
+  color: #f9f3e5;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(28px, 3.4vw, 44px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
 }
 
-.description {
-  margin-bottom: 28px;
-  color: #5f5a55;
-}
+.title:focus { outline: none; }
+.description { margin: 0; color: #d6c9bc; font-size: 13px; line-height: 1.9; }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 29px; }
 
-.link {
-  display: inline-block;
-  padding: 12px 18px;
-  color: #ffffff;
-  font-weight: 700;
+.primary, .secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  min-height: 46px;
+  padding: 12px 23px;
+  border: 1px solid #f9f3e538;
+  border-radius: 7px;
+  color: #f9f3e5;
+  background: #08090cd9;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
   text-decoration: none;
-  background: #513522;
-  border-radius: 8px;
 }
 
-.link:hover,
-.link:focus-visible {
-  background: #382216;
+.primary { border-color: #f1b487; background: #f1b487; color: #27150e; }
+.primary:hover { background: #ffcca6; border-color: #ffcca6; }
+.secondary:hover, .motionToggle:hover { border-color: #eaa171; color: #ffffff; }
+.signIn { margin-top: 20px; color: #d6c9bc; font-size: 11px; text-underline-offset: 4px; }
+.page a:focus-visible, .motionToggle:focus-visible { outline: 2px solid #ffcca6; outline-offset: 5px; }
+.footer { background: linear-gradient(transparent, #08090ce6); color: #f9f3e5; font-size: 10px; line-height: 1.5; text-shadow: 0 1px 6px #08090c; }
+
+@media (max-width: 480px) {
+  .header { padding: 22px 20px; gap: 12px; }
+  .brand { font-size: 23px; }
+  .motionToggle { padding: 8px 10px; }
+  .content { padding: 32px 22px 110px; }
+  .eyebrow { font-size: 9px; }
+  .title { max-width: 310px; }
+  .footer { padding: 20px; gap: 12px; font-size: 9px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motionToggle { display: none; }
 }

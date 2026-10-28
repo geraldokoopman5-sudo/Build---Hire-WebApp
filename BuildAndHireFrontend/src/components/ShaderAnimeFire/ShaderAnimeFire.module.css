@@ -1,0 +1,11 @@
+.fire {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  mask-image: linear-gradient(#000, #000);
+}
+
+.canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; }
