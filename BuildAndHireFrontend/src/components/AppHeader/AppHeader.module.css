@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  background: var(--color-neutral);
+  background: var(--color-surface-muted);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -16,7 +16,7 @@
 .menuButton {
   background: none;
   border: none;
-  color: var(--color-secondary);
+  color: var(--color-text);
   cursor: pointer;
   padding: 0.25rem;
 }
@@ -25,7 +25,7 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.25rem;
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
   text-decoration: none;
 }
 
@@ -38,7 +38,7 @@
 .iconButton {
   background: none;
   border: none;
-  color: var(--color-secondary);
+  color: var(--color-text);
   cursor: pointer;
   padding: 0.25rem;
 }
@@ -47,8 +47,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--color-tertiary);
-  color: var(--color-secondary);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
   display: flex;
   align-items: center;
   justify-content: center;

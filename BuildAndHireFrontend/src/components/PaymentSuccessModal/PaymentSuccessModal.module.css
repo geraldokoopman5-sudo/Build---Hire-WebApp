@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(84, 58, 50, 0.55);
+  background: var(--color-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,11 +12,11 @@
 .modal {
   width: 100%;
   max-width: 380px;
-  background: var(--color-white);
+  background: var(--color-surface);
   border-radius: 20px;
   padding: 2.5rem 2rem;
   text-align: center;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-dialog);
 }
 
 .checkIcon {
@@ -24,7 +24,7 @@
   height: 56px;
   border-radius: 50%;
   background: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-on-accent);
   font-size: 1.6rem;
   display: flex;
   align-items: center;
@@ -35,7 +35,7 @@
 .title {
   font-family: var(--font-display);
   font-size: 1.4rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   margin: 0 0 0.5rem;
 }
 
@@ -43,7 +43,7 @@
   font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-accent-text);
   margin: 0 0 0.5rem;
 }
 
@@ -64,13 +64,14 @@
   width: 100%;
   padding: 0.85rem;
   border: none;
-  border-radius: 8px;
-  background: var(--color-secondary);
-  color: var(--color-white);
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
+  color: var(--color-on-accent);
   font-weight: 700;
   cursor: pointer;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .doneButton:hover {
-  background: #3f2b25;
+  background: var(--color-primary-hover);  color: var(--color-on-accent);  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }

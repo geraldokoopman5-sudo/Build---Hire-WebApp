@@ -1,8 +1,8 @@
 .card {
-  background: var(--color-white);
-  border-radius: 14px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
   padding: 1.5rem;
-  box-shadow: 0 12px 32px rgba(84, 58, 50, 0.06);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
 }
@@ -24,13 +24,13 @@
 }
 
 .status-working {
-  background: rgba(195, 111, 67, 0.15);
-  color: var(--color-primary-dark);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
 }
 
 .status-available {
-  background: rgba(216, 163, 115, 0.25);
-  color: var(--color-secondary);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
 }
 
 .status-unavailable {
@@ -50,7 +50,7 @@
 .title {
   font-family: var(--font-display);
   font-size: 1.3rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   margin: 0 0 0.5rem;
 }
 
@@ -63,13 +63,13 @@
 
 .meta {
   font-size: 0.8rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   margin: 0 0 1.1rem;
 }
 
 .paymentBox {
-  background: var(--color-neutral);
-  border-radius: 10px;
+  background: var(--color-background);
+  border-radius: var(--radius-card);
   padding: 1rem;
   margin-bottom: 1rem;
 }
@@ -100,17 +100,17 @@
 
 .payment-successful {
   background: var(--color-primary-dark);
-  color: var(--color-white);
+  color: var(--color-on-accent);
 }
 
 .payment-pending {
-  background: #f4c9b8;
-  color: var(--color-primary-dark);
+  background: var(--color-danger-soft);
+  color: var(--color-accent-text);
 }
 
 .payment-on-hold {
-  background: #f4c9b8;
-  color: var(--color-primary-dark);
+  background: var(--color-danger-soft);
+  color: var(--color-accent-text);
 }
 
 .paymentBottomRow {
@@ -122,7 +122,7 @@
 
 .amountPaid {
   font-weight: 700;
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
 }
 
 .paymentNote {
@@ -139,18 +139,19 @@
   flex: 1;
   padding: 0.75rem;
   border: none;
-  border-radius: 8px;
-  background: var(--color-secondary);
-  color: var(--color-white);
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
+  color: var(--color-on-accent);
   font-weight: 700;
   font-size: 0.8rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   cursor: pointer;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .manageButton:hover:not(.manageButtonDisabled) {
-  background: #3f2b25;
+  background: var(--color-primary-hover);  color: var(--color-on-accent);
 }
 
 .manageButtonDisabled {
@@ -162,10 +163,11 @@
 .viewButton {
   width: 48px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-white);
-  color: var(--color-primary-dark);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-accent-text);
   cursor: pointer;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .meta {
@@ -173,15 +175,15 @@
   justify-content: space-between;
   gap: 1rem;
   margin: 0 0 1.1rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-size: 0.8rem;
 }
 
 .paymentBox {
   margin-bottom: 1rem;
   padding: 1rem;
-  border-radius: 10px;
-  background: var(--color-neutral);
+  border-radius: var(--radius-card);
+  background: var(--color-background);
 }
 
 .paymentTopRow {
@@ -211,13 +213,13 @@
 
 .payment-successful {
   background: var(--color-primary-dark);
-  color: var(--color-white);
+  color: var(--color-on-accent);
 }
 
 .payment-pending,
 .payment-on-hold {
-  background: #f4c9b8;
-  color: var(--color-primary-dark);
+  background: var(--color-danger-soft);
+  color: var(--color-accent-text);
 }
 
 .paymentBottomRow {
@@ -229,7 +231,7 @@
 }
 
 .amountPaid {
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
   font-weight: 700;
 }
 
@@ -243,26 +245,27 @@
   width: 100%;
   padding: 0.8rem 1rem;
   border: none;
-  border-radius: 8px;
-  background: var(--color-secondary);
-  color: var(--color-white);
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
+  color: var(--color-on-accent);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   cursor: pointer;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .manageButton:hover {
-  background: #3f2b25;
+  background: var(--color-primary-hover);  color: var(--color-on-accent);  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .manageButtonClosed {
-  background: var(--color-primary-dark);
+  background: var(--color-primary-dark);  color: var(--color-on-accent);  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .manageButtonClosed:hover {
-  background: var(--color-secondary);
+  background: var(--color-primary);  color: var(--color-on-accent);  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 @media (max-width: 600px) {

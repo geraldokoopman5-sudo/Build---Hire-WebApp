@@ -19,7 +19,7 @@
 
 .title {
   margin: 0 0 0.5rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-family: var(--font-display);
   font-size: 2.35rem;
 }
@@ -41,8 +41,9 @@
   min-width: 120px;
   padding: 0.9rem 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: var(--color-white);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
 
 .summaryLabel {
@@ -56,7 +57,7 @@
 }
 
 .summaryValue {
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-family: var(--font-display);
   font-size: 1.5rem;
 }
@@ -67,7 +68,7 @@
 
 .sectionTitle {
   margin: 0;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-family: var(--font-display);
   font-size: 1.45rem;
 }
@@ -82,14 +83,15 @@
 .emptyState {
   padding: 3rem 1.5rem;
   border: 1px dashed var(--color-border);
-  border-radius: 12px;
-  background: var(--color-white);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
   text-align: center;
+  box-shadow: var(--shadow-card);
 }
 
 .emptyStateTitle {
   margin: 0 0 0.5rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-family: var(--font-display);
   font-size: 1.4rem;
 }

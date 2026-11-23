@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: var(--color-neutral);
+  background: var(--color-background);
   padding: 2.5rem 3rem 4rem;
 }
 
@@ -16,7 +16,7 @@
 .title {
   font-family: var(--font-display);
   font-size: 2.75rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   margin: 0 0 0.6rem;
 }
 
@@ -29,10 +29,11 @@
 
 .tabToggle {
   display: flex;
-  background: var(--color-white);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 999px;
   padding: 0.3rem;
+  box-shadow: var(--shadow-card);
 }
 
 .tabButton {
@@ -40,16 +41,18 @@
   border: none;
   border-radius: 999px;
   background: none;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
   white-space: nowrap;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .tabButtonActive {
   background: var(--color-primary-dark);
-  color: var(--color-white);
+  color: var(--color-on-accent);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .statsRow {
@@ -60,10 +63,11 @@
 }
 
 .tableCard {
-  background: var(--color-white);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .tableHeader {
@@ -78,7 +82,7 @@
 .tableTitle {
   font-family: var(--font-display);
   font-size: 1.5rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   margin: 0;
 }
 
@@ -101,9 +105,9 @@
   padding: 0.65rem 1rem 0.65rem 2.5rem;
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: var(--color-neutral);
+  background: var(--color-background);
   font-size: 0.85rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   outline: none;
 }
 
@@ -117,7 +121,7 @@
 }
 
 .table thead tr {
-  background: var(--color-neutral);
+  background: var(--color-background);
 }
 
 .table th {
@@ -138,7 +142,7 @@
   padding: 1rem 1.75rem;
   border-top: 1px solid var(--color-border);
   font-size: 0.9rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   vertical-align: middle;
 }
 
@@ -151,9 +155,9 @@
 .avatar {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
-  background: rgba(195, 111, 67, 0.15);
-  color: var(--color-primary-dark);
+  border-radius: var(--radius-card);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,7 +169,7 @@
 .entityName {
   display: block;
   font-weight: 700;
-  color: var(--color-secondary);
+  color: var(--color-text);
 }
 
 .entityLocation {
@@ -185,7 +189,7 @@
 .suspendButton,
 .deleteButton {
   padding: 0.5rem 0.9rem;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
@@ -195,33 +199,38 @@
 
 .approveButton {
   background: var(--color-primary-dark);
-  color: var(--color-white);
+  color: var(--color-on-accent);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .approveButton:hover {
-  background: #8a4a2e;
+  background: var(--color-primary-hover);  color: var(--color-on-accent);  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .rejectButton,
 .deleteButton {
   background: none;
-  border: 1px solid #c0392b;
-  color: #c0392b;
+  border: 1px solid var(--color-danger-border);
+  color: var(--color-danger);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .rejectButton:hover,
 .deleteButton:hover {
-  background: rgba(192, 57, 43, 0.08);
+  background: var(--color-danger-soft);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .suspendButton {
   background: none;
   border: 1px solid var(--color-border);
-  color: var(--color-secondary);
+  color: var(--color-text);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .suspendButton:hover {
-  background: var(--color-neutral);
+  background: var(--color-background);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .noActions {

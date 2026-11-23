@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SplitFlapText from '../../components/reactbits/SplitFlapText/SplitFlapText';
 import { getPostLoginRoute, getStoredAccountType, getStoredAdminRole } from '../../utils/auth';
 import styles from './PostLoginWelcome.module.css';
-
-const BRAND_WORDS = ['Build and Hire'];
 
 export default function PostLoginWelcome() {
   const navigate = useNavigate();
@@ -25,31 +22,11 @@ export default function PostLoginWelcome() {
       <span className={styles.eyebrow}>WELCOME TO YOUR WORKSPACE</span>
       <h1 id="welcome-title" className={styles.srOnly}>Welcome to Build and Hire</h1>
       <div className={styles.board}>
-        <SplitFlapText
-          words={BRAND_WORDS}
-          flipDuration={0.12}
-          stagger={0.06}
-          cycleDelay={2400}
-          charset="alphanumeric"
-          flipsPerChar={8}
-          order="left"
-          align="left"
-          tileStyle="board"
-          tileColor="var(--color-secondary, #543A32)"
-          textColor="var(--color-neutral, #F9F3E5)"
-          glare={0}
-          depth={0.5}
-          tileRadius={8}
-          gap="clamp(2px, 0.6vw, 6px)"
-          fontSize="clamp(18px, 6vw, 52px)"
-          loop
-          padTo={14}
-          intro
-          aria-hidden="true"
-        />
+        <span aria-hidden="true">Build &amp; Hire</span>
       </div>
       <p className={styles.message}>Your next project starts here.</p>
       <div className={styles.divider} aria-hidden="true" />
-      <p className={styles.status}>Opening your dashboard…</p>    </section>
+      <p className={styles.status}>Opening your dashboard…</p>
+    </section>
   </main>;
 }

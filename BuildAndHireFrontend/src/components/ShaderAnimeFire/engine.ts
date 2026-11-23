@@ -1,3 +1,5 @@
+import { palette } from '../../theme/colors';
+
 // Adapted from 23rd.dev Shader Anime Fire by radiumcoders. See README.md.
 
 
@@ -37,12 +39,12 @@ export type ShaderAnimeFireInstance = {
   destroy: () => void
 }
 
-/** Brick, flame orange and marigold, saturated enough to hold on paper. */
-export const LIGHT_COLORS = ["#D8341A", "#F9731E", "#FFBA3A"]
-/** Deep ember, flame and gold; the tonemap carries the core to white-hot. */
-export const DARK_COLORS = ["#B4200A", "#FF6512", "#FFC04A"]
-const LIGHT_BASE = "#FCFBF9"
-const DARK_BASE = "#08090C"
+/** Brand colours keep the animation and its reduced-motion fallback in sync. */
+export const LIGHT_COLORS = [palette.cyprusDeep, palette.cyprus, palette.sand]
+/** Cyprus flames with sand at the core. */
+export const DARK_COLORS = [palette.cyprusDeep, palette.cyprus, palette.sand]
+const LIGHT_BASE = "#EFE7D3"
+const DARK_BASE = palette.cyprusDeep
 
 export const DEFAULT_SPEED = 0.6
 export const DEFAULT_INTENSITY = 1

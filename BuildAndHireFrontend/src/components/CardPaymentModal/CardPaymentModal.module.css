@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(84, 58, 50, 0.55);
+  background: var(--color-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,10 +12,10 @@
 .modal {
   width: 100%;
   max-width: 420px;
-  background: var(--color-white);
+  background: var(--color-surface);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-dialog);
   max-height: 90vh;
   overflow-y: auto;
 }
@@ -23,14 +23,14 @@
 .title {
   font-family: var(--font-display);
   font-size: 1.6rem;
-  color: var(--color-primary);
+  color: var(--color-accent-text);
   text-align: center;
   margin: 0 0 0.4rem;
 }
 
 .subtitle {
   text-align: center;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-size: 0.9rem;
   margin: 0 0 0.35rem;
 }
@@ -45,9 +45,9 @@
 
 .cardVisual {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  border-radius: 14px;
+  border-radius: var(--radius-card);
   padding: 1.5rem;
-  color: var(--color-white);
+  color: var(--color-on-accent);
   margin-bottom: 1.75rem;
 }
 
@@ -107,7 +107,7 @@
   display: block;
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--color-secondary);
+  color: var(--color-text);
   margin-bottom: 0.4rem;
 }
 
@@ -116,11 +116,12 @@
   box-sizing: border-box;
   padding: 0.75rem 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-neutral);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
   font-size: 0.95rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   outline: none;
+  transition: border-color var(--motion-ui), box-shadow var(--motion-ui);
 }
 
 .input:focus {
@@ -133,11 +134,11 @@
 }
 
 .inputError {
-  border-color: #C0392B;
+  border-color: var(--color-danger-border);
 }
 
 .errorText {
-  color: #C0392B;
+  color: var(--color-danger);
   font-size: 0.75rem;
   margin-top: 0.35rem;
 }
@@ -148,15 +149,16 @@
   border: none;
   border-radius: 999px;
   background: var(--color-primary-dark);
-  color: var(--color-white);
+  color: var(--color-on-accent);
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
   margin-top: 0.5rem;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .confirmButton:hover:not(:disabled) {
-  background: #8a4a2e;
+  background: var(--color-primary-hover);  color: var(--color-on-accent);
 }
 
 .confirmButton:disabled {
@@ -169,12 +171,13 @@
   width: 100%;
   background: none;
   border: none;
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
   font-weight: 700;
   font-size: 0.9rem;
   text-align: center;
   padding: 1rem 0 0;
   cursor: pointer;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .backButton:disabled {

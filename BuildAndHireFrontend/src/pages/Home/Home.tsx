@@ -1,8 +1,53 @@
 import { Link } from 'react-router-dom';
-import Workspace, { Panel } from '../../components/Workspace/Workspace';
+import Workspace from '../../components/Workspace/Workspace';
+
+const steps = [
+  ['Choose a company', 'Browse approved company accounts and choose who receives your request.'],
+  ['Agree on the quote', 'Review the scope and quote before giving the go-ahead.'],
+  ['Follow the work', 'Keep project progress and updates together in your workspace.'],
+  ['Try the payment demo', 'Follow a simulated EFT through review. No money moves.'],
+];
+
 export default function Home() {
-  const steps = [['Choose a company', 'Browse approved company accounts and choose who receives your request.'], ['Agree on the quote', 'The company accepts your request and sends a quote for you to review.'], ['Follow the work', 'After you accept the quote, the company manages the job and its workers.'], ['Try the payment demo', 'Record a simulated EFT and follow its review status. No money moves.']];
-  return <Workspace className="customer-overview" title="Home"><div className="hero-grid"><div><span className="eyebrow">YOUR NEXT CHAPTER</span><h1 className="hero-title">A better space.<br /><em>A clearer process.</em></h1><p className="hero-copy">Find an approved company, tell them what you have in mind, and keep your project moving from the first quote to the final update.</p><div className="buttonrow"><Link className="primary" to="/marketplace">Explore companies →</Link><Link className="secondary" to="/my-jobs/new">Start a project</Link></div><p className="hint">Already have a project? <Link className="textbutton" to="/my-jobs">Visit your dashboard →</Link></p></div>
-    <div className="blueprint"><svg viewBox="0 0 480 300" fill="none" aria-label="Architectural floor plan illustration" role="img"><defs><pattern id="plan-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" stroke="#ceb899" strokeWidth=".5" /></pattern></defs><rect width="480" height="300" fill="url(#plan-grid)" /><g stroke="#947453" strokeWidth="2"><path d="M70 50H410V250H70Z M240 50V250 M70 140H240 M240 165H410 M150 140V250" /><path d="M270 50H375V90H270Z M290 190H355V235H290Z M90 70H145V115H90Z M240 100H280A40 40 0 0 1 240 140 M150 170H185A35 35 0 0 1 150 205" strokeWidth="1" /></g><g fill="#997953" fontFamily="Segoe UI,Arial" fontSize="10"><text x="99" y="130">KITCHEN</text><text x="295" y="140">LIVING</text><text x="172" y="230">ENTRY</text><text x="298" y="185">BEDROOM</text></g></svg><span className="blueprint-label">Your next project, thoughtfully planned.</span></div></div>
-    <div className="sectionhead"><h2>From an idea to a finished project</h2><small>One shared workflow</small></div><div className="flowcards">{steps.map(([title, text], i) => <Panel key={title} title={title}><span className="number">0{i + 1}</span><p>{text}</p></Panel>)}</div><div className="sectionhead"><h2>Ready when you are</h2></div><div className="panels"><Panel title="Find the right starting point"><p>Know who you want to work with? Search the marketplace by company name.</p><div className="divider" /><Link className="secondary" to="/marketplace">Browse the marketplace →</Link></Panel><Panel title="Keep every update together"><p>Requests, quotes, project progress and simulated payments live in your workspace.</p><div className="divider" /><Link className="secondary" to="/my-jobs">Open my projects →</Link></Panel></div></Workspace>;
+  return (
+    <Workspace className="customer-overview" title="Home">
+      <section className="home-bento" aria-label="Plan your next project">
+        <div className="bento-tile bento-hero">
+          <span className="eyebrow">YOUR NEXT CHAPTER</span>
+          <h1>A better space.<br />A clearer process.</h1>
+          <p>Find an approved company, share your idea, and keep your project moving from the first quote to the final update.</p>
+          <div className="buttonrow">
+            <Link className="primary" to="/marketplace">Explore companies</Link>
+            <Link className="secondary" to="/my-jobs/new">Start a project</Link>
+          </div>
+        </div>
+
+        <div className="bento-tile bento-plan">
+          <span className="eyebrow">ROOM FOR YOUR IDEAS</span>
+          <svg viewBox="0 0 480 280" fill="none" aria-label="Architectural floor plan" role="img">
+            <g stroke="currentColor" strokeWidth="3" strokeLinejoin="round">
+              <path d="M70 40H410V240H70Z M240 40V240 M70 130H240 M240 155H410 M150 130V240" />
+              <path d="M270 40H375V80H270Z M290 180H355V225H290Z M90 60H145V105H90Z M240 90H280A40 40 0 0 1 240 130 M150 160H185A35 35 0 0 1 150 195" strokeWidth="1.5" />
+            </g>
+          </svg>
+          <p>Your next project, thoughtfully planned.</p>
+        </div>
+
+        <section className="bento-tile bento-projects" aria-labelledby="home-projects-title">
+          <span className="eyebrow">YOUR WORKSPACE</span>
+          <h2 id="home-projects-title">Every update.<br />One place.</h2>
+          <p>Requests, quotes, and progress at a glance.</p>
+          <Link className="secondary" to="/my-jobs">Open my projects</Link>
+        </section>
+
+        {steps.map(([title, description], index) => (
+          <section className="bento-tile bento-step" key={title}>
+            <span className="step-index" aria-label={'Step ' + (index + 1)}>{String(index + 1).padStart(2, '0')}</span>
+            <h2>{title}</h2>
+            <p>{description}</p>
+          </section>
+        ))}
+      </section>
+    </Workspace>
+  );
 }

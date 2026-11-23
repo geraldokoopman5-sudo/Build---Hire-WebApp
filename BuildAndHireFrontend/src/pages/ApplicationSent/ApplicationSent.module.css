@@ -3,17 +3,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-neutral);
+  background: var(--color-background);
   padding: 2rem 1.5rem;
 }
 
 .card {
   width: 100%;
   max-width: 460px;
-  background: var(--color-white);
+  background: var(--color-surface);
   border-radius: 20px;
   padding: 2.5rem;
-  box-shadow: 0 20px 60px rgba(84, 58, 50, 0.12);
+  box-shadow: var(--shadow-card);
   text-align: center;
 }
 
@@ -25,13 +25,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 1.5rem;  color: var(--color-on-accent);
 }
 
 .title {
   font-family: var(--font-display);
   font-size: 1.9rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   margin: 0 0 0.75rem;
 }
 
@@ -46,21 +46,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--color-neutral);
+  background: var(--color-background);
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   padding: 1rem 1.25rem;
   margin-bottom: 2rem;
 }
 
 .referenceLabel {
   font-size: 0.9rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
 }
 
 .referenceValue {
   font-weight: 700;
-  color: var(--color-secondary);
+  color: var(--color-text);
 }
 
 .nextStepsLabel {
@@ -106,7 +106,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--color-neutral);
+  background: var(--color-background);
   border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -118,7 +118,7 @@
 
 .stepIconActive {
   background: var(--color-primary-dark);
-  border-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);  color: var(--color-on-accent);
 }
 
 .stepText {
@@ -130,13 +130,13 @@
 
 .stepTitle {
   font-weight: 700;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-size: 0.95rem;
 }
 
 .stepTitlePending {
   font-weight: 700;
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
   font-size: 0.95rem;
 }
 
@@ -150,15 +150,16 @@
   width: 100%;
   box-sizing: border-box;
   padding: 0.9rem;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--color-primary-dark);
-  color: var(--color-white);
+  color: var(--color-on-accent);
   font-weight: 700;
   font-size: 1rem;
   text-decoration: none;
   text-align: center;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .viewJobsButton:hover {
-  background: #8a4a2e;
+  background: var(--color-primary-hover);  color: var(--color-on-accent);  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }

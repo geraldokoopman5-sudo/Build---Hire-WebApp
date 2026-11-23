@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 2.5rem;
-  background: var(--color-neutral);
+  background: var(--color-surface-muted);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -11,7 +11,7 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.3rem;
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
   text-decoration: none;
 }
 
@@ -23,23 +23,23 @@
 .navLink {
   font-size: 0.95rem;
   font-weight: 500;
-  color: var(--color-secondary);
+  color: var(--color-text);
   text-decoration: none;
 }
 
 .navLink:hover {
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
 }
 
 .navLinkActive {
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
   font-weight: 700;
 }
 
 .menuButton {
   background: none;
   border: none;
-  color: var(--color-primary);
+  color: var(--color-accent-text);
   cursor: pointer;
   padding: 0.25rem;
 }

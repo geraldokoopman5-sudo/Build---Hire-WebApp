@@ -2,18 +2,19 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 420px;
-  background: var(--color-white);
-  border-radius: 16px;
-  padding: 2.75rem 2.5rem;
-  box-shadow: 0 20px 60px rgba(84, 58, 50, 0.12);
+  max-width: none;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: 36px;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
 }
 
 .title {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.9rem;
-  color: var(--color-primary);
+  color: var(--color-accent-text);
   text-align: center;
   margin: 0 0 0.5rem;
 }
@@ -35,7 +36,7 @@
   display: block;
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--color-secondary);
+  color: var(--color-text);
   margin-bottom: 0.4rem;
 }
 
@@ -44,12 +45,12 @@
   box-sizing: border-box;
   padding: 0.75rem 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-neutral);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
   font-size: 0.95rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color var(--motion-ui), box-shadow var(--motion-ui);
 }
 
 .input:focus {
@@ -57,11 +58,11 @@
 }
 
 .inputError {
-  border-color: #C0392B;
+  border-color: var(--color-danger-border);
 }
 
 .errorText {
-  color: #C0392B;
+  color: var(--color-danger);
   font-size: 0.75rem;
   margin-top: 0.35rem;
 }
@@ -78,11 +79,11 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
 }
 
 .link {
-  color: var(--color-primary);
+  color: var(--color-accent-text);
   font-size: 0.85rem;
   font-weight: 500;
   text-decoration: none;
@@ -96,17 +97,17 @@
   width: 100%;
   padding: 0.85rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   background: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-on-accent);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .submitButton:hover {
-  background: var(--color-primary-dark);
+  background: var(--color-primary-hover);  color: var(--color-on-accent);  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .submitButton:disabled {
@@ -136,22 +137,23 @@
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-white);
-  color: var(--color-secondary);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text);
   font-size: 0.9rem;
   cursor: pointer;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .footerText {
   text-align: center;
   margin-top: 1.75rem;
   font-size: 0.85rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
 }
 
 .footerLink {
-  color: var(--color-primary);
+  color: var(--color-accent-text);
   font-weight: 600;
   text-decoration: none;
   margin-left: 0.25rem;

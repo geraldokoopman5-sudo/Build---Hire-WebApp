@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.1rem 2.5rem;
-  background: var(--color-neutral);
+  background: var(--color-surface-muted);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -14,12 +14,12 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.2rem;
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
   text-decoration: none;
 }
 
 .logoMark {
-  color: var(--color-primary);
+  color: var(--color-accent-text);
 }
 
 .nav {
@@ -29,12 +29,12 @@
 
 .navLink {
   font-size: 0.9rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   text-decoration: none;
 }
 
 .navLink:hover {
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
 }
 
 .actions {
@@ -46,22 +46,23 @@
 .logInLink {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-secondary);
+  color: var(--color-text);
   text-decoration: none;
 }
 
 .postButton {
   padding: 0.6rem 1.25rem;
   background: var(--color-primary-dark);
-  color: var(--color-white);
-  border-radius: 8px;
+  color: var(--color-on-accent);
+  border-radius: var(--radius-control);
   font-size: 0.85rem;
   font-weight: 700;
   text-decoration: none;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .postButton:hover {
-  background: #8a4a2e;
+  background: var(--color-primary-hover);  color: var(--color-on-accent);  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 @media (max-width: 900px) {

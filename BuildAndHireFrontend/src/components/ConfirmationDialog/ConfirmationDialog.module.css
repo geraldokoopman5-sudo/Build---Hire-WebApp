@@ -5,28 +5,28 @@
   margin: auto;
   padding: 28px;
   overflow: auto;
-  border: 1px solid #dec6a7;
-  border-radius: 12px;
-  background: #fffdfa;
-  color: #362c28;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text);
   color-scheme: light;
-  box-shadow: 0 20px 70px #35231340;
+  box-shadow: var(--shadow-dialog);
   font: 14px/1.55 'Segoe UI', Arial, sans-serif;
 }
 
 .dialog::backdrop {
-  background: #33251c80;
+  background: var(--color-overlay);
 }
 
 .dialog h2 {
   margin: 0 0 12px;
   color: inherit;
-  font: 26px/1.25 Georgia, serif;
+  font: 26px/1.25 var(--font-display);
 }
 
 .dialog p {
   margin: 0;
-  color: #756352;
+  color: var(--color-text);
   overflow-wrap: anywhere;
 }
 
@@ -41,32 +41,35 @@
   min-width: 80px;
   padding: 11px 20px;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   cursor: pointer;
   font: inherit;
   font-weight: 600;
 }
 
 .actions .cancel {
-  border-color: #d9c9b5;
-  background: #fffdfa;
-  color: #7e5d3f;
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .actions .cancel:hover {
-  background: #eee4d7;
+  background: var(--color-surface-muted);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .actions .confirm {
-  background: #a85a34;
-  color: #fff;
+  background: var(--color-primary);
+  color:var(--color-on-accent);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .actions .confirm:hover {
-  background: #904a28;
+  background: var(--color-primary-hover);  color: var(--color-on-accent);  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .actions button:focus-visible {
-  outline: 3px solid #c36f43;
+  outline: 3px solid var(--color-accent-text);
   outline-offset: 3px;
 }

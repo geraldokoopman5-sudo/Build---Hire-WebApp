@@ -1,12 +1,24 @@
+// Keep the brand and semantic values in sync with theme.css.
+export const palette = {
+  cyprus: '#004643',
+  cyprusDeep: '#003532',
+  sand: '#C2B280',
+} as const;
+
 export const colors = {
-  primary: '#C36F43',
-  primaryDark: '#A85A34',
-  secondary: '#543A32',
-  tertiary: '#D8A373',
-  neutral: '#F9F3E5',
+  ...palette,
+  primary: palette.cyprus,
+  primaryDark: palette.cyprusDeep,
+  primaryHover: '#084B46',
+  secondary: palette.cyprus,
+  tertiary: palette.sand,
+  neutral: '#F0EDDF',
+  surface: '#FCFAF3',
+  text: '#123E3A',
+  textMuted: '#53645B',
+  accentText: palette.cyprus,
+  border: '#D8D2BC',
   white: '#FFFFFF',
-  textMuted: '#8A7B6E',
-  border: '#E8DCC8',
 } as const;
 
 export type ColorToken = keyof typeof colors;

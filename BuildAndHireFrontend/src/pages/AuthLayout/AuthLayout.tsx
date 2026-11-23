@@ -1,36 +1,26 @@
 import type { ReactNode } from 'react';
 import styles from './AuthLayout.module.css';
 
-interface AuthLayoutProps {
-  children: ReactNode;
-}
-
-export default function AuthLayout({ children }: AuthLayoutProps) {
+export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <h1 className={styles.logo}>Build &amp; Hire</h1>
-        <button type="button" className={styles.cartButton} aria-label="Cart">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M6 6h15l-1.5 9h-12z" />
-            <path d="M6 6L4 3H2" />
-            <circle cx="9" cy="20" r="1" />
-            <circle cx="18" cy="20" r="1" />
-          </svg>
-        </button>
-      </header>
-
+      <header className={styles.header}><span className={styles.logo}>Build &amp; Hire</span></header>
       <main className={styles.main}>
-        <div className={`${styles.decorPanel} ${styles['decorPanel--left']}`} aria-hidden="true" />
-        <div className={`${styles.decorPanel} ${styles['decorPanel--right']}`} aria-hidden="true" />
+        <aside className={styles.introGroup} aria-label="Your project workspace">
+          <section className={styles.intro}>
+            <span className={styles.eyebrow}>MAKE ROOM FOR WHAT IS NEXT</span>
+            <h1>Good projects.<br />Clear beginnings.</h1>
+            <p>Find a company and bring every request, quote, and project update into one workspace.</p>
+          </section>
+          <section className={styles.note}>
+            <h2>Find your team</h2><p>Browse approved company accounts for your next project.</p>
+          </section>
+          <section className={styles.note}>
+            <h2>Keep it together</h2><p>Follow your project from its first quote to its final update.</p>
+          </section>
+        </aside>
         {children}
       </main>
-
-      {/* <footer className={styles.siteFooter}>
-        <span></span>
-        <nav className={styles.footerNav}>
-        </nav>
-      </footer> */}
     </div>
   );
 }

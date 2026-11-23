@@ -6,17 +6,17 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--color-overlay);
 }
 
 .modal {
   width: min(100%, 540px);
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
-  border-radius: 14px;
-  background: var(--color-white);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
   padding: 1.5rem;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-dialog);
 }
 
 .header {
@@ -39,7 +39,7 @@
 
 .title {
   margin: 0;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-family: var(--font-display);
   font-size: 1.45rem;
 }
@@ -57,7 +57,7 @@
   flex-direction: column;
   gap: 0.45rem;
   margin-bottom: 1rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -68,11 +68,12 @@
   box-sizing: border-box;
   padding: 0.8rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-white);
-  color: var(--color-secondary);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text);
   font: inherit;
   outline: none;
+  transition: border-color var(--motion-ui), box-shadow var(--motion-ui);
 }
 
 .input:focus,
@@ -88,9 +89,9 @@
 .error {
   margin: 0 0 1rem;
   padding: 0.75rem;
-  border-radius: 8px;
-  background: rgba(138, 63, 50, 0.1);
-  color: #8a3f32;
+  border-radius: var(--radius-card);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
   font-size: 0.8rem;
 }
 
@@ -104,7 +105,7 @@
 .cancelButton,
 .submitButton {
   padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   font-size: 0.76rem;
   font-weight: 800;
   cursor: pointer;
@@ -112,12 +113,14 @@
 
 .cancelButton {
   border: 1px solid var(--color-border);
-  background: var(--color-white);
-  color: var(--color-secondary);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .submitButton {
   border: none;
-  background: var(--color-secondary);
-  color: var(--color-white);
+  background: var(--color-primary);
+  color: var(--color-on-accent);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }

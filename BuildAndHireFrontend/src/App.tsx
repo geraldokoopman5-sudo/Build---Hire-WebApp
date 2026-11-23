@@ -60,6 +60,7 @@ import {
 
 // Global styles
 import './theme/theme.css';
+import './theme/bento.css';
 
 function App() {
   return (

@@ -1,16 +1,16 @@
 .card {
   display: flex;
   flex-direction: column;
-  background: var(--color-white);
-  border-radius: 16px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
   overflow: hidden;
-  box-shadow: 0 12px 32px rgba(84, 58, 50, 0.08);
+  box-shadow: var(--shadow-card);
 }
 
 .imageWrapper {
   width: 100%;
   aspect-ratio: 16 / 10;
-  background: var(--color-tertiary);
+  background: var(--color-surface-muted);
 }
 
 .image {
@@ -30,8 +30,8 @@
 .category {
   font-size: 0.7rem;
   font-weight: 600;
-  color: var(--color-secondary);
-  background: var(--color-neutral);
+  color: var(--color-text);
+  background: var(--color-background);
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
 }
@@ -39,13 +39,13 @@
 .rating {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
 }
 
 .name {
   font-family: var(--font-display);
   font-size: 1.15rem;
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
   margin: 0.6rem 1.25rem 0.35rem;
 }
 
@@ -64,14 +64,14 @@
   text-align: center;
   margin: 0 1.25rem 1.25rem;
   padding: 0.75rem;
-  background: var(--color-secondary);
-  color: var(--color-white);
-  border-radius: 8px;
+  background: var(--color-primary);
+  color: var(--color-on-accent);
+  border-radius: var(--radius-control);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
 }
 
 .button:hover {
-  background: #3f2b25;
+  background: var(--color-primary-hover);  color: var(--color-on-accent);
 }

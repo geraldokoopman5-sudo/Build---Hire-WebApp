@@ -16,7 +16,7 @@
 }
 
 .backLink:hover {
-  color: var(--color-primary-dark);
+  color: var(--color-accent-text);
 }
 
 .eyebrow,
@@ -32,7 +32,7 @@
 
 .title {
   margin: 0 0 0.45rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-family: var(--font-display);
   font-size: 2.35rem;
 }
@@ -53,13 +53,13 @@
 }
 
 .status-working {
-  background: rgba(195, 111, 67, 0.15);
-  color: var(--color-primary-dark);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
 }
 
 .status-available {
-  background: rgba(216, 163, 115, 0.25);
-  color: var(--color-secondary);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
 }
 
 .status-unavailable {
@@ -84,10 +84,10 @@
 .card,
 .summaryCard,
 .dangerCard {
-  background: var(--color-white);
-  border-radius: 14px;
+  background: var(--color-surface);
+  border-radius: var(--radius-control);
   padding: 1.5rem;
-  box-shadow: 0 12px 32px rgba(84, 58, 50, 0.06);
+  box-shadow: var(--shadow-card);
 }
 
 .cardHeader {
@@ -96,7 +96,7 @@
 
 .cardTitle {
   margin: 0;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-family: var(--font-display);
   font-size: 1.35rem;
 }
@@ -122,7 +122,7 @@
 }
 
 .detailValue {
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -150,21 +150,23 @@
   min-height: 120px;
   padding: 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: var(--color-neutral);
+  border-radius: var(--radius-control);
+  background: var(--color-background);
   text-align: left;
   cursor: pointer;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .actionButton:hover {
   border-color: var(--color-primary);
-  background: var(--color-white);
+  background: var(--color-surface);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .actionTitle {
   display: block;
   margin-bottom: 0.4rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-weight: 700;
 }
 
@@ -178,13 +180,13 @@
 .emptyState {
   padding: 2rem;
   border: 1px dashed var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   text-align: center;
 }
 
 .emptyStateTitle {
   margin: 0 0 0.5rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-size: 1rem;
 }
 
@@ -212,7 +214,7 @@
 }
 
 .summaryRow strong {
-  color: var(--color-secondary);
+  color: var(--color-text);
 }
 
 .summaryDivider {
@@ -231,13 +233,13 @@
 
 .payment-successful {
   background: var(--color-primary-dark);
-  color: var(--color-white);
+  color: var(--color-on-accent);
 }
 
 .payment-pending,
 .payment-on-hold {
-  background: #f4c9b8;
-  color: var(--color-primary-dark);
+  background: var(--color-danger-soft);
+  color: var(--color-accent-text);
 }
 
 .secondaryButton,
@@ -248,7 +250,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   padding: 0.75rem 1rem;
   font-size: 0.78rem;
   font-weight: 700;
@@ -259,9 +261,10 @@
 .backButton {
   margin-top: 1rem;
   border: 1px solid var(--color-border);
-  background: var(--color-white);
-  color: var(--color-secondary);
+  background: var(--color-surface);
+  color: var(--color-text);
   text-decoration: none;
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .secondaryButton:hover,
@@ -270,7 +273,7 @@
 }
 
 .dangerCard {
-  border: 1px solid rgba(150, 60, 40, 0.18);
+  border: 1px solid var(--color-danger-border);
 }
 
 .dangerText {
@@ -281,12 +284,14 @@
 
 .dangerButton {
   border: none;
-  background: #8a3f32;
-  color: var(--color-white);
+  background: var(--color-danger-action);
+  color: var(--color-on-accent);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .dangerButton:hover {
-  background: #723328;
+  background: var(--color-danger-hover);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .dangerButton:disabled {
@@ -302,15 +307,15 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--color-overlay);
 }
 
 .modal {
   width: min(100%, 460px);
-  border-radius: 14px;
-  background: var(--color-white);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
   padding: 1.5rem;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-dialog);
 }
 
 .modalHeader {
@@ -323,7 +328,7 @@
 
 .modalTitle {
   margin: 0;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-family: var(--font-display);
   font-size: 1.35rem;
 }
@@ -341,9 +346,10 @@
   margin-top: 0.5rem;
   padding: 0.8rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-white);
-  color: var(--color-secondary);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color var(--motion-ui), box-shadow var(--motion-ui);
 }
 
 .modalText {
@@ -362,29 +368,31 @@
 
 .cancelButton {
   border: 1px solid var(--color-border);
-  background: var(--color-white);
-  color: var(--color-secondary);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .confirmButton {
   border: none;
-  background: var(--color-secondary);
-  color: var(--color-white);
+  background: var(--color-primary);
+  color: var(--color-on-accent);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .notFound {
   max-width: 620px;
   margin: 4rem auto;
   padding: 2rem;
-  border-radius: 14px;
-  background: var(--color-white);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
   text-align: center;
-  box-shadow: 0 12px 32px rgba(84, 58, 50, 0.06);
+  box-shadow: var(--shadow-card);
 }
 
 .notFoundTitle {
   margin: 0 0 0.5rem;
-  color: var(--color-secondary);
+  color: var(--color-text);
   font-family: var(--font-display);
   font-size: 2rem;
 }

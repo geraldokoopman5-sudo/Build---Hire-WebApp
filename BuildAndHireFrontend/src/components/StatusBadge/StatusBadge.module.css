@@ -9,18 +9,19 @@
 }
 
 .success {
-  background: rgba(46, 125, 50, 0.12);
-  color: #2e7d32;
+  background: var(--color-success-soft);
+  color: var(--color-success);
 }
 
 .pending {
-  background: rgba(216, 163, 115, 0.25);
-  color: var(--color-primary-dark);
+  background: var(--color-surface-muted);
+  color: var(--color-accent-text);
 }
 
 .danger {
-  background: rgba(192, 57, 43, 0.1);
-  color: #c0392b;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  transition: box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui);
 }
 
 .neutral {
