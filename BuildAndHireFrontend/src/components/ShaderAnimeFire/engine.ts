@@ -40,11 +40,11 @@ export type ShaderAnimeFireInstance = {
 }
 
 /** Brand colours keep the animation and its reduced-motion fallback in sync. */
-export const LIGHT_COLORS = [palette.cyprusDeep, palette.cyprus, palette.sand]
-/** Cyprus flames with sand at the core. */
-export const DARK_COLORS = [palette.cyprusDeep, palette.cyprus, palette.sand]
-const LIGHT_BASE = "#EFE7D3"
-const DARK_BASE = palette.cyprusDeep
+export const LIGHT_COLORS = [palette.sageMuted, palette.sage, palette.sageLight]
+/** Sage flames with light sage at the core. */
+export const DARK_COLORS = [palette.sageMuted, palette.sage, palette.sageLight]
+const LIGHT_BASE = palette.cream
+const DARK_BASE = palette.sageMuted
 
 export const DEFAULT_SPEED = 0.6
 export const DEFAULT_INTENSITY = 1

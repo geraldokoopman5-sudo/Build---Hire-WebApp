@@ -1,8 +1,8 @@
 .sidebar {
   --color-text: var(--color-text-inverse);
   --color-text-muted: var(--color-text-inverse-muted);
-  --color-accent-text: var(--color-sand);
-  --color-highlight: var(--color-sand);
+  --color-accent-text: var(--color-ink);
+  --color-highlight: var(--color-ink);
   --color-border: var(--color-border-inverse);
   --color-accent-soft: var(--color-cyprus-hover);
   --color-surface-hover: var(--color-cyprus-hover);

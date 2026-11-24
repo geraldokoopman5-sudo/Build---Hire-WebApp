@@ -2,7 +2,7 @@
 .profile-account>span:last-child{min-width:0}
 .profile-account strong{display:block;font-size:12px;font-weight:500;overflow-wrap:anywhere}
 .profile-account small{display:block;font-size:10px;margin-top:3px;color:inherit;opacity:.85}
-.profile-avatar{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;background:var(--color-sand);color:var(--color-cyprus);font:15px var(--font-display);overflow:hidden}
+.profile-avatar{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;background:var(--color-sand);color:var(--color-accent-text);font:15px var(--font-display);overflow:hidden}
 .profile-avatar img{width:100%;height:100%;object-fit:cover}
 .profile-account:focus-visible{outline:3px solid var(--color-accent-text);outline-offset:4px;border-radius:4px}
 .bh-workspace .profile-photo-panel{max-width:700px}

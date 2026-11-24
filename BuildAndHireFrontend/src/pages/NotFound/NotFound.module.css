@@ -15,7 +15,7 @@
 }
 
 .brand {
-  color: var(--color-cyprus);
+  color: var(--color-accent-text);
   font: 700 26px/1.2 var(--font-display);
   letter-spacing: -1px;
   text-decoration: none;
@@ -43,7 +43,7 @@
 
 .code {
   margin: 0 0 20px;
-  color: var(--color-cyprus);
+  color: var(--color-accent-text);
   font: 700 clamp(64px, 14vw, 112px)/1 var(--font-display);
   letter-spacing: -0.04em;
 }

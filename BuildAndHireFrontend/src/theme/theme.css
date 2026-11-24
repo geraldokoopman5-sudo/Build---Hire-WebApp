@@ -3,41 +3,49 @@
   --workspace-height: calc(100vh / var(--workspace-scale));
 
   /* Brand palette. Keep these in sync with colors.ts. */
-  --color-cyprus: #004643;
-  --color-cyprus-deep: #003532;
-  --color-sand: #C2B280;
-  --color-sand-hover: #D9CCA2;
+  --color-cream: #FEF5ED;
+  --color-sage-light: #D3E4CD;
+  --color-sage: #ADC2A9;
+  --color-sage-muted: #99A799;
 
-  /* Sand surfaces with Cyprus foregrounds. */
-  --color-background: #F0EDDF;
-  --color-surface: #FCFAF3;
-  --color-surface-muted: #E7DDC1;
-  --color-surface-hover: #DCD2B7;
-  --color-sand-soft: #E7DDC1;
-  --color-text: #123E3A;
-  --color-text-muted: #53645B;
-  --color-border: #D8D2BC;
-  --color-border-warm: #A69A72;
-  --color-on-accent: #F8F3E6;
-  --color-accent-text: var(--color-cyprus);
-  --color-accent-soft: #D9E4D5;
-  --color-highlight: var(--color-cyprus);
+  /* Compatibility aliases for existing components. */
+  --color-cyprus: var(--color-sage-muted);
+  --color-cyprus-deep: var(--color-sage-muted);
+  --color-cyprus-hover: var(--color-sage);
+  --color-sand: var(--color-sage-light);
+  --color-sand-hover: var(--color-sage);
 
-  /* Foregrounds for Cyprus navigation and feature panels. */
-  --color-text-inverse: #F8F3E6;
-  --color-text-inverse-muted: #D5CEB7;
-  --color-border-inverse: #44736A;
-  --color-cyprus-hover: #084B46;
+  /* Cream surfaces and sage accents with dark, readable foregrounds. */
+  --color-background: var(--color-cream);
+  --color-surface: #FFFBF7;
+  --color-surface-muted: var(--color-sage-light);
+  --color-surface-hover: var(--color-sage);
+  --color-sand-soft: var(--color-sage);
+  --color-ink: #25362B;
+  --color-ink-muted: #2E3D30;
+  --color-text: var(--color-ink);
+  --color-text-muted: var(--color-ink-muted);
+  --color-border: var(--color-sage-muted);
+  --color-border-warm: #647660;
+  --color-on-accent: var(--color-ink);
+  --color-accent-text: var(--color-ink);
+  --color-accent-soft: var(--color-sage-light);
+  --color-highlight: var(--color-ink);
+
+  /* Foregrounds for sage navigation and feature panels. */
+  --color-text-inverse: var(--color-ink);
+  --color-text-inverse-muted: var(--color-ink-muted);
+  --color-border-inverse: #647660;
 
   --color-success: #275943;
-  --color-success-soft: #DDE8D5;
+  --color-success-soft: var(--color-sage-light);
   --color-danger: #943F32;
   --color-danger-soft: #F3DFD4;
   --color-danger-border: #BE8777;
   --color-danger-action: #8A3F32;
   --color-danger-hover: #723328;
-  --color-overlay: #002E2BCC;
-  --color-shadow: #002E2B1F;
+  --color-overlay: #25362BCC;
+  --color-shadow: #25362B1F;
 
   /* Shared component aliases. */
   --color-primary: var(--color-cyprus);
@@ -52,8 +60,8 @@
   --radius-card: 24px;
   --radius-control: 12px;
   --grid-gap: 20px;
-  --shadow-card: 0 4px 18px #002E2B08;
-  --shadow-dialog: 0 20px 60px #002E2B26;
+  --shadow-card: 0 4px 18px #25362B08;
+  --shadow-dialog: 0 20px 60px #25362B26;
   --motion-ui: 160ms ease;
 
   --font-display: 'Inter', system-ui, sans-serif;

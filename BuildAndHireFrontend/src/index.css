@@ -40,7 +40,7 @@
 }
 
 input, select, textarea {
-  accent-color: var(--color-primary);
+  accent-color: var(--color-accent-text);
 }
 
 input::placeholder, textarea::placeholder {

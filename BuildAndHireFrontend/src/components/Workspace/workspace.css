@@ -29,7 +29,7 @@
 .bh-workspace .sidenote{border:1px solid var(--color-border);border-radius:var(--radius-card);padding:17px 15px;font-size:11px;color:var(--color-text-muted);margin-top:auto}
 .bh-workspace .sidenote strong{display:block;font-size:12px;color:var(--color-text-muted);margin-bottom:6px}
 .bh-workspace .account{display:flex;align-items:center;gap:10px;font-size:11px;margin-top:25px}
-.bh-workspace .avatar,.bh-workspace .initials{display:grid;place-items:center;background:var(--color-sand);color:var(--color-cyprus);border-radius:50%;height:34px;width:34px;flex:none;font:14px var(--font-display)}
+.bh-workspace .avatar,.bh-workspace .initials{display:grid;place-items:center;background:var(--color-sand);color:var(--color-ink);border-radius:50%;height:34px;width:34px;flex:none;font:14px var(--font-display)}
 .bh-workspace .account small{display:block;color:var(--color-text-muted)}
 .bh-workspace .content{flex:1;min-width:0}
 .bh-workspace .topbar{height:75px;padding:0 38px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--color-border);background:var(--color-surface-muted);font-size:11px;color:var(--color-text-muted)}
@@ -337,7 +337,7 @@
 .bh-workspace .payment-label{display:block;font-size:10px;color:var(--color-text-muted);margin-top:8px}
 @media(max-width:720px){.bh-workspace .sidebar{position:static;height:auto;overflow:visible}.bh-workspace .signout{margin-top:12px}.bh-workspace .modal-overlay{padding:15px}.bh-workspace .modal-card{padding:22px}.bh-workspace .projectrow .buttonrow{justify-content:stretch}.bh-workspace .projectrow .buttonrow>*{flex:1}}
 
-/* Cyprus panels use sand foregrounds throughout. */
+/* Sage panels use dark foregrounds throughout. */
 .bh-workspace .authstory p,.bh-workspace .authstory .checkitem,.bh-workspace .authstory small,.bh-workspace .authstory .eyebrow{color:var(--color-text)}
 .bh-workspace .authstory .brand span{color:var(--color-text)}
 .bh-workspace .rolecard.active{border-color:var(--color-accent-text);background:var(--color-accent-soft);transition:box-shadow var(--motion-ui), transform var(--motion-ui), background-color var(--motion-ui)}
@@ -346,8 +346,8 @@
 .bh-workspace .sidebar,.bh-workspace .authstory {
   --color-text: var(--color-text-inverse);
   --color-text-muted: var(--color-text-inverse-muted);
-  --color-accent-text: var(--color-sand);
-  --color-highlight: var(--color-sand);
+  --color-accent-text: var(--color-ink);
+  --color-highlight: var(--color-ink);
   --color-border: var(--color-border-inverse);
   --color-accent-soft: var(--color-cyprus-hover);
   --color-surface-hover: var(--color-cyprus-hover);
